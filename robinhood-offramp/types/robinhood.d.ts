@@ -82,3 +82,21 @@ export type SupportedNetwork =
 
 // Common asset codes
 export type AssetCode = 'BTC' | 'ETH' | 'USDC' | 'USDT' | 'SOL' | 'MATIC' | 'LTC' | 'DOGE' | 'AVAX' | 'ADA' | string // Allow other asset codes
+
+// Offramp URL Generation Types
+export interface OfframpUrlRequest {
+  supportedNetworks: SupportedNetwork[]
+  assetCode?: AssetCode
+  assetAmount?: string
+  fiatAmount?: string
+}
+
+export interface OfframpUrlResponse {
+  success: boolean
+  data?: {
+    url: string
+    referenceId: string
+    params: RobinhoodOfframpParams
+  }
+  error?: string
+}
