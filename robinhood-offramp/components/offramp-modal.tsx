@@ -3,6 +3,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -11,13 +12,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
-import { buildOfframpUrl, getAssetsForNetwork, NETWORK_ASSET_MAP } from '@/lib/robinhood-url-builder'
-import type { AssetCode, SupportedNetwork } from '@/types/robinhood'
-import { ExternalLink, Info, Loader2 } from 'lucide-react'
+import { buildOfframpUrl, SUPPORTED_NETWORKS } from '@/lib/robinhood-url-builder'
+import type { SupportedNetwork } from '@/types/robinhood'
+import { Check, ExternalLink, Info, Loader2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 interface OfframpModalProps {
@@ -25,86 +24,29 @@ interface OfframpModalProps {
   onClose: () => void
 }
 
-interface PriceQuote {
-  price: string
-  fiatAmount: string
-  processingFee: {
-    fiatAmount: string
-  }
-  totalAmount: {
-    fiatAmount: string
-  }
-}
-
 export function OfframpModal({ isOpen, onClose }: OfframpModalProps) {
   const { toast } = useToast()
 
-  // Form state
-  const [selectedNetwork, setSelectedNetwork] = useState<SupportedNetwork>('ETHEREUM')
-  const [selectedAsset, setSelectedAsset] = useState<AssetCode>('ETH')
-  const [amount, setAmount] = useState('')
-  const [amountType, setAmountType] = useState<'crypto' | 'fiat'>('crypto')
-
-  // UI state
+  // Form state - only networks now
+  const [selectedNetworks, setSelectedNetworks] = useState<SupportedNetwork[]>(['ETHEREUM'])
   const [loading, setLoading] = useState(false)
-  const [priceQuote, setPriceQuote] = useState<PriceQuote | null>(null)
-  const [quoteLoading, setQuoteLoading] = useState(false)
 
   // Reset form when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
-      setSelectedNetwork('ETHEREUM')
-      setSelectedAsset('ETH')
-      setAmount('')
-      setAmountType('crypto')
-      setPriceQuote(null)
+      setSelectedNetworks(['ETHEREUM'])
     }
   }, [isOpen])
 
-  // Update available assets when network changes
-  useEffect(() => {
-    const availableAssets = getAssetsForNetwork(selectedNetwork)
-    if (availableAssets.length > 0 && !availableAssets.includes(selectedAsset)) {
-      setSelectedAsset(availableAssets[0])
-    }
-  }, [selectedNetwork, selectedAsset])
-
-  // Fetch price quote when parameters change
-  useEffect(() => {
-    if (selectedAsset && selectedNetwork && amount && parseFloat(amount) > 0) {
-      fetchPriceQuote()
-    } else {
-      setPriceQuote(null)
-    }
-  }, [selectedAsset, selectedNetwork, amount, amountType])
-
-  const fetchPriceQuote = async () => {
-    setQuoteLoading(true)
-    try {
-      // This would call the price quote API
-      // For now, we'll simulate the response
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      const mockQuote: PriceQuote = {
-        price: '2500.00',
-        fiatAmount: (parseFloat(amount) * 2500).toFixed(2),
-        processingFee: { fiatAmount: '0.00' },
-        totalAmount: { fiatAmount: (parseFloat(amount) * 2500).toFixed(2) },
-      }
-
-      setPriceQuote(mockQuote)
-    } catch (error) {
-      console.error('Failed to fetch price quote:', error)
-    } finally {
-      setQuoteLoading(false)
-    }
+  const handleNetworkToggle = (network: SupportedNetwork) => {
+    setSelectedNetworks((prev) => (prev.includes(network) ? prev.filter((n) => n !== network) : [...prev, network]))
   }
 
   const handleStartTransfer = async () => {
-    if (!selectedAsset || !selectedNetwork || !amount || parseFloat(amount) <= 0) {
+    if (selectedNetworks.length === 0) {
       toast({
-        title: 'Invalid input',
-        description: 'Please select an asset, network, and enter a valid amount.',
+        title: 'Select Networks',
+        description: 'Please select at least one blockchain network you can receive crypto on.',
         variant: 'destructive',
       })
       return
@@ -112,16 +54,13 @@ export function OfframpModal({ isOpen, onClose }: OfframpModalProps) {
 
     setLoading(true)
     try {
-      // Generate offramp URL
+      // Generate offramp URL with only required parameters
       const result = buildOfframpUrl({
-        supportedNetworks: [selectedNetwork],
-        assetCode: selectedAsset,
-        assetAmount: amountType === 'crypto' ? amount : undefined,
-        fiatAmount: amountType === 'fiat' ? amount : undefined,
-        fiatCode: amountType === 'fiat' ? 'USD' : undefined,
+        supportedNetworks: selectedNetworks,
+        // No asset code, amount, or other pre-selections
       })
 
-      // Store referenceId for callback handling (already done in buildOfframpUrl)
+      // Store referenceId for callback handling
       console.log('Generated referenceId:', result.referenceId)
 
       // Open Robinhood Connect URL
@@ -132,7 +71,7 @@ export function OfframpModal({ isOpen, onClose }: OfframpModalProps) {
 
       toast({
         title: 'Opening Robinhood...',
-        description: 'Complete your transfer in the Robinhood app or web interface.',
+        description: "You'll see your balances and can choose what to transfer in Robinhood.",
       })
     } catch (error: any) {
       console.error('Failed to start transfer:', error)
@@ -146,121 +85,82 @@ export function OfframpModal({ isOpen, onClose }: OfframpModalProps) {
     }
   }
 
-  const availableAssets = getAssetsForNetwork(selectedNetwork)
-  const isValidAmount = amount && parseFloat(amount) > 0
-
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !loading && onClose()}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Transfer from Robinhood</DialogTitle>
           <DialogDescription>
-            Choose the crypto asset and amount you want to transfer from your Robinhood account.
+            Connect to Robinhood where you'll see your balances and choose what to transfer.
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-6 py-4">
           {/* Network Selection */}
-          <div className="grid gap-2">
-            <Label htmlFor="network">Blockchain Network</Label>
-            <Select value={selectedNetwork} onValueChange={(value) => setSelectedNetwork(value as SupportedNetwork)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select network" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.keys(NETWORK_ASSET_MAP).map((network) => (
-                  <SelectItem key={network} value={network}>
-                    {network}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Asset Selection */}
-          <div className="grid gap-2">
-            <Label htmlFor="asset">Crypto Asset</Label>
-            <Select value={selectedAsset} onValueChange={(value) => setSelectedAsset(value as AssetCode)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select asset" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableAssets.map((asset) => (
-                  <SelectItem key={asset} value={asset}>
-                    {asset}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Amount Input */}
-          <div className="grid gap-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="amount">Amount</Label>
-              <div className="flex space-x-1">
-                <Button
-                  variant={amountType === 'crypto' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setAmountType('crypto')}
-                >
-                  {selectedAsset}
-                </Button>
-                <Button
-                  variant={amountType === 'fiat' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setAmountType('fiat')}
-                >
-                  USD
-                </Button>
-              </div>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-base font-medium">Which blockchain networks can you receive crypto on?</Label>
+              <p className="text-sm text-muted-foreground mt-1">
+                Select all networks your wallet supports. You'll choose the specific asset and amount in Robinhood.
+              </p>
             </div>
-            <Input
-              id="amount"
-              type="number"
-              step="any"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder={`Enter amount in ${amountType === 'crypto' ? selectedAsset : 'USD'}`}
-              disabled={loading}
-            />
+
+            <div className="grid gap-3">
+              {SUPPORTED_NETWORKS.map((network) => (
+                <div key={network} className="flex items-center space-x-3">
+                  <Checkbox
+                    id={network}
+                    checked={selectedNetworks.includes(network)}
+                    onCheckedChange={() => handleNetworkToggle(network)}
+                  />
+                  <Label
+                    htmlFor={network}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
+                  >
+                    {network}
+                  </Label>
+                  {selectedNetworks.includes(network) && <Check className="h-4 w-4 text-emerald-600" />}
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Price Quote */}
-          {isValidAmount && (
-            <Card>
-              <CardContent className="pt-4">
-                {quoteLoading ? (
-                  <div className="flex items-center space-x-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm">Getting price quote...</span>
+          {/* How it Works */}
+          <Card className="bg-emerald-50 border-emerald-200">
+            <CardContent className="pt-4">
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <div className="w-6 h-6 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                    1
                   </div>
-                ) : priceQuote ? (
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Estimated Value:</span>
-                      <span className="font-medium">${priceQuote.fiatAmount}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Processing Fee:</span>
-                      <span className="font-medium">${priceQuote.processingFee.fiatAmount}</span>
-                    </div>
-                    <div className="border-t pt-2 flex justify-between font-medium">
-                      <span>Total Value:</span>
-                      <span>${priceQuote.totalAmount.fiatAmount}</span>
-                    </div>
+                  <span className="text-sm font-medium text-emerald-800">
+                    Open Robinhood and see your crypto balances
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-6 h-6 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                    2
                   </div>
-                ) : null}
-              </CardContent>
-            </Card>
-          )}
+                  <span className="text-sm font-medium text-emerald-800">
+                    Choose which crypto and how much to transfer
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-6 h-6 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                    3
+                  </div>
+                  <span className="text-sm font-medium text-emerald-800">Return here to get your deposit address</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Information Alert */}
           <Alert>
             <Info className="h-4 w-4" />
             <AlertDescription>
-              You'll complete the transfer in your Robinhood app or web interface. The exact amount and fees will be
-              confirmed there.
+              <strong>No guessing needed!</strong> You'll see your actual crypto balances in Robinhood and can make
+              informed decisions about what and how much to transfer.
             </AlertDescription>
           </Alert>
         </div>
@@ -271,7 +171,7 @@ export function OfframpModal({ isOpen, onClose }: OfframpModalProps) {
           </Button>
           <Button
             onClick={handleStartTransfer}
-            disabled={loading || !isValidAmount}
+            disabled={loading || selectedNetworks.length === 0}
             className="bg-emerald-600 hover:bg-emerald-700"
           >
             {loading ? (
@@ -282,7 +182,7 @@ export function OfframpModal({ isOpen, onClose }: OfframpModalProps) {
             ) : (
               <>
                 <ExternalLink className="mr-2 h-4 w-4" />
-                Open Robinhood
+                Open Robinhood ({selectedNetworks.length} network{selectedNetworks.length !== 1 ? 's' : ''})
               </>
             )}
           </Button>

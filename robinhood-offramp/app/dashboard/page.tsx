@@ -47,10 +47,10 @@ export default function Dashboard() {
                     </Badge>
                   </div>
                   <ol className="text-sm text-emerald-700 space-y-1">
-                    <li>1. Choose the crypto asset and amount to transfer</li>
-                    <li>2. Open Robinhood app to confirm the transfer</li>
-                    <li>3. Receive deposit address and complete the transfer</li>
-                    <li>4. Track your donation until completion</li>
+                    <li>1. Click to open Robinhood and see your crypto balances</li>
+                    <li>2. Choose what crypto and how much you want to transfer</li>
+                    <li>3. Return here to get your unique deposit address</li>
+                    <li>4. Complete the transfer and track until donation</li>
                   </ol>
                 </div>
 
