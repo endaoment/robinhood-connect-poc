@@ -169,6 +169,7 @@ curl "http://localhost:3000/api/robinhood/order-status?referenceId=invalid-uuid"
 ### Expected Responses
 
 **Success** (200):
+
 ```json
 {
   "success": true,
@@ -184,6 +185,7 @@ curl "http://localhost:3000/api/robinhood/order-status?referenceId=invalid-uuid"
 ```
 
 **Error** (400):
+
 ```json
 {
   "success": false,
@@ -199,10 +201,10 @@ curl "http://localhost:3000/api/robinhood/order-status?referenceId=invalid-uuid"
 The order status component can be added to the callback page (`app/callback/page.tsx`) to provide immediate tracking after deposit address redemption:
 
 ```typescript
-import { OrderStatusComponent } from '@/components/order-status'
+import { OrderStatusComponent } from "@/components/order-status";
 
 // After deposit address display
-<OrderStatusComponent referenceId={referenceId} autoRefresh={true} />
+<OrderStatusComponent referenceId={referenceId} autoRefresh={true} />;
 ```
 
 ### With Dashboard
@@ -211,9 +213,11 @@ The component can be used on the dashboard to show status of ongoing transfers:
 
 ```typescript
 // Show active transfers
-{activeReferenceIds.map((id) => (
-  <OrderStatusComponent key={id} referenceId={id} />
-))}
+{
+  activeReferenceIds.map((id) => (
+    <OrderStatusComponent key={id} referenceId={id} />
+  ));
+}
 ```
 
 ## Security Considerations
@@ -252,6 +256,7 @@ The component can be used on the dashboard to show status of ongoing transfers:
 ## Next Steps
 
 1. **Sub-Plan 6: Dashboard UI**
+
    - Create offramp initiation modal
    - Integrate order status component
    - Add transaction history display
@@ -285,4 +290,3 @@ The component can be used on the dashboard to show status of ongoing transfers:
 **Implementation completed successfully!** ✅
 
 The order tracking system is now ready for integration into the dashboard and callback pages. All functionality has been implemented according to the sub-plan specifications.
-

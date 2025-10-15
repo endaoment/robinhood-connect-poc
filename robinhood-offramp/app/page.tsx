@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { Button } from '@/components/ui/button'
+import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Home() {
   return (
@@ -10,12 +10,12 @@ export default function Home() {
           Crypto <span className="text-emerald-400">Donations</span> Platform
         </h1>
         <p className="max-w-2xl text-lg text-zinc-300">
-          Connect your Coinbase account to make donations using your crypto assets. Secure, fast, and transparent.
+          Transfer crypto from your Robinhood account to support causes you care about. Secure, fast, and transparent.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
-          <Link href="/api/auth/signin">
+          <Link href="/dashboard">
             <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700">
-              Login with Coinbase
+              Get Started with Robinhood
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
