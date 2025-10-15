@@ -4,39 +4,7 @@
 **Network Coverage**: 19 of 20 Robinhood networks (95%) ✅  
 **User Experience**: Zero-click form - ultimate simplicity 🚀
 
-A complete integration that enables users to transfer cryptocurrency FROM their Robinhood accounts TO Endaoment using Robinhood Connect's offramp functionality with **zero form interaction** and support for **19 blockchain networks**.
-
----
-
-## 🎯 Project Overview
-
-This implementation provides the **simplest possible way** for users to donate crypto from their Robinhood accounts. Users just click one button, choose their crypto in Robinhood (where they see their actual balances), and return to complete the donation.
-
-### Key Features
-
-- ✅ **Zero-Click Form**: Single button click to launch (no form fields!)
-- ✅ **19 Blockchain Networks**: Broadest possible crypto support (95% of Robinhood)
-- ✅ **Real-time Tracking**: Auto-refresh order status with exponential backoff
-- ✅ **Transaction History**: View all transfers with status badges
-- ✅ **Mobile Optimized**: Universal links open Robinhood app natively
-- ✅ **Security First**: 9/10 security rating, OWASP compliant
-- ✅ **Production Ready**: Comprehensive documentation and deployment guides
-- ✅ **Optimal Performance**: 15 kB dashboard bundle (55% smaller than initial)
-
-### Project Stats
-
-| Metric                | Value                       |
-| --------------------- | --------------------------- |
-| **Status**            | All 9 sub-plans complete ✅ |
-| **Network Coverage**  | 19 of 20 networks (95%)     |
-| **Code**              | 5,000+ lines                |
-| **Documentation**     | 2,300+ lines                |
-| **Security**          | 9/10 rating (excellent)     |
-| **Dashboard Bundle**  | 15 kB (excellent)           |
-| **Callback Bundle**   | 3.04 kB (excellent)         |
-| **First Load JS**     | 130 kB (optimal)            |
-| **Build Errors**      | 0                           |
-| **User Clicks**       | 1 (87% fewer than complex form) |
+A proof of concept integration that enables users to transfer cryptocurrency FROM their Robinhood accounts TO Endaoment using Robinhood Connect's offramp functionality.
 
 ---
 
@@ -65,7 +33,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Visit http://localhost:3000/dashboard
+Visit <http://localhost:3000> (automatically redirects to dashboard)
 
 ### Environment Variables
 
@@ -84,42 +52,42 @@ NEXTAUTH_URL=http://localhost:3000
 
 ### 19 Networks Configured (95% Coverage)
 
-We support **19 of 20** blockchain networks that Robinhood supports for crypto transfers:
+This POC demonstrates **19 of 20** blockchain networks that Robinhood supports for crypto transfers. All transfers go to **Coinbase Prime custody addresses** with automated liquidation infrastructure.
 
 #### EVM-Compatible Networks (8) ✅
 
-All use the same address for safety and simplified management:
+Each network uses its own unique Coinbase Prime address for proper tracking:
 
-- **Ethereum** - ETH, USDC, USDT, AAVE, LINK, COMP, UNI, and all ERC-20 tokens
-- **Polygon** - MATIC, USDC, USDT, and Polygon tokens
-- **Arbitrum** - ARB, USDC (Layer 2)
-- **Base** - USDC (Coinbase L2)
-- **Optimism** - OP, USDC (Layer 2)
-- **Zora** - ZORA (Base L2)
-- **Avalanche** - AVAX, USDC (C-Chain)
-- **Ethereum Classic** - ETC
+- **Ethereum** - `0x8e58A3E8835A90EcF53c14C153cCE3aaC44B8113`- ETH
+- **Polygon** - `0x3F5a6f6Ce9Dd9e1098f279Eb0aF00aFF317b3d66`- Polygon
+- **Arbitrum** - `0xE6cBea18f60CE40D699bF39Dd41f240EdcCdf0a4`- ARB
+- **Base** - `0x8e58A3E8835A90EcF53c14C153cCE3aaC44B8113`- ETH
+- **Optimism** - `0xc99970500ae222E95168483155D6Ec0d1FbC2B69`- OP
+- **Zora** - `0xd7A20776F36d7B19F4F5f53B1305aD832A07bf4C`- ZORA
+- **Avalanche** - `0x7e707c8d5dc65d80162c0a7fb02c634306952385`- AVAX
+- **Ethereum Classic** - `0x6Eca26A6337b1069d3865F54158fA5Bf675C3d37`- ETC
 
 #### Bitcoin & Bitcoin-Like (4) ✅
 
-- **Bitcoin** - BTC
-- **Bitcoin Cash** - BCH
-- **Litecoin** - LTC
-- **Dogecoin** - DOGE
+- **Bitcoin** - `3NJ48qerB4sWE8qEF1bRzk7jXKh8AJnbBC`- BTC
+- **Bitcoin Cash** - `qrja4dr6kjtrrjae2y7jals4jc8up0assspl39fekq`- BCH
+- **Litecoin** - `MEDGZCJWX8X1Njy5uRfvGwdi2QxaMNQYad`- LTC
+- **Dogecoin** - `DC77W64uHRkkmvDwusq2tfEjqBQwch1W7s`- DOGE
 
 #### Other Layer 1 Networks (4) ✅
 
-- **Solana** - SOL, USDC, BONK, WIF, MOODENG, TRUMP, PNUT, POPCAT, PENGU (all SPL tokens)
-- **Cardano** - ADA
-- **Tezos** - XTZ
-- **Sui** - SUI
+- **Solana** - `DPsUYCziRFjW8dcvitvtrJJfxbPUb1X7Ty8ybn3hRwM1`- SOL
+- **Cardano** - `addr1v9fu7mgyyyh63v7kqn57t7nadvv76n2cgjlg7l0r974nj9st03emv`- ADA
+- **Tezos** - `tz1WiBmPs9ZLsvuiS92cxZQjikxEo9Dsv7eh`- XTZ
+- **Sui** - `0x5e4072e696853d1d9c7b478c68a5d97f32ac35524e9dee3cf1022bc022e59c9a`- SUI
 
 #### Networks with Required Memos (3) ✅
 
 These networks require both address AND memo for proper crediting:
 
-- **Stellar** - XLM (memo: `4212863649`)
-- **XRP** - Ripple (destination tag: `2237695492`)
-- **Hedera** - HBAR (memo: `2364220028`)
+- **Stellar** - `GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37` + memo: `4212863649`- XLM
+- **XRP** - `rn7d8bZhsdz9ecf586XsvbmVePfxYGrs34` + destination tag: `2237695492`- Ripple
+- **Hedera** - `0.0.1133968` + memo: `2364220028`- HBAR
 
 #### Pending (1)
 
@@ -132,36 +100,34 @@ These networks require both address AND memo for proper crediting:
 - **DeFi Tokens**: AAVE, LINK, COMP, UNI, CRV
 - **Meme Coins**: DOGE, BONK, WIF, PEPE, SHIB, MOODENG, PNUT
 - **L2 Tokens**: ARB, OP, MATIC, ZORA
-
-**Total**: 100+ different crypto assets supported across 19 networks!
+  Get
 
 See [NETWORK-ADDRESSES-STATUS.md](NETWORK-ADDRESSES-STATUS.md) for complete network reference.
 
 ---
 
-## 🎯 User Flow (Zero-Click Experience)
+## 🎯 User Flow (One-Click Experience)
 
-### The Simplified Flow
+### The Ultimate Simplified Flow
 
 ```
-1. Click "Start Transfer" button on dashboard
+1. Visit app → Lands directly on dashboard (no homepage!)
    ↓
-2. Modal shows 19 supported networks (informational - no selection needed!)
+2. Click "Give with Robinhood" button (one click!)
    ↓
-3. Click "Open Robinhood" (just one click!)
+3. Robinhood app/web opens → User sees their ACTUAL balances
    ↓
-4. Robinhood app/web opens → User sees their ACTUAL balances
+4. User chooses ANY crypto and amount from their holdings
    ↓
-5. User chooses ANY crypto and amount from their holdings
+5. Robinhood redirects back → Deposit address shown automatically
    ↓
-6. Robinhood redirects back → Deposit address shown automatically
-   ↓
-7. User completes transfer → Real-time tracking until complete
+6. User completes transfer → Real-time tracking until complete
 ```
 
-**Total user interactions before Robinhood**: **1 click** (vs 8 clicks in complex form)  
-**Time to Robinhood**: **5-10 seconds** (vs 60-90 seconds with form)  
-**Form errors possible**: **0** (no form to fill!)
+**Total user interactions before Robinhood**: **1 click** (Give with Robinhood button)  
+**Time to Robinhood**: **~2 seconds** (instant from dashboard)  
+**Form errors possible**: **0** (no form to fill!)  
+**Pages required**: **1** (one-page app - no homepage, no modal)
 
 ### Benefits of Zero-Click Design
 
@@ -224,24 +190,28 @@ See [NETWORK-ADDRESSES-STATUS.md](NETWORK-ADDRESSES-STATUS.md) for complete netw
 
 ## 🏗️ Architecture
 
-### Stateless Flow Design
+### Stateless One-Page Flow Design
 
-Unlike OAuth-based integrations, this uses a stateless redirect flow:
+Unlike OAuth-based integrations, this uses a stateless redirect flow with a one-page app:
 
 ```
-Dashboard → Generate referenceId → Robinhood App → Callback → 
-Pre-Configured Address → Status Tracking
+Root (/) → Dashboard → Click "Give with Robinhood" → Generate referenceId →
+Robinhood App → Callback → Pre-Configured Address → Status Tracking
 ```
 
-**Key Innovation**: Direct address lookup (no API call needed for redemption)
+**Key Innovations**:
+
+- One-page app (no homepage, no modal - just direct action)
+- Direct address lookup (no API call needed for redemption)
+- Single click from app to Robinhood
 
 ### Key Components
 
 **Frontend** (`app/`):
 
-- `dashboard/page.tsx` - Main dashboard UI with zero-click modal
+- `page.tsx` - Root redirect to dashboard (instant navigation)
+- `dashboard/page.tsx` - One-page app with "Give with Robinhood" button (no modal!)
 - `callback/page.tsx` - Handles Robinhood redirects with instant address lookup
-- `components/offramp-modal.tsx` - Transfer initiation (158 lines, zero form fields)
 - `components/order-status.tsx` - Real-time tracking with auto-refresh
 - `components/transaction-history.tsx` - History viewer with order details
 
@@ -255,7 +225,7 @@ Pre-Configured Address → Status Tracking
 
 - `robinhood-api.ts` - API client for order status
 - `robinhood-url-builder.ts` - URL generation (20 networks)
-- `network-addresses.ts` - **NEW**: Pre-configured addresses for 19 networks
+- `network-addresses.ts` - **NEW**: Coinbase Prime addresses for 19 networks
 - `security-utils.ts` - Input validation and sanitization
 - `performance-utils.ts` - Caching & optimization
 - `error-messages.ts` - User-friendly error constants
@@ -345,15 +315,16 @@ vercel --prod
 Before production deployment:
 
 1. ✅ All code implemented and tested
-2. ✅ 19 networks configured with verified addresses
+2. ✅ 19 networks configured with Coinbase Prime addresses
 3. ⚠️ Obtain Robinhood production API credentials
 4. ⚠️ Register production callback URL with Robinhood
-5. ⚠️ Implement Redis-based rate limiting
-6. ⚠️ Set up error monitoring (Sentry)
-7. ⚠️ Configure production environment variables
-8. ⚠️ Test on mobile devices (iOS/Android)
-9. ⚠️ Deploy to staging first
-10. ⚠️ Verify addresses on blockchain explorers
+5. ⚠️ Verify Coinbase Prime automated liquidation is configured
+6. ⚠️ Implement Redis-based rate limiting
+7. ⚠️ Set up error monitoring (Sentry)
+8. ⚠️ Configure production environment variables
+9. ⚠️ Test on mobile devices (iOS/Android)
+10. ⚠️ Deploy to staging first
+11. ⚠️ Verify addresses on blockchain explorers
 
 See [READY-FOR-PRODUCTION.md](READY-FOR-PRODUCTION.md) for complete checklist.
 
@@ -367,14 +338,13 @@ See [READY-FOR-PRODUCTION.md](READY-FOR-PRODUCTION.md) for complete checklist.
 # Start dev server
 npm run dev
 
-# Visit dashboard
-open http://localhost:3000/dashboard
+# Visit app (automatically goes to dashboard)
+open http://localhost:3000
 
-# Test zero-click modal
-# 1. Click "Start Transfer"
-# 2. See all 19 networks displayed
-# 3. Click "Open Robinhood" (no form to fill!)
-# 4. Robinhood URL opens with all networks included
+# Test one-click flow
+# 1. Click "Give with Robinhood" button
+# 2. Robinhood URL opens with all 19 networks included
+# That's it - no homepage, no modal, no form!
 ```
 
 See [TESTING-CHECKLIST.md](TESTING-CHECKLIST.md) for 100+ test items.
@@ -396,63 +366,68 @@ npm run build
 
 ## 📱 Dashboard Preview
 
-### Offramp Modal (Zero-Click Design)
+### One-Page App (No Homepage, No Modal)
 
 ```
-┌────────────────────────────────────────────────┐
-│ Transfer from Robinhood                        │
-│ We support all major blockchain networks.      │
-│ Choose any crypto in your Robinhood account!   │
-│                                                │
-│ ┌────────────────────────────────────────────┐ │
-│ │ ✅ We accept crypto on all major networks  │ │
-│ │                                            │ │
-│ │ [ETHEREUM] [POLYGON] [ARBITRUM] [BASE]    │ │
-│ │ [OPTIMISM] [ZORA] [BITCOIN] [SOLANA]      │ │
-│ │ [CARDANO] [XRP] [STELLAR] [HEDERA]        │ │
-│ │ ... (19 networks total)                    │ │
-│ └────────────────────────────────────────────┘ │
-│                                                │
-│ ┌────────────────────────────────────────────┐ │
-│ │ How it Works:                              │ │
-│ │ 1️⃣ Click below to open Robinhood           │ │
-│ │ 2️⃣ Choose ANY crypto and amount            │ │
-│ │ 3️⃣ Return here to complete your donation   │ │
-│ └────────────────────────────────────────────┘ │
-│                                                │
-│ ℹ️  Maximum flexibility! We support 19         │
-│    blockchain networks. Select any crypto      │
-│    asset you have in Robinhood.                │
-│                                                │
-│                  [Cancel] [Open Robinhood] → │
-└────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│ Give Crypto with Robinhood                               │
+│ Transfer crypto from your Robinhood account...           │
+│                                                          │
+│ ┌───────────────────────────────────────────────────┐   │
+│ │ One-Click Crypto Giving                           │   │
+│ │                                                    │   │
+│ │ ┌──────────────────────────────────────────────┐  │   │
+│ │ │     🔗 Give with Robinhood                   │  │   │
+│ │ └──────────────────────────────────────────────┘  │   │
+│ │                                                    │   │
+│ │ ┌──────────────────────────────────────────────┐  │   │
+│ │ │ How it Works:                                │  │   │
+│ │ │ 1️⃣ Click "Give with Robinhood" to open      │  │   │
+│ │ │ 2️⃣ Choose ANY crypto and amount             │  │   │
+│ │ │ 3️⃣ Return here to complete your donation    │  │   │
+│ │ └──────────────────────────────────────────────┘  │   │
+│ │                                                    │   │
+│ │ ┌──────────────────────────────────────────────┐  │   │
+│ │ │ ✅ We accept crypto on 19 networks:          │  │   │
+│ │ │ [ETHEREUM] [POLYGON] [ARBITRUM] [BASE]      │  │   │
+│ │ │ [OPTIMISM] [BITCOIN] [SOLANA] [CARDANO]     │  │   │
+│ │ │ ... and 11 more networks                     │  │   │
+│ │ └──────────────────────────────────────────────┘  │   │
+│ └───────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
 ```
 
 **Features**:
-- No form fields (zero user input required)
-- All 19 networks displayed as informational badges
-- Single "Open Robinhood" button
-- Clear 3-step instructions
-- Mobile-optimized layout
+
+- Single-page app (no homepage redirect needed)
+- Prominent "Give with Robinhood" button (primary CTA)
+- All 19 networks displayed on dashboard
+- Clear 3-step instructions embedded
+- No modal, no form - absolute simplicity
+- Mobile-optimized responsive layout
 
 ---
 
 ## 🎯 Complete User Flow
 
-### The Ultimate Simplified Experience
+### The Ultimate One-Click Experience
 
-**Step 1: Dashboard** (1 second)
+**Step 1: Landing** (instant)
+
 ```
-User clicks "Start Transfer" button
+User visits app → Automatically lands on dashboard
+(No homepage, no intermediate pages)
 ```
 
-**Step 2: Modal Opens** (2 seconds)
+**Step 2: One Click** (1 second)
+
 ```
-Modal shows all 19 supported networks (informational only)
-User clicks "Open Robinhood" button
+User clicks "Give with Robinhood" button
+Robinhood URL opens immediately
 ```
 
 **Step 3: In Robinhood** (30-60 seconds)
+
 ```
 Robinhood app/web opens
 User sees their ACTUAL crypto balances
@@ -461,6 +436,7 @@ User confirms transfer
 ```
 
 **Step 4: Back to Dashboard** (5 seconds)
+
 ```
 Robinhood redirects back automatically
 Deposit address shown instantly (no API call!)
@@ -468,14 +444,16 @@ User copies address and completes transfer
 ```
 
 **Step 5: Track Completion** (minutes to hours)
+
 ```
 Real-time status updates with auto-refresh
 Transaction ID shown when complete
 ```
 
-**Total time before Robinhood**: **~5-10 seconds** (vs 60-90 seconds with complex form)  
-**Total user clicks**: **1** (vs 8 clicks with form)  
-**Form errors possible**: **0** (no form to fill!)
+**Total time before Robinhood**: **~1-2 seconds** (instant button click)  
+**Total user clicks**: **1** ("Give with Robinhood" button)  
+**Form errors possible**: **0** (no form to fill!)  
+**Pages/Modals**: **0** (one-page app - no homepage, no modal)
 
 ---
 
@@ -513,27 +491,24 @@ npm run build
 
 ## 🎨 UI Screenshots
 
-**Note**: The dev server is running at http://localhost:3003
+**Note**: The dev server is running at <http://localhost:3003>
 
-### Dashboard Features
+### Dashboard Features (One-Page App)
 
-The dashboard includes:
-- **Transfer Card**: Zero-click "Start Transfer" button with "How it works" guide
+The dashboard is the entire app - no homepage, no modal:
+
+- **Primary CTA**: Large "Give with Robinhood" button (prominent, one-click action)
+- **Network Display**: All 19 supported networks shown as badges
+- **How it Works**: 3-step guide embedded directly on page
+- **Info Alert**: Maximum flexibility message (19 networks supported)
 - **Your Impact Stats**: Total donated and transfer count
 - **Recent Activity**: Empty state with clear messaging
 - **Transaction History**: Modal for viewing past transfers with status tracking
 
-### Offramp Modal Features
-
-The modal displays:
-- **19 Network Badges**: All supported networks in emerald-themed card
-- **How it Works**: 3-step visual guide with numbered circles
-- **Info Alert**: Maximum flexibility message
-- **Single Button**: "Open Robinhood" - no form fields!
-
 ### Callback Page Features
 
 After Robinhood redirect:
+
 - **Deposit Address Display**: Large, copyable address with blockchain explorer link
 - **Transfer Details**: Asset, amount, network clearly shown
 - **Memo Support**: Address tags shown for XLM, XRP, HBAR
@@ -590,10 +565,11 @@ See [DEVELOPER_GUIDE.md](robinhood-offramp/docs/DEVELOPER_GUIDE.md) for contribu
 
 ### User Experience Excellence
 
-- ✅ **Zero-click form** (no user input before Robinhood)
-- ✅ **87% fewer steps** (1 click vs 8 clicks)
-- ✅ **50-67% faster** to Robinhood (5-10s vs 15-30s)
-- ✅ **Perfect mobile UX** (no form fields)
+- ✅ **One-page app** (no homepage, no modal, no navigation)
+- ✅ **One-click to Robinhood** (single "Give with Robinhood" button)
+- ✅ **Instant action** (~1-2 seconds from landing to Robinhood)
+- ✅ **87% fewer steps** (1 click vs 8 clicks in complex form)
+- ✅ **Perfect mobile UX** (no form fields, optimized button)
 - ✅ **Maximum flexibility** (any crypto, any network)
 - ✅ **No form errors possible** (nothing to fill incorrectly)
 
@@ -602,8 +578,8 @@ See [DEVELOPER_GUIDE.md](robinhood-offramp/docs/DEVELOPER_GUIDE.md) for contribu
 - ✅ **Highest conversion potential** (absolute minimum friction)
 - ✅ **Broadest crypto support** (19 networks, 100+ assets)
 - ✅ **Lowest support burden** (no form errors to troubleshoot)
-- ✅ **Production-ready addresses** (from Endaoment OTC config)
-- ✅ **Smart address reuse** (1 address for 6 EVM L2s)
+- ✅ **Coinbase Prime integration** (custody addresses with automated liquidation)
+- ✅ **Unique addresses per network** (proper tracking and settlement)
 
 ---
 
@@ -625,7 +601,7 @@ See [DEVELOPER_GUIDE.md](robinhood-offramp/docs/DEVELOPER_GUIDE.md) for contribu
 - Built with Next.js, TypeScript, and Tailwind CSS
 - UI components from shadcn/ui
 - Robinhood Connect API integration
-- Network addresses from Endaoment production OTC configuration
+- Coinbase Prime custody addresses with automated liquidation infrastructure
 - Address format requirements from [Robinhood documentation](https://robinhood.com/us/en/support/articles/crypto-transfers/)
 
 ---

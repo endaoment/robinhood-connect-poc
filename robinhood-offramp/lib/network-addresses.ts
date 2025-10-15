@@ -2,59 +2,54 @@ import type { SupportedNetwork } from '@/types/robinhood'
 
 /**
  * Pre-configured deposit addresses for each supported blockchain network.
- * These addresses are owned and controlled by Endaoment.
  *
- * ⚠️ IMPORTANT: All addresses verified against Robinhood's supported formats
+ * ⚠️ COINBASE PRIME INTEGRATION
+ * These addresses connect to Coinbase Prime wallets with automated liquidation infrastructure.
+ * Each network has its own unique Prime address for proper tracking and settlement.
+ *
  * Complete address format reference: https://robinhood.com/us/en/support/articles/crypto-transfers/
- *
- * Address sources:
- * - Endaoment's production OTC token configuration
- * - Already in production use for direct crypto donations
- * - Verified and tested in existing donation flow
- *
- * 📝 PLACEHOLDER_NEEDED: Networks marked with this need addresses provided
  */
 export const NETWORK_DEPOSIT_ADDRESSES: Record<SupportedNetwork, string> = {
   // ========================================
   // EVM-Compatible Networks (L1 & L2)
   // ========================================
-  // All EVM chains can use the same address for safety and simplicity
-  ETHEREUM: '0x8e58A3E8835A90EcF53c14C153cCE3aaC44B8113', // Endaoment Accountant Wallet
-  POLYGON: '0x8e58A3E8835A90EcF53c14C153cCE3aaC44B8113', // Same as ETH (EVM-compatible)
-  ARBITRUM: '0x8e58A3E8835A90EcF53c14C153cCE3aaC44B8113', // Same as ETH (EVM L2)
-  BASE: '0x8e58A3E8835A90EcF53c14C153cCE3aaC44B8113', // Same as ETH (EVM L2)
-  OPTIMISM: '0x8e58A3E8835A90EcF53c14C153cCE3aaC44B8113', // Same as ETH (EVM L2)
-  ZORA: '0x8e58A3E8835A90EcF53c14C153cCE3aaC44B8113', // Same as ETH (Base L2)
-  AVALANCHE: '0x7e707c8d5dc65d80162c0a7fb02c634306952385', // AVAX C-Chain (0x format)
-  ETHEREUM_CLASSIC: '0x6Eca26A6337b1069d3865F54158fA5Bf675C3d37', // ETC (EOA only, no smart contracts)
+  // Each EVM network has its own unique Coinbase Prime address
+  ETHEREUM: '0x8e58A3E8835A90EcF53c14C153cCE3aaC44B8113', // CB Prime Ethereum wallet (ndao.eth)
+  POLYGON: '0x3F5a6f6Ce9Dd9e1098f279Eb0aF00aFF317b3d66', // CB Prime Polygon wallet
+  ARBITRUM: '0xE6cBea18f60CE40D699bF39Dd41f240EdcCdf0a4', // CB Prime Arbitrum wallet
+  BASE: '0x8e58A3E8835A90EcF53c14C153cCE3aaC44B8113', // CB Prime Base wallet (ndao.eth - ETH is reserve asset)
+  OPTIMISM: '0xc99970500ae222E95168483155D6Ec0d1FbC2B69', // CB Prime Optimism wallet
+  ZORA: '0xd7A20776F36d7B19F4F5f53B1305aD832A07bf4C', // CB Prime Zora wallet
+  AVALANCHE: '0x7e707c8d5dc65d80162c0a7fb02c634306952385', // CB Prime Avalanche C-Chain wallet
+  ETHEREUM_CLASSIC: '0x6Eca26A6337b1069d3865F54158fA5Bf675C3d37', // CB Prime Ethereum Classic wallet
 
   // ========================================
   // Bitcoin-like Networks
   // ========================================
-  BITCOIN: '3NJ48qerB4sWE8qEF1bRzk7jXKh8AJnbBC', // P2SH format (starts with "3")
-  BITCOIN_CASH: 'qrja4dr6kjtrrjae2y7jals4jc8up0assspl39fekq', // Cashaddr P2PKH (starts with "q")
-  LITECOIN: 'MEDGZCJWX8X1Njy5uRfvGwdi2QxaMNQYad', // M-address (P2SH)
-  DOGECOIN: 'DC77W64uHRkkmvDwusq2tfEjqBQwch1W7s', // P2PKH (starts with "D")
+  BITCOIN: '3NJ48qerB4sWE8qEF1bRzk7jXKh8AJnbBC', // CB Prime Bitcoin wallet
+  BITCOIN_CASH: 'qrja4dr6kjtrrjae2y7jals4jc8up0assspl39fekq', // CB Prime Bitcoin Cash wallet
+  LITECOIN: 'MEDGZCJWX8X1Njy5uRfvGwdi2QxaMNQYad', // CB Prime Litecoin wallet
+  DOGECOIN: 'DC77W64uHRkkmvDwusq2tfEjqBQwch1W7s', // CB Prime Dogecoin wallet
 
   // ========================================
   // Other Layer 1 Networks
   // ========================================
-  SOLANA: 'DPsUYCziRFjW8dcvitvtrJJfxbPUb1X7Ty8ybn3hRwM1', // Solana base58 (44 chars)
-  CARDANO: 'addr1v9fu7mgyyyh63v7kqn57t7nadvv76n2cgjlg7l0r974nj9st03emv', // Shelley format (addr1)
-  TEZOS: 'tz1WiBmPs9ZLsvuiS92cxZQjikxEo9Dsv7eh', // Tezos tz1 format
+  SOLANA: 'DPsUYCziRFjW8dcvitvtrJJfxbPUb1X7Ty8ybn3hRwM1', // CB Prime Solana wallet
+  CARDANO: 'addr1v9fu7mgyyyh63v7kqn57t7nadvv76n2cgjlg7l0r974nj9st03emv', // CB Prime Cardano wallet
+  TEZOS: 'tz1WiBmPs9ZLsvuiS92cxZQjikxEo9Dsv7eh', // CB Prime Tezos wallet
 
   // ========================================
   // Networks Requiring Memos
   // ========================================
-  STELLAR: 'GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37', // Stellar G-address + memo
-  XRP: 'rn7d8bZhsdz9ecf586XsvbmVePfxYGrs34', // Ripple r-address + numeric tag
-  HEDERA: '0.0.1133968', // Hedera account ID + memo
+  STELLAR: 'GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37', // CB Prime Stellar wallet + memo
+  XRP: 'rn7d8bZhsdz9ecf586XsvbmVePfxYGrs34', // CB Prime XRP wallet + destination tag
+  HEDERA: '0.0.1133968', // CB Prime Hedera account ID + memo
 
   // ========================================
   // Additional Networks
   // ========================================
-  SUI: '0x5e4072e696853d1d9c7b478c68a5d97f32ac35524e9dee3cf1022bc022e59c9a', // SUI address (0x + 64 hex)
-  TONCOIN: 'PLACEHOLDER_NEEDED_TON_ADDRESS', // 📝 NEED: Base64 or hex format
+  SUI: '0x5e4072e696853d1d9c7b478c68a5d97f32ac35524e9dee3cf1022bc022e59c9a', // CB Prime Sui wallet
+  TONCOIN: 'PLACEHOLDER_CB_PRIME_TON', // 📝 Need: CB Prime Toncoin address
 }
 
 /**
@@ -63,9 +58,9 @@ export const NETWORK_DEPOSIT_ADDRESSES: Record<SupportedNetwork, string> = {
  * Reference: https://robinhood.com/us/en/support/articles/crypto-transfers/
  */
 export const NETWORK_ADDRESS_TAGS: Partial<Record<SupportedNetwork, string>> = {
-  STELLAR: '4212863649', // XLM memo (required for custodial accounts)
-  XRP: '2237695492', // XRP destination tag (numeric only)
-  HEDERA: '2364220028', // HBAR memo (required for Hedera)
+  STELLAR: '4212863649', // CB Prime Stellar memo
+  XRP: '2237695492', // CB Prime XRP destination tag
+  HEDERA: '2364220028', // CB Prime Hedera memo
 }
 
 /**
