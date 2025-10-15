@@ -67,18 +67,28 @@ export interface PriceQuoteResponse {
 }
 
 // Supported networks from Robinhood SDK
+// Complete list from: https://robinhood.com/us/en/support/articles/crypto-transfers/
 export type SupportedNetwork =
-  | 'AVALANCHE'
-  | 'BITCOIN'
-  | 'BITCOIN_CASH'
-  | 'LITECOIN'
-  | 'DOGECOIN'
-  | 'ETHEREUM'
-  | 'ETHEREUM_CLASSIC'
-  | 'POLYGON'
-  | 'SOLANA'
-  | 'STELLAR'
-  | 'TEZOS'
+  | 'ARBITRUM' // ARB - Native Arbitrum chain
+  | 'AVALANCHE' // AVAX - C-Chain only (starts with 0x)
+  | 'BASE' // Base L2 network (starts with 0x)
+  | 'BITCOIN' // BTC - P2PKH (1), P2SH (3), SegWit (bc1q)
+  | 'BITCOIN_CASH' // BCH - Legacy (1) or Cashaddr (q)
+  | 'CARDANO' // ADA - Byron (Ae2, DdzFF) or Shelley (addr1)
+  | 'DOGECOIN' // DOGE - P2PKH (starts with D)
+  | 'ETHEREUM' // ETH + all ERC-20 tokens (starts with 0x)
+  | 'ETHEREUM_CLASSIC' // ETC - EOA addresses only (starts with 0x)
+  | 'HEDERA' // HBAR - Account ID format (0.0.x) - REQUIRES MEMO
+  | 'LITECOIN' // LTC - P2PKH (L), P2SH (M), SegWit (ltc1)
+  | 'OPTIMISM' // OP - Optimism L2 network (starts with 0x)
+  | 'POLYGON' // MATIC + Polygon tokens (starts with 0x)
+  | 'SOLANA' // SOL + SPL tokens - 44 character addresses
+  | 'STELLAR' // XLM - Standard addresses (G) - REQUIRES MEMO
+  | 'SUI' // SUI - Addresses with 0x + 64 hex chars
+  | 'TEZOS' // XTZ - Addresses starting with tz
+  | 'TONCOIN' // TON - Base64 or hexadecimal format
+  | 'XRP' // XRP - XRPL network - REQUIRES MEMO (numeric)
+  | 'ZORA' // ZORA - Base network (starts with 0x)
 
 // Common asset codes
 export type AssetCode = 'BTC' | 'ETH' | 'USDC' | 'USDT' | 'SOL' | 'MATIC' | 'LTC' | 'DOGE' | 'AVAX' | 'ADA' | string // Allow other asset codes

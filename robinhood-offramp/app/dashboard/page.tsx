@@ -47,10 +47,10 @@ export default function Dashboard() {
                     </Badge>
                   </div>
                   <ol className="text-sm text-emerald-700 space-y-1">
-                    <li>1. Click to open Robinhood and see your crypto balances</li>
-                    <li>2. Choose what crypto and how much you want to transfer</li>
-                    <li>3. Return here to get your unique deposit address</li>
-                    <li>4. Complete the transfer and track until donation</li>
+                    <li>1. Click one button to open Robinhood</li>
+                    <li>2. Choose ANY crypto from your balances</li>
+                    <li>3. Return here to get your deposit address</li>
+                    <li>4. Complete the transfer and track your donation</li>
                   </ol>
                 </div>
 

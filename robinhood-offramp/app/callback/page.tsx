@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
-import type { CallbackParams, DepositAddressResponse } from '@/types/robinhood'
+import { getDepositAddress, getAddressTag } from '@/lib/network-addresses'
+import type { CallbackParams, DepositAddressResponse, SupportedNetwork } from '@/types/robinhood'
 import { AlertCircle, ArrowLeft, CheckCircle, Copy, ExternalLink } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
@@ -57,27 +58,22 @@ function CallbackPageContent() {
     return { assetCode, assetAmount, network }
   }
 
-  // Redeem deposit address using referenceId from localStorage
-  const redeemDepositAddress = async (referenceId: string) => {
+  // Get deposit address from pre-configured addresses
+  const getDepositAddressForNetwork = (callbackParams: CallbackParams): DepositAddressResponse => {
     try {
-      const response = await fetch('/api/robinhood/redeem-deposit-address', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ referenceId }),
-      })
+      const depositAddress = getDepositAddress(callbackParams.network as SupportedNetwork)
+      const addressTag = getAddressTag(callbackParams.network as SupportedNetwork)
 
-      const result = await response.json()
-
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to redeem deposit address')
+      return {
+        address: depositAddress,
+        addressTag,
+        assetCode: callbackParams.assetCode,
+        assetAmount: callbackParams.assetAmount,
+        networkCode: callbackParams.network,
       }
-
-      return result.data
     } catch (error: any) {
-      console.error('Deposit address redemption failed:', error)
-      throw new Error(error.message || 'Failed to redeem deposit address')
+      console.error('Failed to get deposit address:', error)
+      throw new Error(error.message || 'Deposit address not configured for this network')
     }
   }
 
@@ -134,20 +130,8 @@ function CallbackPageContent() {
 
         setState((prev) => ({ ...prev, callbackParams }))
 
-        // Get referenceId from localStorage (set during URL generation)
-        const referenceId = localStorage.getItem('robinhood_reference_id')
-
-        if (!referenceId) {
-          setState((prev) => ({
-            ...prev,
-            loading: false,
-            error: 'Missing reference ID. Please start the transfer process again.',
-          }))
-          return
-        }
-
-        // Redeem deposit address
-        const depositAddress = await redeemDepositAddress(referenceId)
+        // Get pre-configured deposit address for the selected network
+        const depositAddress = getDepositAddressForNetwork(callbackParams)
 
         setState((prev) => ({
           ...prev,
@@ -155,7 +139,7 @@ function CallbackPageContent() {
           depositAddress,
         }))
 
-        // Clean up localStorage
+        // Clean up localStorage (referenceId no longer needed after callback)
         localStorage.removeItem('robinhood_reference_id')
       } catch (error: any) {
         console.error('Callback processing failed:', error)

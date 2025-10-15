@@ -2,36 +2,83 @@ import type { AssetCode, RobinhoodOfframpParams, SupportedNetwork } from '@/type
 import { v4 as uuidv4 } from 'uuid'
 
 // Supported networks from Robinhood SDK
+// Complete list from: https://robinhood.com/us/en/support/articles/crypto-transfers/
 export const SUPPORTED_NETWORKS: SupportedNetwork[] = [
+  'ARBITRUM',
   'AVALANCHE',
+  'BASE',
   'BITCOIN',
   'BITCOIN_CASH',
-  'LITECOIN',
+  'CARDANO',
   'DOGECOIN',
   'ETHEREUM',
   'ETHEREUM_CLASSIC',
+  'HEDERA',
+  'LITECOIN',
+  'OPTIMISM',
   'POLYGON',
   'SOLANA',
   'STELLAR',
+  'SUI',
   'TEZOS',
+  'TONCOIN',
+  'XRP',
+  'ZORA',
 ]
 
-// Common asset codes
-export const COMMON_ASSETS: AssetCode[] = ['BTC', 'ETH', 'USDC', 'USDT', 'SOL', 'MATIC', 'LTC', 'DOGE', 'AVAX', 'ADA']
+// Common asset codes supported by Robinhood
+export const COMMON_ASSETS: AssetCode[] = [
+  'BTC',
+  'ETH',
+  'USDC',
+  'USDT',
+  'SOL',
+  'MATIC',
+  'LTC',
+  'DOGE',
+  'AVAX',
+  'ADA',
+  'XRP',
+  'HBAR',
+  'XLM',
+  'XTZ',
+  'ETC',
+  'BCH',
+]
 
 // Network to asset mapping (common combinations)
+// Based on what assets are commonly available on each network via Robinhood
+// Reference: https://robinhood.com/us/en/support/articles/crypto-transfers/
 export const NETWORK_ASSET_MAP: Record<SupportedNetwork, AssetCode[]> = {
-  ETHEREUM: ['ETH', 'USDC', 'USDT'],
+  // EVM L1
+  ETHEREUM: ['ETH', 'USDC', 'USDT', 'AAVE', 'LINK', 'COMP', 'CRV', 'FLOKI', 'ONDO', 'PEPE', 'SHIB', 'UNI', 'WLFI'],
+  ETHEREUM_CLASSIC: ['ETC'],
+  AVALANCHE: ['AVAX', 'USDC'],
+
+  // EVM L2 Networks
   POLYGON: ['MATIC', 'USDC', 'USDT'],
-  SOLANA: ['SOL', 'USDC'],
+  ARBITRUM: ['ARB', 'USDC'],
+  OPTIMISM: ['OP', 'USDC'],
+  BASE: ['USDC'],
+  ZORA: ['ZORA'],
+
+  // Bitcoin & Bitcoin-like
   BITCOIN: ['BTC'],
+  BITCOIN_CASH: ['BCH'],
   LITECOIN: ['LTC'],
   DOGECOIN: ['DOGE'],
-  AVALANCHE: ['AVAX', 'USDC'],
-  BITCOIN_CASH: ['BCH'],
-  ETHEREUM_CLASSIC: ['ETC'],
-  STELLAR: ['XLM'],
+
+  // Other L1 Chains
+  SOLANA: ['SOL', 'USDC', 'BONK', 'MEW', 'WIF', 'MOODENG', 'TRUMP', 'PNUT', 'POPCAT', 'PENGU'],
+  CARDANO: ['ADA'],
   TEZOS: ['XTZ'],
+  SUI: ['SUI'],
+  TONCOIN: ['TON'],
+
+  // Networks with Memos
+  STELLAR: ['XLM'],
+  XRP: ['XRP'],
+  HEDERA: ['HBAR'],
 }
 
 /**
