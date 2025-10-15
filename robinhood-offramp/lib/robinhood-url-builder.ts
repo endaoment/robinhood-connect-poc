@@ -98,6 +98,15 @@ export interface OfframpUrlResult {
 }
 
 /**
+ * Store referenceId in localStorage for callback handling
+ */
+export function storeReferenceId(referenceId: string): void {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('robinhood_reference_id', referenceId)
+  }
+}
+
+/**
  * Build complete offramp URL with all parameters
  */
 export function buildOfframpUrl(params: OfframpUrlParams): OfframpUrlResult {
@@ -182,11 +191,16 @@ export function buildOfframpUrl(params: OfframpUrlParams): OfframpUrlResult {
     }
   })
 
-  return {
+  const result = {
     url: url.toString(),
     referenceId,
     params: urlParams,
   }
+
+  // Store referenceId for callback handling
+  storeReferenceId(referenceId)
+
+  return result
 }
 
 /**
