@@ -120,11 +120,101 @@ export async function redeemDepositAddress(referenceId: string): Promise<Deposit
   }
 }
 
-// Placeholder for other API functions (will be implemented in later sub-plans)
+/**
+ * Get order status from Robinhood using referenceId
+ * @param referenceId - UUID v4 from offramp order
+ * @returns Promise<OrderStatusResponse>
+ */
 export async function getOrderStatus(referenceId: string): Promise<OrderStatusResponse> {
-  throw new Error('Not implemented yet - will be implemented in Sub-Plan 5')
+  validateEnvironmentVariables()
+
+  const url = `https://api.robinhood.com/catpay/v1/external/order/?referenceId=${referenceId}`
+
+  try {
+    console.log(`Fetching order status for referenceId: ${referenceId}`)
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'x-api-key': process.env.ROBINHOOD_API_KEY!,
+        'application-id': process.env.ROBINHOOD_APP_ID!,
+      },
+      // Ensure fresh request, no caching
+      cache: 'no-store',
+    })
+
+    console.log(`Robinhood order status API response status: ${response.status}`)
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      console.error('Robinhood order status API error:', errorData)
+
+      // Handle specific HTTP status codes
+      if (response.status === 404) {
+        throw new RobinhoodAPIError(
+          'Order not found or referenceId expired',
+          'INVALID_REFERENCE_ID',
+          404,
+        )
+      }
+
+      if (response.status === 401 || response.status === 403) {
+        throw new RobinhoodAPIError(
+          'Authentication failed. Check API credentials.',
+          'AUTHENTICATION_ERROR',
+          response.status,
+        )
+      }
+
+      if (response.status >= 500) {
+        throw new RobinhoodAPIError(
+          'Robinhood API server error. Please try again later.',
+          'SERVER_ERROR',
+          response.status,
+        )
+      }
+
+      // Generic API error
+      const errorMessage = errorData.error || errorData.message || 'Unknown API error'
+      throw new RobinhoodAPIError(errorMessage, 'ROBINHOOD_API_ERROR', response.status)
+    }
+
+    const responseData = await response.json()
+    console.log('Robinhood order status API success:', responseData)
+
+    // Validate response structure
+    if (!responseData.status || !responseData.assetCode || !responseData.referenceID) {
+      throw new RobinhoodAPIError(
+        'Invalid response format from Robinhood order status API',
+        'INVALID_RESPONSE_FORMAT',
+      )
+    }
+
+    return responseData
+  } catch (error: any) {
+    // Re-throw RobinhoodAPIError instances
+    if (error instanceof RobinhoodAPIError) {
+      throw error
+    }
+
+    // Handle network errors
+    if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED' || error.name === 'FetchError') {
+      console.error('Network error calling Robinhood order status API:', error)
+      throw new RobinhoodAPIError('Network error communicating with Robinhood', 'NETWORK_ERROR')
+    }
+
+    // Handle timeout errors
+    if (error.name === 'AbortError' || error.code === 'ETIMEDOUT') {
+      console.error('Timeout error calling Robinhood order status API:', error)
+      throw new RobinhoodAPIError('Request timeout communicating with Robinhood', 'TIMEOUT_ERROR')
+    }
+
+    // Generic error handling
+    console.error('Unexpected error calling Robinhood order status API:', error)
+    throw new RobinhoodAPIError('Unexpected error communicating with Robinhood', 'UNEXPECTED_ERROR')
+  }
 }
 
 export async function getPriceQuote(assetCode: string, networkCode: string): Promise<any> {
-  throw new Error('Not implemented yet - will be implemented in Sub-Plan 5')
+  throw new Error('Not implemented yet - will be implemented in future sub-plan')
 }
