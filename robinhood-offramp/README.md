@@ -2,7 +2,7 @@
 
 **Status**: ✅ **PRODUCTION READY**  
 **Network Coverage**: 19 of 20 networks (95%)  
-**User Experience**: Zero-click form - just one button!
+**User Experience**: One-page app - single "Give with Robinhood" button!
 
 Complete Next.js application for transferring cryptocurrency from Robinhood to Endaoment with the **simplest possible user experience** and support for **19 blockchain networks**.
 
@@ -22,7 +22,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Visit http://localhost:3000/dashboard
+Visit http://localhost:3000 (automatically goes to dashboard)
 
 ---
 
@@ -55,6 +55,7 @@ NEXTAUTH_SECRET=your-secret
 We support **95% of all Robinhood networks** for crypto transfers:
 
 ### EVM-Compatible Networks (8) ✅
+
 - **Ethereum** - ETH, USDC, USDT, AAVE, LINK, COMP, UNI, and all ERC-20 tokens
 - **Polygon** - MATIC, USDC, USDT
 - **Arbitrum** - ARB, USDC (Layer 2)
@@ -65,23 +66,27 @@ We support **95% of all Robinhood networks** for crypto transfers:
 - **Ethereum Classic** - ETC
 
 ### Bitcoin & Bitcoin-Like (4) ✅
+
 - **Bitcoin** - BTC
 - **Bitcoin Cash** - BCH
 - **Litecoin** - LTC
 - **Dogecoin** - DOGE
 
 ### Other Layer 1 Networks (4) ✅
+
 - **Solana** - SOL, USDC, BONK, WIF, MOODENG, TRUMP, PNUT, POPCAT, PENGU
 - **Cardano** - ADA
 - **Tezos** - XTZ
 - **Sui** - SUI
 
 ### Networks with Required Memos (3) ✅
+
 - **Stellar** - XLM (with memo)
 - **XRP** - Ripple (with destination tag)
 - **Hedera** - HBAR (with memo)
 
 ### Pending (1)
+
 - **Toncoin** - TON (address needed)
 
 **Total**: **19 networks** configured and ready for production!
@@ -129,6 +134,7 @@ robinhood-offramp/
 ### Zero-Click User Experience ⭐
 
 **The Simplest Possible Flow**:
+
 1. User clicks "Start Transfer" button
 2. Modal shows 19 supported networks (informational only)
 3. User clicks "Open Robinhood" button (no form!)
@@ -137,6 +143,7 @@ robinhood-offramp/
 6. Tracks status until complete
 
 **Benefits**:
+
 - ✅ No form fields to fill
 - ✅ No guessing amounts
 - ✅ See actual balances before deciding
@@ -227,6 +234,7 @@ This integration uses Robinhood's stateless redirect flow with **pre-configured 
 Instead of calling Robinhood's redemption API, we use pre-configured addresses:
 
 **Benefits**:
+
 - ✅ Instant address retrieval (0ms vs 200-500ms API call)
 - ✅ One fewer network request per transaction
 - ✅ Centralized address management
@@ -245,7 +253,7 @@ Unlike OAuth integrations, this flow requires no user authentication on our side
 
 ```
 Route (app)                                   Size  First Load JS
-├ ○ /dashboard                               15 kB         130 kB  ✅ 
+├ ○ /dashboard                               15 kB         130 kB  ✅
 ├ ○ /callback                              3.04 kB         115 kB  ✅
 ├ ƒ /api/robinhood/order-status              144 B         101 kB  ✅
 └ ... (all routes optimized)
@@ -254,6 +262,7 @@ Total First Load JS: 101-130 kB (excellent performance!)
 ```
 
 **Performance Highlights**:
+
 - ✅ Dashboard: 15 kB (55% smaller than initial implementation)
 - ✅ Callback: 3.04 kB (optimized for instant loading)
 - ✅ No unnecessary dependencies
