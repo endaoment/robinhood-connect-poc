@@ -31,4 +31,3 @@ This integration uses Robinhood's stateless offramp flow with app linking, unlik
 ## Security
 
 All Robinhood API keys are stored as environment variables and used only on the backend. The client never has access to sensitive credentials.
-
