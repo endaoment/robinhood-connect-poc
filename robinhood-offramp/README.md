@@ -72,17 +72,20 @@ robinhood-offramp/
 ## 🎯 Key Features
 
 ### User Interface
+
 - **Dashboard**: Clean interface for initiating transfers
 - **Offramp Modal**: Network, asset, and amount selection
 - **Status Tracking**: Real-time updates with auto-refresh
 - **Transaction History**: View all past transfers
 
 ### Backend API
+
 - **URL Generation**: Creates Robinhood Connect links
 - **Address Redemption**: Retrieves deposit addresses
 - **Order Status**: Monitors transfer completion
 
 ### Security
+
 - ✅ API keys on backend only
 - ✅ Input validation on all endpoints
 - ✅ Type-safe interfaces
@@ -161,11 +164,13 @@ Unlike OAuth integrations, this flow requires no user authentication on our side
 ## 🌐 Supported Networks & Assets
 
 ### Networks
+
 - Ethereum, Polygon, Solana
 - Bitcoin, Litecoin, Dogecoin
 - Avalanche, and more
 
 ### Assets
+
 - **ETH, USDC, USDT** (Ethereum/Polygon)
 - **SOL, USDC** (Solana)
 - **BTC, LTC, DOGE** (Bitcoin family)
@@ -185,6 +190,7 @@ See Robinhood documentation for complete list.
 ### Testing Without API Credentials
 
 You can test the UI and client-side logic without Robinhood API credentials:
+
 - ✅ Dashboard loads
 - ✅ Modal opens and closes
 - ✅ Form validation works
@@ -194,6 +200,7 @@ You can test the UI and client-side logic without Robinhood API credentials:
 ### Testing With API Credentials
 
 Complete end-to-end testing requires:
+
 1. Valid Robinhood API credentials
 2. Robinhood app installed (mobile) or web access
 3. Callback URL registered with Robinhood team
@@ -217,6 +224,7 @@ vercel --prod
 ### Environment Setup
 
 In Vercel dashboard, add:
+
 - `ROBINHOOD_APP_ID`
 - `ROBINHOOD_API_KEY`
 - `NEXTAUTH_URL` (your production domain)
@@ -241,6 +249,7 @@ Route (app)                              Size  First Load JS
 ```
 
 **Excellent performance**:
+
 - Dashboard: 146 kB (< 200 kB target)
 - Optimized code splitting
 - Minimal API overhead
@@ -258,15 +267,19 @@ See `SECURITY-AUDIT.md` in project root for complete audit.
 ## 📚 Documentation
 
 ### For Users
+
 - **[USER_GUIDE.md](docs/USER_GUIDE.md)** - How to transfer crypto
 
 ### For Developers
+
 - **[DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)** - Complete technical reference
 
 ### For Testing
+
 - **[TESTING-CHECKLIST.md](../TESTING-CHECKLIST.md)** - 100+ test items
 
 ### For Production
+
 - **[READY-FOR-PRODUCTION.md](../READY-FOR-PRODUCTION.md)** - Deployment checklist
 
 ## 🐛 Troubleshooting
@@ -298,6 +311,7 @@ Next.js will automatically try ports 3001, 3002, etc.
 ## 🤝 Contributing
 
 This project uses:
+
 - TypeScript strict mode
 - No semicolons
 - Single quotes
