@@ -97,19 +97,20 @@ robinhood-offramp/
 
 ### For Users
 
-- **USER_GUIDE.md** - How to transfer crypto from Robinhood
+- **[USER_GUIDE.md](robinhood-offramp/docs/USER_GUIDE.md)** - How to transfer crypto from Robinhood
 
 ### For Developers
 
-- **DEVELOPER_GUIDE.md** - Architecture and API reference
-- **TESTING-CHECKLIST.md** - Manual testing guide
-- **SECURITY-AUDIT.md** - Security review and recommendations
-- **READY-FOR-PRODUCTION.md** - Deployment checklist
+- **[DEVELOPER_GUIDE.md](robinhood-offramp/docs/DEVELOPER_GUIDE.md)** - Architecture and API reference
+- **[TESTING-CHECKLIST.md](TESTING-CHECKLIST.md)** - Manual testing guide
+- **[SECURITY-AUDIT.md](SECURITY-AUDIT.md)** - Security review and recommendations
+- **[READY-FOR-PRODUCTION.md](READY-FOR-PRODUCTION.md)** - Deployment checklist
 
 ### Project Status
 
-- **PROJECT-COMPLETE.md** - Complete project summary
-- **SUBPLAN-X-SUMMARY.md** - Individual sub-plan summaries
+- **[PROJECT-COMPLETE.md](PROJECT-COMPLETE.md)** - Complete project summary
+- **[IMPLEMENTATION-LOG.md](IMPLEMENTATION-LOG.md)** - Implementation timeline
+- **Implementation Details**: [.cursor/plans/robinhood-connect-poc/](.cursor/plans/robinhood-connect-poc/)
 
 ---
 
@@ -163,10 +164,10 @@ See **READY-FOR-PRODUCTION.md** for complete checklist.
 
 ## 📞 Need Help?
 
-- **Technical Issues**: See `DEVELOPER_GUIDE.md`
-- **User Questions**: See `USER_GUIDE.md`
-- **Security Concerns**: See `SECURITY-AUDIT.md`
-- **Deployment**: See `READY-FOR-PRODUCTION.md`
+- **Technical Issues**: See [DEVELOPER_GUIDE.md](robinhood-offramp/docs/DEVELOPER_GUIDE.md)
+- **User Questions**: See [USER_GUIDE.md](robinhood-offramp/docs/USER_GUIDE.md)
+- **Security Concerns**: See [SECURITY-AUDIT.md](SECURITY-AUDIT.md)
+- **Deployment**: See [READY-FOR-PRODUCTION.md](READY-FOR-PRODUCTION.md)
 
 ---
 
@@ -181,4 +182,4 @@ See **READY-FOR-PRODUCTION.md** for complete checklist.
 **🎉 All 7 sub-plans complete!**  
 **Ready for production deployment** (pending API keys)
 
-For complete details, see `PROJECT-COMPLETE.md`
+For complete details, see [PROJECT-COMPLETE.md](PROJECT-COMPLETE.md)
