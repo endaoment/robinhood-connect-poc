@@ -93,15 +93,6 @@ These networks require both address AND memo for proper crediting:
 
 - **Toncoin** - TON (address needed - low priority)
 
-### Popular Assets Supported
-
-- **Stablecoins**: USDC (7 networks), USDT (Ethereum, Polygon)
-- **Major L1s**: ETH, BTC, SOL, ADA, AVAX, XRP
-- **DeFi Tokens**: AAVE, LINK, COMP, UNI, CRV
-- **Meme Coins**: DOGE, BONK, WIF, PEPE, SHIB, MOODENG, PNUT
-- **L2 Tokens**: ARB, OP, MATIC, ZORA
-  Get
-
 See [NETWORK-ADDRESSES-STATUS.md](NETWORK-ADDRESSES-STATUS.md) for complete network reference.
 
 ---

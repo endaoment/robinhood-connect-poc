@@ -1,0 +1,172 @@
+[
+  {
+    "symbol": "ADA",
+    "network": "CARDANO",
+    "status": "found",
+    "wallet_name": "ADA Trading Balance",
+    "wallet_id": "1b151226-2149-50c1-b971-7188e1493799",
+    "address": "addr1vydgw0ruk6q78vl0f26q6zxtssfnh2thxzgqvvthe8je56crgtapt",
+    "memo": ""
+  },
+  {
+    "symbol": "ARB",
+    "network": "ARBITRUM",
+    "status": "found",
+    "wallet_name": "ARB Trading Balance",
+    "wallet_id": "899af8e0-6270-5dc8-983b-3a312bd952aa",
+    "address": "0x6931a51e15763C4d8da468cbF7C51323d96F2e80",
+    "memo": ""
+  },
+  {
+    "symbol": "AVAX",
+    "network": "AVALANCHE",
+    "status": "found",
+    "wallet_name": "AVAX Trading Balance",
+    "wallet_id": "70bc1d4a-e427-5ba8-8e15-0e76576a7d49",
+    "address": "0x2063115a37f55c19cA60b9d1eca2378De00CD79b",
+    "memo": ""
+  },
+  {
+    "symbol": "BCH",
+    "network": "BITCOIN_CASH",
+    "status": "found",
+    "wallet_name": "BCH Trading Balance",
+    "wallet_id": "32749f6e-cb49-5dfe-85bb-7ec430fd3c48",
+    "address": "qqqg0e4qs9h6j6z8t53kwmjukwksmkzphvtsfv3j2q",
+    "memo": ""
+  },
+  {
+    "symbol": "BTC",
+    "network": "BITCOIN",
+    "status": "found",
+    "wallet_name": "BTC Trading Balance",
+    "wallet_id": "34b19806-9f54-532f-908d-c0d2fc3e7500",
+    "address": "3NJ48qerB4sWE8qEF1bRzk7jXKh8AJnbBC",
+    "memo": ""
+  },
+  {
+    "symbol": "DOGE",
+    "network": "DOGECOIN",
+    "status": "found",
+    "wallet_name": "DOGE Trading Balance",
+    "wallet_id": "98957174-b62e-5acc-82c4-fe8423341bd4",
+    "address": "DUGnpFtJGnmmGzFMBoEgSw5nPgRfSzYHF7",
+    "memo": ""
+  },
+  {
+    "symbol": "ETC",
+    "network": "ETHEREUM_CLASSIC",
+    "status": "found",
+    "wallet_name": "ETC Trading Balance",
+    "wallet_id": "9c188bfb-556f-531a-b62d-0b7e63c91000",
+    "address": "0x269285683a921dbce6fcb21513b06998f8fbbc99",
+    "memo": ""
+  },
+  {
+    "symbol": "ETH",
+    "network": "ETHEREUM",
+    "status": "found",
+    "wallet_name": "ETH Trading Balance",
+    "wallet_id": "9196aac2-40f9-5db3-8f4a-fc3435847e26",
+    "address": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+    "memo": ""
+  },
+  {
+    "symbol": "ETH_BASE",
+    "network": "BASE",
+    "status": "missing",
+    "address": null,
+    "memo": null,
+    "wallet_id": null
+  },
+  {
+    "symbol": "HBAR",
+    "network": "HEDERA",
+    "status": "found",
+    "wallet_name": "HBAR Trading Balance",
+    "wallet_id": "5f3727b4-b51a-513b-b072-48d7f25e7757",
+    "address": "0.0.5006230",
+    "memo": "904278439"
+  },
+  {
+    "symbol": "LTC",
+    "network": "LITECOIN",
+    "status": "found",
+    "wallet_name": "LTC Trading Balance",
+    "wallet_id": "4eb37862-6a9f-5f82-97ef-30e6b682b744",
+    "address": "MQNay3B5gRq4o7nHuTJf9LpFkDmxhmockK",
+    "memo": ""
+  },
+  {
+    "symbol": "OP",
+    "network": "OPTIMISM",
+    "status": "found",
+    "wallet_name": "OP Trading Balance",
+    "wallet_id": "c9514a13-e2e0-5853-b5ba-fb1a126f7575",
+    "address": "0xE006aBC90950DB9a81A3812502D0b031FaAf28D8",
+    "memo": ""
+  },
+  {
+    "symbol": "POL",
+    "network": "POLYGON",
+    "status": "found",
+    "wallet_name": "POL Trading Balance",
+    "wallet_id": "4d802932-2504-558d-bbb8-323b8d80827f",
+    "address": "0x11362ec5cc119448225abbbb1c9c67e22e776cdd",
+    "memo": ""
+  },
+  {
+    "symbol": "SOL",
+    "network": "SOLANA",
+    "status": "found",
+    "wallet_name": "SOL Trading Balance",
+    "wallet_id": "4bb1c92c-4108-517c-8655-2290fd6e7ee1",
+    "address": "DPsUYCziRFjW8dcvitvtrJJfxbPUb1X7Ty8ybn3hRwM1",
+    "memo": ""
+  },
+  {
+    "symbol": "SUI",
+    "network": "SUI",
+    "status": "found",
+    "wallet_name": "SUI Trading Balance",
+    "wallet_id": "607298bd-b31d-52e5-9fca-f29f344b2421",
+    "address": "0xfb44ad61588e5094d617851c759e35dc72720267b5464eb95284c6d5a1945ce2",
+    "memo": ""
+  },
+  {
+    "symbol": "XLM",
+    "network": "STELLAR",
+    "status": "found",
+    "wallet_name": "XLM Trading Balance",
+    "wallet_id": "fb1c6ebd-d70f-57f9-941f-3b41e8d87844",
+    "address": "GB4SJVA7KAFDZJFVTSEV2YWZZA3VEANHHK3WSJRHO2XS2GDYJCGWKDB5",
+    "memo": "1380611530"
+  },
+  {
+    "symbol": "XRP",
+    "network": "XRP",
+    "status": "found",
+    "wallet_name": "XRP Trading Balance",
+    "wallet_id": "b09716e6-8d79-5ab5-a021-18528535089b",
+    "address": "rn7d8bZhsdz9ecf586XsvbmVePfxYGrs34",
+    "memo": "2237695492"
+  },
+  {
+    "symbol": "XTZ",
+    "network": "TEZOS",
+    "status": "found",
+    "wallet_name": "XTZ Trading Balance",
+    "wallet_id": "b81723c2-9aec-5494-b935-9fd9352102b3",
+    "address": "tz1P4FJEdVTEEG5TRREFavjQthzsJuESiCRV",
+    "memo": ""
+  },
+  {
+    "symbol": "ZORA",
+    "network": "ZORA",
+    "status": "found",
+    "wallet_name": "ZORA Trading Balance",
+    "wallet_id": "47126582-f9f8-5f42-b976-f8ba794ae70c",
+    "address": "0x407506929b5C58992987609539a1D424f2305Cc3",
+    "memo": ""
+  }
+]

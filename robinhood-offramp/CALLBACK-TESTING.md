@@ -11,7 +11,7 @@ This guide explains how to test the callback handling functionality once you hav
    ```bash
    ROBINHOOD_APP_ID=your-app-id
    ROBINHOOD_API_KEY=your-api-key
-   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_URL=http://localhost:3030
    ```
 
 2. **Development Server Running**:
@@ -30,7 +30,7 @@ Since the callback page requires URL parameters from Robinhood, there are two wa
 Test the callback page by manually constructing a URL with parameters:
 
 ```
-http://localhost:3000/callback?assetCode=ETH&assetAmount=0.05&network=ETHEREUM
+http://localhost:3030/callback?assetCode=ETH&assetAmount=0.05&network=ETHEREUM
 ```
 
 **What to expect:**
@@ -43,25 +43,25 @@ http://localhost:3000/callback?assetCode=ETH&assetAmount=0.05&network=ETHEREUM
 Valid parameters:
 
 ```
-http://localhost:3000/callback?assetCode=USDC&assetAmount=100&network=POLYGON
+http://localhost:3030/callback?assetCode=USDC&assetAmount=100&network=POLYGON
 ```
 
 Missing parameters:
 
 ```
-http://localhost:3000/callback?assetCode=ETH
+http://localhost:3030/callback?assetCode=ETH
 # Should show: "Invalid callback parameters"
 ```
 
 Invalid formats:
 
 ```
-http://localhost:3000/callback?assetCode=eth&assetAmount=0.05&network=ETHEREUM
+http://localhost:3030/callback?assetCode=eth&assetAmount=0.05&network=ETHEREUM
 # Should show: "Invalid callback parameters" (lowercase assetCode)
 ```
 
 ```
-http://localhost:3000/callback?assetCode=ETH&assetAmount=-10&network=ETHEREUM
+http://localhost:3030/callback?assetCode=ETH&assetAmount=-10&network=ETHEREUM
 # Should show: "Invalid callback parameters" (negative amount)
 ```
 
@@ -72,7 +72,7 @@ http://localhost:3000/callback?assetCode=ETH&assetAmount=-10&network=ETHEREUM
 Call the URL generation API:
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
   -H "Content-Type: application/json" \
   -d '{
     "supportedNetworks": ["ETHEREUM"],
@@ -96,7 +96,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
 
 **Step 2: Store ReferenceId**
 
-Open browser console on `http://localhost:3000` and manually store the referenceId:
+Open browser console on `http://localhost:3030` and manually store the referenceId:
 
 ```javascript
 localStorage.setItem('robinhood_reference_id', '550e8400-e29b-41d4-a716-446655440000')
@@ -107,7 +107,7 @@ localStorage.setItem('robinhood_reference_id', '550e8400-e29b-41d4-a716-44665544
 Visit the callback URL with the same parameters:
 
 ```
-http://localhost:3000/callback?assetCode=ETH&assetAmount=0.05&network=ETHEREUM
+http://localhost:3030/callback?assetCode=ETH&assetAmount=0.05&network=ETHEREUM
 ```
 
 **What to expect:**

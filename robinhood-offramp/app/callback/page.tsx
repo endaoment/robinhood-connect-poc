@@ -5,8 +5,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
-import { getDepositAddress, getAddressTag } from '@/lib/network-addresses'
-import type { CallbackParams, DepositAddressResponse, SupportedNetwork } from '@/types/robinhood'
+import { getAssetDepositAddress, isAssetSupported } from '@/lib/robinhood-asset-addresses'
+import type { CallbackParams, DepositAddressResponse } from '@/types/robinhood'
 import { AlertCircle, ArrowLeft, CheckCircle, Copy, ExternalLink } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
@@ -58,22 +58,22 @@ function CallbackPageContent() {
     return { assetCode, assetAmount, network }
   }
 
-  // Get deposit address from pre-configured addresses
-  const getDepositAddressForNetwork = (callbackParams: CallbackParams): DepositAddressResponse => {
+  // Get deposit address for specific asset
+  const getDepositAddressForAsset = (callbackParams: CallbackParams): DepositAddressResponse => {
     try {
-      const depositAddress = getDepositAddress(callbackParams.network as SupportedNetwork)
-      const addressTag = getAddressTag(callbackParams.network as SupportedNetwork)
+      // Get asset-specific address (not network-based)
+      const assetInfo = getAssetDepositAddress(callbackParams.assetCode)
 
       return {
-        address: depositAddress,
-        addressTag,
+        address: assetInfo.address,
+        addressTag: assetInfo.memo,
         assetCode: callbackParams.assetCode,
         assetAmount: callbackParams.assetAmount,
         networkCode: callbackParams.network,
       }
     } catch (error: any) {
       console.error('Failed to get deposit address:', error)
-      throw new Error(error.message || 'Deposit address not configured for this network')
+      throw new Error(error.message || 'Deposit address not configured for this asset')
     }
   }
 
@@ -130,8 +130,8 @@ function CallbackPageContent() {
 
         setState((prev) => ({ ...prev, callbackParams }))
 
-        // Get pre-configured deposit address for the selected network
-        const depositAddress = getDepositAddressForNetwork(callbackParams)
+        // Get deposit address for this specific asset
+        const depositAddress = getDepositAddressForAsset(callbackParams)
 
         setState((prev) => ({
           ...prev,

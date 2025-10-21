@@ -9,7 +9,7 @@ Quick reference for testing Robinhood offramp API endpoints.
    ```bash
    ROBINHOOD_APP_ID=your-app-id-from-robinhood
    ROBINHOOD_API_KEY=your-api-key-from-robinhood
-   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_URL=http://localhost:3030
    ```
 
 2. Start the development server:
@@ -22,7 +22,7 @@ Quick reference for testing Robinhood offramp API endpoints.
 ### Basic ETH Transfer
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
   -H "Content-Type: application/json" \
   -d '{
     "supportedNetworks": ["ETHEREUM"],
@@ -43,7 +43,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
       "applicationId": "your-app-id",
       "offRamp": true,
       "supportedNetworks": "ETHEREUM",
-      "redirectUrl": "http://localhost:3000/callback",
+      "redirectUrl": "http://localhost:3030/callback",
       "referenceId": "f2056f4c-93c7-422b-bd59-fbfb5b05b6ad",
       "assetCode": "ETH",
       "assetAmount": "0.1"
@@ -55,7 +55,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
 ### USDC on Polygon
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
   -H "Content-Type: application/json" \
   -d '{
     "supportedNetworks": ["POLYGON"],
@@ -67,7 +67,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
 ### Multi-Network (User Chooses)
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
   -H "Content-Type: application/json" \
   -d '{
     "supportedNetworks": ["ETHEREUM", "POLYGON", "SOLANA"]
@@ -77,7 +77,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
 ### Fiat Amount Specification
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
   -H "Content-Type: application/json" \
   -d '{
     "supportedNetworks": ["ETHEREUM"],
@@ -91,7 +91,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
 ### Invalid Network
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
   -H "Content-Type: application/json" \
   -d '{
     "supportedNetworks": ["INVALID_NETWORK"]
@@ -110,7 +110,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
 ### Invalid Asset Code
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
   -H "Content-Type: application/json" \
   -d '{
     "supportedNetworks": ["ETHEREUM"],
@@ -130,7 +130,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
 ### Missing Networks
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
   -H "Content-Type: application/json" \
   -d '{
     "assetCode": "ETH"
@@ -151,7 +151,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
 ### Basic Test
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/redeem-deposit-address \
+curl -X POST http://localhost:3030/api/robinhood/redeem-deposit-address \
   -H "Content-Type: application/json" \
   -d '{
     "referenceId": "f2056f4c-93c7-422b-bd59-fbfb5b05b6ad"
@@ -204,7 +204,7 @@ curl -X POST http://localhost:3000/api/robinhood/redeem-deposit-address \
 1. Generate URL:
 
    ```bash
-   curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+   curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
      -H "Content-Type: application/json" \
      -d '{"supportedNetworks": ["ETHEREUM"], "assetCode": "ETH", "assetAmount": "0.1"}'
    ```
@@ -217,7 +217,7 @@ curl -X POST http://localhost:3000/api/robinhood/redeem-deposit-address \
 
 5. After redirect, use the referenceId to redeem the deposit address:
    ```bash
-   curl -X POST http://localhost:3000/api/robinhood/redeem-deposit-address \
+   curl -X POST http://localhost:3030/api/robinhood/redeem-deposit-address \
      -H "Content-Type: application/json" \
      -d '{"referenceId": "your-reference-id-here"}'
    ```

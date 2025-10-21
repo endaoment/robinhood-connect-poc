@@ -537,6 +537,7 @@ scripts/__pycache__/
    - Verify `lib/network-addresses.ts` was updated
 
 6. **Build and test**:
+
    ```bash
    cd ..
    npm run build

@@ -7,9 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useToast } from '@/hooks/use-toast'
-import { getAddressTag, getConfiguredNetworks, getDepositAddress } from '@/lib/network-addresses'
-import { buildOfframpUrl, NETWORK_ASSET_MAP } from '@/lib/robinhood-url-builder'
-import { Check, CheckCircle2, Copy, ExternalLink, History, Info, Loader2, TrendingUp } from 'lucide-react'
+import { ROBINHOOD_ASSET_ADDRESSES, getSupportedAssets, getSupportedNetworks } from '@/lib/robinhood-asset-addresses'
+import { AlertCircle, Check, CheckCircle2, Copy, ExternalLink, History, Info, Loader2, TrendingUp } from 'lucide-react'
 import { useState } from 'react'
 
 export default function Dashboard() {
@@ -18,8 +17,12 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false)
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null)
 
-  // Get all configured networks
-  const supportedNetworks = getConfiguredNetworks()
+  // Get all supported assets and networks
+  const supportedAssets = getSupportedAssets()
+  const supportedNetworks = getSupportedNetworks()
+
+  // Missing assets (hardcoded for now since export isn't working)
+  const missingAssets = ['MEW', 'PENGU', 'PNUT', 'POPCAT', 'WIF', 'TON']
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
@@ -32,25 +35,66 @@ export default function Dashboard() {
   }
 
   const handleGiveWithRobinhood = async () => {
+    const startTime = Date.now()
+    console.log('\n' + '='.repeat(80))
+    console.log('🎯 [CLIENT] User clicked "Give with Robinhood"')
+    console.log('='.repeat(80))
+
     setLoading(true)
     try {
-      // Generate offramp URL with all supported networks
-      const result = buildOfframpUrl({
-        supportedNetworks,
+      console.log('📊 [CLIENT] Preparing request:')
+      console.log(`   Networks: ${supportedNetworks.join(', ')}`)
+      console.log(`   Networks count: ${supportedNetworks.length}`)
+
+      // Call server-side API to generate offramp URL
+      console.log('\n📤 [CLIENT] Calling API: /api/robinhood/generate-offramp-url')
+      const apiStartTime = Date.now()
+
+      const response = await fetch('/api/robinhood/generate-offramp-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          supportedNetworks,
+        }),
       })
 
-      console.log('Generated referenceId:', result.referenceId)
-      console.log('Supporting networks:', supportedNetworks.join(', '))
+      const apiDuration = Date.now() - apiStartTime
+      console.log(`📥 [CLIENT] API response received in ${apiDuration}ms`)
+      console.log(`   Status: ${response.status} ${response.statusText}`)
+
+      const result = await response.json()
+      console.log('   Response body:', JSON.stringify(result, null, 2))
+
+      if (!response.ok || !result.success) {
+        console.error('❌ [CLIENT] API call failed')
+        throw new Error(result.error || 'Failed to generate offramp URL')
+      }
+
+      console.log('✅ [CLIENT] URL generated successfully')
+      console.log(`   📋 Reference ID: ${result.data.referenceId}`)
+      console.log(`   🔗 URL: ${result.data.url.substring(0, 100)}...`)
 
       // Open Robinhood Connect URL
-      window.open(result.url, '_blank')
+      console.log('\n🌐 [CLIENT] Opening Robinhood Connect in new tab...')
+      window.open(result.data.url, '_blank')
+
+      const totalDuration = Date.now() - startTime
+      console.log(`\n✅ [CLIENT] Flow completed successfully in ${totalDuration}ms`)
+      console.log('='.repeat(80) + '\n')
 
       toast({
         title: 'Opening Robinhood...',
         description: 'Choose any crypto from your Robinhood account. We support all major networks!',
       })
     } catch (error: any) {
-      console.error('Failed to start transfer:', error)
+      const totalDuration = Date.now() - startTime
+      console.error('\n❌ [CLIENT] Transfer failed')
+      console.error(`   Error: ${error.message}`)
+      console.error(`   Duration: ${totalDuration}ms`)
+      console.log('='.repeat(80) + '\n')
+
       toast({
         title: 'Transfer failed',
         description: error.message || 'Failed to start transfer. Please try again.',
@@ -133,24 +177,57 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
 
-              {/* Supported Networks Display */}
+              {/* Supported Assets Display */}
               <Card className="bg-emerald-50 border-emerald-200">
                 <CardContent className="pt-4">
                   <div className="flex items-center space-x-2 mb-3">
                     <CheckCircle2 className="h-5 w-5 text-emerald-600" />
                     <span className="font-medium text-emerald-800">
-                      We accept crypto on {supportedNetworks.length} networks
+                      ✅ Supported Assets ({supportedAssets.length} available)
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {supportedNetworks.map((network) => (
-                      <Badge key={network} variant="secondary" className="bg-white border-emerald-200 text-emerald-700">
-                        {network}
+                    {supportedAssets.sort().map((assetCode) => (
+                      <Badge
+                        key={assetCode}
+                        variant="secondary"
+                        className="bg-emerald-100 border-emerald-300 text-emerald-800 font-mono"
+                      >
+                        {assetCode}
                       </Badge>
                     ))}
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Unsupported Assets Display */}
+              {missingAssets.length > 0 && (
+                <Card className="bg-red-50 border-red-200">
+                  <CardContent className="pt-4">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <AlertCircle className="h-5 w-5 text-red-600" />
+                      <span className="font-medium text-red-800">
+                        ❌ Not Yet Supported ({missingAssets.length} assets)
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {missingAssets.map((assetCode) => (
+                        <Badge
+                          key={assetCode}
+                          variant="secondary"
+                          className="bg-red-100 border-red-300 text-red-800 font-mono"
+                        >
+                          {assetCode}
+                        </Badge>
+                      ))}
+                    </div>
+                    <p className="text-xs text-red-700 mt-3">
+                      These assets don't have deposit addresses configured yet. Contact support if you need to transfer
+                      these.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Information Alert */}
               <Alert>
@@ -215,52 +292,69 @@ export default function Dashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {supportedNetworks.flatMap((network) => {
-                    const address = getDepositAddress(network)
-                    const memo = getAddressTag(network)
-                    const assets = NETWORK_ASSET_MAP[network] || []
+                  {supportedAssets.sort().map((assetCode) => {
+                    const assetInfo = ROBINHOOD_ASSET_ADDRESSES[assetCode]
+                    const address = assetInfo.address
+                    const memo = assetInfo.memo
+                    const isCopied = copiedAddress === address
 
-                    return assets.map((asset) => {
-                      const isCopied = copiedAddress === address
-                      const rowKey = `${network}-${asset}`
+                    // Determine network from asset code or address
+                    let network = 'ETHEREUM' // Default for most ERC-20 tokens
+                    if (assetCode === 'BTC') network = 'BITCOIN'
+                    else if (assetCode === 'BCH') network = 'BITCOIN_CASH'
+                    else if (assetCode === 'LTC') network = 'LITECOIN'
+                    else if (assetCode === 'DOGE') network = 'DOGECOIN'
+                    else if (assetCode === 'SOL' || assetCode === 'BONK' || assetCode === 'MOODENG') network = 'SOLANA'
+                    else if (assetCode === 'ADA') network = 'CARDANO'
+                    else if (assetCode === 'AVAX') network = 'AVALANCHE'
+                    else if (assetCode === 'XRP') network = 'XRP'
+                    else if (assetCode === 'XLM') network = 'STELLAR'
+                    else if (assetCode === 'SUI') network = 'SUI'
+                    else if (assetCode === 'XTZ') network = 'TEZOS'
+                    else if (assetCode === 'ETC') network = 'ETHEREUM_CLASSIC'
+                    else if (assetCode === 'HBAR') network = 'HEDERA'
+                    else if (assetCode === 'ARB') network = 'ARBITRUM'
+                    else if (assetCode === 'OP') network = 'OPTIMISM'
+                    else if (assetCode === 'ZORA') network = 'ZORA'
+                    else if (assetCode === 'USDC' && address.startsWith('0x11')) network = 'POLYGON'
+                    else if (assetCode === 'USDC' && address.startsWith('0x6')) network = 'ARBITRUM'
 
-                      return (
-                        <TableRow key={rowKey}>
-                          <TableCell className="font-semibold">
-                            <Badge variant="default" className="font-mono">
-                              {asset}
+                    return (
+                      <TableRow key={assetCode}>
+                        <TableCell className="font-semibold">
+                          <Badge variant="default" className="font-mono">
+                            {assetCode}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="font-mono text-xs">
+                            {network}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="font-mono text-xs max-w-md truncate" title={address}>
+                          {address}
+                        </TableCell>
+                        <TableCell className="font-mono text-xs">
+                          {memo ? (
+                            <Badge variant="secondary" className="text-xs">
+                              {memo}
                             </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="font-mono text-xs">
-                              {network}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="font-mono text-xs max-w-md truncate" title={address}>
-                            {address}
-                          </TableCell>
-                          <TableCell className="font-mono text-xs">
-                            {memo ? (
-                              <Badge variant="secondary" className="text-xs">
-                                {memo}
-                              </Badge>
-                            ) : (
-                              <span className="text-zinc-400">—</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => copyToClipboard(address, `${asset} (${network})`)}
-                              className="h-8 w-8 p-0"
-                            >
-                              {isCopied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })
+                          ) : (
+                            <span className="text-zinc-400">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(address, `${assetCode}`)}
+                            className="h-8 w-8 p-0"
+                          >
+                            {isCopied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    )
                   })}
                 </TableBody>
               </Table>
@@ -268,8 +362,8 @@ export default function Dashboard() {
             <div className="mt-4 flex items-center gap-2 text-sm text-zinc-600">
               <Info className="h-4 w-4" />
               <span>
-                All addresses are Coinbase Prime custody wallets with automated liquidation •{' '}
-                {supportedNetworks.flatMap((n) => NETWORK_ASSET_MAP[n] || []).length} total assets supported
+                All addresses are Coinbase Prime Trading Balance wallets • Each asset has its own unique deposit address
+                • {supportedAssets.length} assets supported
               </span>
             </div>
           </CardContent>

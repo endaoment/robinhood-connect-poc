@@ -80,17 +80,17 @@ To prevent phishing of users when being linked to Robinhood Connect UI a unique 
 
 #### Request Headers
 
-| Name | Type | Required/Optional | Comments |
-|------|------|-------------------|----------|
-| x-api-key | str | Required | The api Key provided by the RH team |
-| application-id | str | Required | The applicationId provided by the RH team |
+| Name           | Type | Required/Optional | Comments                                  |
+| -------------- | ---- | ----------------- | ----------------------------------------- |
+| x-api-key      | str  | Required          | The api Key provided by the RH team       |
+| application-id | str  | Required          | The applicationId provided by the RH team |
 
 #### Request Body
 
-| Name | Type | Required/Optional | Comments |
-|------|------|-------------------|----------|
-| withdrawalAddress | str | Required | The user's withdrawal address |
-| userIdentifier | str | Required | A unique identifier that identifies the user |
+| Name              | Type | Required/Optional | Comments                                     |
+| ----------------- | ---- | ----------------- | -------------------------------------------- |
+| withdrawalAddress | str  | Required          | The user's withdrawal address                |
+| userIdentifier    | str  | Required          | A unique identifier that identifies the user |
 
 #### Sample request
 
@@ -107,14 +107,14 @@ curl --location --request POST \
 
 #### Response
 
-| Name | Type | Comments |
-|------|------|----------|
+| Name      | Type | Comments                                                    |
+| --------- | ---- | ----------------------------------------------------------- |
 | connectId | UUID | A unique request Id that needs to be passed for redirection |
 
 #### Sample Response
 
 ```json
-{"connectId":"19f0fce8-37da-4206-a43f-5925e9c4e1dc"}
+{ "connectId": "19f0fce8-37da-4206-a43f-5925e9c4e1dc" }
 ```
 
 ### 2. Robinhood Connect URL
@@ -125,19 +125,19 @@ The user needs to open this URL in a new tab (step 4 above). This will open the 
 
 #### Query Parameters
 
-| Name | Type | Required/Optional | Comments |
-|------|------|-------------------|----------|
-| applicationId | str | Required | A unique ID provided to each dApp by the Robinhood team |
-| connectId | UUID | Required | A unique request ID generated for each redirection to Robinhood Connect |
-| walletAddress | str | Required | The wallet address to which the coin would be transferred |
-| userIdentifier | str | Required | A unique identifier that identifies the user on the dApp |
-| supportedNetworks | comma separated string | Required | The networks supported by the wallet address and origin app (For possible values, please see the Reference section below) |
-| supportedAssets | comma separated string | Optional | The assets supported by the wallet address and origin app (For possible values, please see the Reference section below). **Note:** it's strongly recommended to provide supported assets. If omitted, users will be able to select any coin Robinhood supports in the supported networks, even if the origin app does not. |
-| redirectUrl | string | Optional | Link to return after the user finishes Robinhood Connect flow. This URL must be registered to your unique application ID |
-| assetCode | str | Optional | To be set if the asset to be purchase has been already determined (For possible values, please see the Reference section below) |
-| fiatCode | str | Optional | To be set if the asset to be purchased has been already determined. We accept only USD at the moment. |
-| assetAmount | str | Optional | To be set, if quantity has been already determined in the asset denomination. If this is set, assetCode must be set. |
-| fiatAmount | str | Optional | To be set, if quantity has been determined in fiat denomination. If this is set, assetCode and fiatCode must be set. |
+| Name              | Type                   | Required/Optional | Comments                                                                                                                                                                                                                                                                                                                   |
+| ----------------- | ---------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| applicationId     | str                    | Required          | A unique ID provided to each dApp by the Robinhood team                                                                                                                                                                                                                                                                    |
+| connectId         | UUID                   | Required          | A unique request ID generated for each redirection to Robinhood Connect                                                                                                                                                                                                                                                    |
+| walletAddress     | str                    | Required          | The wallet address to which the coin would be transferred                                                                                                                                                                                                                                                                  |
+| userIdentifier    | str                    | Required          | A unique identifier that identifies the user on the dApp                                                                                                                                                                                                                                                                   |
+| supportedNetworks | comma separated string | Required          | The networks supported by the wallet address and origin app (For possible values, please see the Reference section below)                                                                                                                                                                                                  |
+| supportedAssets   | comma separated string | Optional          | The assets supported by the wallet address and origin app (For possible values, please see the Reference section below). **Note:** it's strongly recommended to provide supported assets. If omitted, users will be able to select any coin Robinhood supports in the supported networks, even if the origin app does not. |
+| redirectUrl       | string                 | Optional          | Link to return after the user finishes Robinhood Connect flow. This URL must be registered to your unique application ID                                                                                                                                                                                                   |
+| assetCode         | str                    | Optional          | To be set if the asset to be purchase has been already determined (For possible values, please see the Reference section below)                                                                                                                                                                                            |
+| fiatCode          | str                    | Optional          | To be set if the asset to be purchased has been already determined. We accept only USD at the moment.                                                                                                                                                                                                                      |
+| assetAmount       | str                    | Optional          | To be set, if quantity has been already determined in the asset denomination. If this is set, assetCode must be set.                                                                                                                                                                                                       |
+| fiatAmount        | str                    | Optional          | To be set, if quantity has been determined in fiat denomination. If this is set, assetCode and fiatCode must be set.                                                                                                                                                                                                       |
 
 #### Sample URLs
 
@@ -157,9 +157,9 @@ This API returns all the crypto assets supported by Robinhood Connect.
 
 #### Query Parameters
 
-| Name | Type | Required/Optional | Comments |
-|------|------|-------------------|----------|
-| applicationId | str | Required | To track the origin of the request |
+| Name          | Type | Required/Optional | Comments                           |
+| ------------- | ---- | ----------------- | ---------------------------------- |
+| applicationId | str  | Required          | To track the origin of the request |
 
 #### Sample request
 
@@ -170,52 +170,50 @@ curl -s --request GET \
 
 #### Response
 
-| Name | Type | Comments |
-|------|------|----------|
-| applicationId | str | To track the origin of the request |
+| Name                | Type                     | Comments                                       |
+| ------------------- | ------------------------ | ---------------------------------------------- |
+| applicationId       | str                      | To track the origin of the request             |
 | cryptoCurrencyPairs | List<CryptoCurrencyPair> | List of supported crypto currency pair objects |
 
 #### CryptoCurrencyPair
 
-| Name | Type | Comments |
-|------|------|----------|
-| id | str | Crypto currency pair id |
-| assetCurrency | CurrencyInfo | Asset currency information |
-| quoteCurrency | CurrencyInfo | Quote currency information |
-| supportedNetworks | List<str> | Networks supported for the asset |
+| Name              | Type         | Comments                         |
+| ----------------- | ------------ | -------------------------------- |
+| id                | str          | Crypto currency pair id          |
+| assetCurrency     | CurrencyInfo | Asset currency information       |
+| quoteCurrency     | CurrencyInfo | Quote currency information       |
+| supportedNetworks | List<str>    | Networks supported for the asset |
 
 #### CurrencyInfo
 
-| Name | Type | Comments |
-|------|------|----------|
-| id | str | Currency id |
-| code | str | Currency code (USD, ETH etc) |
-| name | str | Currency name |
-| currencyType | str | Type of the currency. i.e Fiat, Crypto etc |
+| Name         | Type | Comments                                   |
+| ------------ | ---- | ------------------------------------------ |
+| id           | str  | Currency id                                |
+| code         | str  | Currency code (USD, ETH etc)               |
+| name         | str  | Currency name                              |
+| currencyType | str  | Type of the currency. i.e Fiat, Crypto etc |
 
 #### Sample Response
 
 ```json
 {
-  "applicationId":"test-123",
-  "cryptoCurrencyPairs":[
+  "applicationId": "test-123",
+  "cryptoCurrencyPairs": [
     {
-      "id":"69432091-9fd3-4ca8-aef3-78fc2f193608",
-      "assetCurrency":{
-        "id":"6f64d0ab-aa87-4cb2-ae2b-2287a2b2c7a4",
-        "code":"ATOM",
-        "name":"Cosmos",
-        "currencyType":"cryptocurrency"
+      "id": "69432091-9fd3-4ca8-aef3-78fc2f193608",
+      "assetCurrency": {
+        "id": "6f64d0ab-aa87-4cb2-ae2b-2287a2b2c7a4",
+        "code": "ATOM",
+        "name": "Cosmos",
+        "currencyType": "cryptocurrency"
       },
-      "quoteCurrency":{
-        "id":"1072fc76-1862-41ab-82c2-485837590762",
-        "code":"USD",
-        "name":"US Dollar",
-        "currencyType":"fiat"
+      "quoteCurrency": {
+        "id": "1072fc76-1862-41ab-82c2-485837590762",
+        "code": "USD",
+        "name": "US Dollar",
+        "currencyType": "fiat"
       },
-      "supportedNetworks":[
-        "COSMOS"
-      ]
+      "supportedNetworks": ["COSMOS"]
     }
   ]
 }
@@ -229,14 +227,14 @@ This API returns the crypto currency price quote for Robinhood Connect.
 
 #### Query Parameters
 
-| Name | Type | Required/Optional | Comments |
-|------|------|-------------------|----------|
-| applicationId | str | Required | To track the origin of the request |
-| assetCode | str | Required | The asset code for the quote |
-| networkCode | str | Optional | If the user wants quote for a specific network |
-| fiatCode | str | Optional | Fiat code for the quote. Defaults to USD if nothing is provided |
-| fiatAmount | str | Optional | Amount in Fiat for the asset quote |
-| cryptoAmount | str | Optional | Amount in crypto for the asset quote. If both fiatAmount and cryptoAmount are specified, cryptoAmount will take precedence. Defaults to 1 if fiatAmount and cryptoAmount aren't provided |
+| Name          | Type | Required/Optional | Comments                                                                                                                                                                                 |
+| ------------- | ---- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| applicationId | str  | Required          | To track the origin of the request                                                                                                                                                       |
+| assetCode     | str  | Required          | The asset code for the quote                                                                                                                                                             |
+| networkCode   | str  | Optional          | If the user wants quote for a specific network                                                                                                                                           |
+| fiatCode      | str  | Optional          | Fiat code for the quote. Defaults to USD if nothing is provided                                                                                                                          |
+| fiatAmount    | str  | Optional          | Amount in Fiat for the asset quote                                                                                                                                                       |
+| cryptoAmount  | str  | Optional          | Amount in crypto for the asset quote. If both fiatAmount and cryptoAmount are specified, cryptoAmount will take precedence. Defaults to 1 if fiatAmount and cryptoAmount aren't provided |
 
 #### Sample request
 
@@ -247,50 +245,50 @@ curl --request GET \
 
 #### Response
 
-| Name | Type | Required/Optional | Comments |
-|------|------|-------------------|----------|
-| applicationId | str | Required | To track the origin of the request |
-| assetCode | str | Required | The asset code for the quote |
-| fiatCode | str | Required | Defaults to USD if nothing is provided in the request |
-| fiatAmount | str | Required | Amount in Fiat for the asset quote |
-| cryptoAmount | str | Required | Amount in crypto for the asset quote |
-| price | str | Required | Price of the asset quote |
-| networkFee | PriceItem | Required | Network fee for the quote which encompasses fee in fiat and in crypto |
-| processingFee | PriceItem | Required | Processing fee for the quote which encompasses fee in fiat and in crypto |
-| totalAmount | PriceItem | Required | Total amount (i.e base amount + network fee + processing fee) for the quote which encompasses fee in fiat and in crypto |
+| Name          | Type      | Required/Optional | Comments                                                                                                                |
+| ------------- | --------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| applicationId | str       | Required          | To track the origin of the request                                                                                      |
+| assetCode     | str       | Required          | The asset code for the quote                                                                                            |
+| fiatCode      | str       | Required          | Defaults to USD if nothing is provided in the request                                                                   |
+| fiatAmount    | str       | Required          | Amount in Fiat for the asset quote                                                                                      |
+| cryptoAmount  | str       | Required          | Amount in crypto for the asset quote                                                                                    |
+| price         | str       | Required          | Price of the asset quote                                                                                                |
+| networkFee    | PriceItem | Required          | Network fee for the quote which encompasses fee in fiat and in crypto                                                   |
+| processingFee | PriceItem | Required          | Processing fee for the quote which encompasses fee in fiat and in crypto                                                |
+| totalAmount   | PriceItem | Required          | Total amount (i.e base amount + network fee + processing fee) for the quote which encompasses fee in fiat and in crypto |
 
 #### PriceItem
 
-| Name | Type | Comments |
-|------|------|----------|
-| type | str | Indicates the type of price item (Ex network fee, processing fee etc) |
-| fiatAmount | str | Amount in fiat for the price item |
-| cryptoQuantity | str | Amount in crypto for the price item |
+| Name           | Type | Comments                                                              |
+| -------------- | ---- | --------------------------------------------------------------------- |
+| type           | str  | Indicates the type of price item (Ex network fee, processing fee etc) |
+| fiatAmount     | str  | Amount in fiat for the price item                                     |
+| cryptoQuantity | str  | Amount in crypto for the price item                                   |
 
 #### Sample Response
 
 ```json
 {
-  "assetCode":"ETH",
-  "applicationId":"test-123",
-  "fiatCode":"USD",
-  "fiatAmount":"1770.1466069946937",
-  "cryptoAmount":"1",
-  "price":"1770.1466069946937",
-  "networkFee":{
-    "type":"PRICE_ITEM_TYPE_CRYPTO_CURRENCY_NETWORK_FEE",
-    "fiatAmount":"1.49",
-    "cryptoQuantity":"0.00084"
+  "assetCode": "ETH",
+  "applicationId": "test-123",
+  "fiatCode": "USD",
+  "fiatAmount": "1770.1466069946937",
+  "cryptoAmount": "1",
+  "price": "1770.1466069946937",
+  "networkFee": {
+    "type": "PRICE_ITEM_TYPE_CRYPTO_CURRENCY_NETWORK_FEE",
+    "fiatAmount": "1.49",
+    "cryptoQuantity": "0.00084"
   },
-  "processingFee":{
-    "type":"PRICE_ITEM_TYPE_CRYPTO_CURRENCY_PROCESSING_FEE",
-    "fiatAmount":"0",
-    "cryptoQuantity":"0"
+  "processingFee": {
+    "type": "PRICE_ITEM_TYPE_CRYPTO_CURRENCY_PROCESSING_FEE",
+    "fiatAmount": "0",
+    "cryptoQuantity": "0"
   },
-  "totalAmount":{
-    "type":"PRICE_ITEM_TYPE_TOTAL",
-    "fiatAmount":"1771.64",
-    "cryptoQuantity":"1.00084"
+  "totalAmount": {
+    "type": "PRICE_ITEM_TYPE_TOTAL",
+    "fiatAmount": "1771.64",
+    "cryptoQuantity": "1.00084"
   }
 }
 ```
@@ -348,17 +346,17 @@ This link will open the Robinhood Connect UI in the Robinhood app if it's alread
 
 ### Query Parameters
 
-| Name | Type | Required/Optional | Comments |
-|------|------|-------------------|----------|
-| applicationId | string | Required | Unique ID provided by Robinhood for your dApp |
-| offRamp | bool | Required | Must be `true` to initiate the offramp flow |
-| supportedNetworks | string | Required | Comma-separated string with the blockchain network(s) the user intends to send the coin over. (e.g. ETHEREUM,POLYGON). Should use a single network, unless your wallet supports multiple blockchains. |
-| redirectUrl | string | Required | URL to return to your dApp post Robinhood Connect. Must be registered with your `applicationId` |
-| referenceId | string | Required | UUID generated by your dApp for each offramp order. Used to redeem the corresponding deposit address. Must be unique for every order. |
-| assetCode | string | Optional | Set if the asset to be sold is predefined. (Refer to this for possible values) |
-| fiatCode | string | Optional | Set if the fiat currency to be used is predefined. Only USD is accepted currently. |
-| assetAmount | string | Optional | Set if quantity is predefined in asset units. If set, `assetCode` must also be provided. Order quantity increments can be found in the Available Assets section below. |
-| fiatAmount | string | Optional | Set if quantity is predefined in fiat currency. Requires both `assetCode` and `fiatCode` to be set. Order quantity increments can be found in the Available Assets section below. |
+| Name              | Type   | Required/Optional | Comments                                                                                                                                                                                              |
+| ----------------- | ------ | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| applicationId     | string | Required          | Unique ID provided by Robinhood for your dApp                                                                                                                                                         |
+| offRamp           | bool   | Required          | Must be `true` to initiate the offramp flow                                                                                                                                                           |
+| supportedNetworks | string | Required          | Comma-separated string with the blockchain network(s) the user intends to send the coin over. (e.g. ETHEREUM,POLYGON). Should use a single network, unless your wallet supports multiple blockchains. |
+| redirectUrl       | string | Required          | URL to return to your dApp post Robinhood Connect. Must be registered with your `applicationId`                                                                                                       |
+| referenceId       | string | Required          | UUID generated by your dApp for each offramp order. Used to redeem the corresponding deposit address. Must be unique for every order.                                                                 |
+| assetCode         | string | Optional          | Set if the asset to be sold is predefined. (Refer to this for possible values)                                                                                                                        |
+| fiatCode          | string | Optional          | Set if the fiat currency to be used is predefined. Only USD is accepted currently.                                                                                                                    |
+| assetAmount       | string | Optional          | Set if quantity is predefined in asset units. If set, `assetCode` must also be provided. Order quantity increments can be found in the Available Assets section below.                                |
+| fiatAmount        | string | Optional          | Set if quantity is predefined in fiat currency. Requires both `assetCode` and `fiatCode` to be set. Order quantity increments can be found in the Available Assets section below.                     |
 
 ### Sample URLs
 
@@ -378,11 +376,11 @@ https://applink.robinhood.com/u/connect?offRamp=true&applicationId=<APP_ID_PROVI
 
 Upon user completion of Robinhood Connect offramp flow, the Robinhood app will redirect the user back to dApp being passed in from the `redirectURL` parameter.
 
-| Name | Type | Comments |
-|------|------|----------|
-| assetCode | string | Asset selected for purchase by the user on Robinhood Connect |
-| assetAmount | string | Asset quantity set by the user on Robinhood Connect |
-| network | string | Network chosen for asset (e.g. BITCOIN, POLYGON) |
+| Name        | Type   | Comments                                                     |
+| ----------- | ------ | ------------------------------------------------------------ |
+| assetCode   | string | Asset selected for purchase by the user on Robinhood Connect |
+| assetAmount | string | Asset quantity set by the user on Robinhood Connect          |
+| network     | string | Network chosen for asset (e.g. BITCOIN, POLYGON)             |
 
 ### Sample redirect link
 
@@ -398,16 +396,16 @@ To mitigate the risk of phishing attempts, the dApp backend must call the follow
 
 ### Request Headers
 
-| Name | Type | Required/Optional | Comments |
-|------|------|-------------------|----------|
-| x-api-key | string | Required | The API key provided by the Robinhood team |
-| application-id | string | Required | Unique ID provided by Robinhood for your dApp |
+| Name           | Type   | Required/Optional | Comments                                      |
+| -------------- | ------ | ----------------- | --------------------------------------------- |
+| x-api-key      | string | Required          | The API key provided by the Robinhood team    |
+| application-id | string | Required          | Unique ID provided by Robinhood for your dApp |
 
 ### Request Body
 
-| Name | Type | Required/Optional | Comments |
-|------|------|-------------------|----------|
-| referenceId | string | Required | The same UUID that dApp generated when creating the offramp order |
+| Name        | Type   | Required/Optional | Comments                                                          |
+| ----------- | ------ | ----------------- | ----------------------------------------------------------------- |
+| referenceId | string | Required          | The same UUID that dApp generated when creating the offramp order |
 
 ### Sample request
 
@@ -424,19 +422,19 @@ curl --request POST \
 
 ### Response
 
-| Name | Type | Comments |
-|------|------|----------|
-| address | string | Deposit address |
-| addressTag | string | Optional deposit address tag for eligible coin(s). I.e. XLM |
-| assetCode | string | Asset selected for purchase by the user on Robinhood Connect |
-| assetAmount | string | Asset quantity set by the user on Robinhood Connect |
-| networkCode | string | Network chosen for asset (e.g. BITCOIN, POLYGON) |
+| Name        | Type   | Comments                                                     |
+| ----------- | ------ | ------------------------------------------------------------ |
+| address     | string | Deposit address                                              |
+| addressTag  | string | Optional deposit address tag for eligible coin(s). I.e. XLM  |
+| assetCode   | string | Asset selected for purchase by the user on Robinhood Connect |
+| assetAmount | string | Asset quantity set by the user on Robinhood Connect          |
+| networkCode | string | Network chosen for asset (e.g. BITCOIN, POLYGON)             |
 
 ### Sample Response
 
 ```json
 {
-  "address":"0x8d12A197cB00D4747a1fe03395095ce2A5BC6819",
+  "address": "0x8d12A197cB00D4747a1fe03395095ce2A5BC6819",
   "networkCode": "ETHEREUM",
   "assetCode": "ETH",
   "assetAmount": "0.05"
@@ -451,16 +449,16 @@ This request returns the transaction details once an order is complete. This req
 
 ### Request Headers
 
-| Name | Type | Required/Optional | Comments |
-|------|------|-------------------|----------|
-| x-api-key | str | Required | The api Key provided by the RH team |
-| application-id | str | Required | The applicationId provided by the RH team |
+| Name           | Type | Required/Optional | Comments                                  |
+| -------------- | ---- | ----------------- | ----------------------------------------- |
+| x-api-key      | str  | Required          | The api Key provided by the RH team       |
+| application-id | str  | Required          | The applicationId provided by the RH team |
 
 ### Query Parameters
 
-| Name | Type | Required/Optional | Comments |
-|------|------|-------------------|----------|
-| referenceId | str | Required | UUID generated by your dApp for each offramp order |
+| Name        | Type | Required/Optional | Comments                                           |
+| ----------- | ---- | ----------------- | -------------------------------------------------- |
+| referenceId | str  | Required          | UUID generated by your dApp for each offramp order |
 
 ### Sample Request
 
@@ -473,31 +471,31 @@ curl -s --request GET \
 
 ### Response
 
-| Name | Type | Comments |
-|------|------|----------|
-| applicationId | str | Associated with the application with which the transaction took place |
-| connectId | str | Associated with the transaction |
-| assetCode | str | The asset code for the quote |
-| networkCode | str | The network code for the order |
-| fiatCode | str | Set if the fiat currency to be used is predefined. Only USD is accepted currently. |
-| fiatAmount | str | Amount in fiat for the asset quote |
-| cryptoAmount | str | Amount in crypto for the asset quote |
-| price | str | Price of the asset quote |
-| processingFee | PriceItem | Robinhood's processing fee for the quote which encompasses fee in fiat and in crypto |
-| paymentMethod | str | Method of payment used to purchase crypto. Can be one of: `crypto_balance`, `buying_power`, `debit_card`, `bank_transfer` |
-| totalAmount | PriceItem | Total amount from the sale proceeds |
-| blockchainTransactionId | str | The blockchain transaction id / hash |
-| destinationAddress | str | The destination deposit address of the transaction |
-| referenceID | str | The client's input referenceId that was passed in |
-| status | str | Status of customer order. Can be one of: `ORDER_STATUS_IN_PROGRESS`, `ORDER_STATUS_SUCCEEDED`, `ORDER_STATUS_FAILED` |
+| Name                    | Type      | Comments                                                                                                                  |
+| ----------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------- |
+| applicationId           | str       | Associated with the application with which the transaction took place                                                     |
+| connectId               | str       | Associated with the transaction                                                                                           |
+| assetCode               | str       | The asset code for the quote                                                                                              |
+| networkCode             | str       | The network code for the order                                                                                            |
+| fiatCode                | str       | Set if the fiat currency to be used is predefined. Only USD is accepted currently.                                        |
+| fiatAmount              | str       | Amount in fiat for the asset quote                                                                                        |
+| cryptoAmount            | str       | Amount in crypto for the asset quote                                                                                      |
+| price                   | str       | Price of the asset quote                                                                                                  |
+| processingFee           | PriceItem | Robinhood's processing fee for the quote which encompasses fee in fiat and in crypto                                      |
+| paymentMethod           | str       | Method of payment used to purchase crypto. Can be one of: `crypto_balance`, `buying_power`, `debit_card`, `bank_transfer` |
+| totalAmount             | PriceItem | Total amount from the sale proceeds                                                                                       |
+| blockchainTransactionId | str       | The blockchain transaction id / hash                                                                                      |
+| destinationAddress      | str       | The destination deposit address of the transaction                                                                        |
+| referenceID             | str       | The client's input referenceId that was passed in                                                                         |
+| status                  | str       | Status of customer order. Can be one of: `ORDER_STATUS_IN_PROGRESS`, `ORDER_STATUS_SUCCEEDED`, `ORDER_STATUS_FAILED`      |
 
 ### PriceItem
 
-| Name | Type | Comments |
-|------|------|----------|
-| type | str | Indicates the type of price item (Ex network fee, processing fee etc) |
-| fiatAmount | str | Amount in fiat for the price item |
-| cryptoQuantity | str | Amount in crypto for the price item |
+| Name           | Type | Comments                                                              |
+| -------------- | ---- | --------------------------------------------------------------------- |
+| type           | str  | Indicates the type of price item (Ex network fee, processing fee etc) |
+| fiatAmount     | str  | Amount in fiat for the price item                                     |
+| cryptoQuantity | str  | Amount in crypto for the price item                                   |
 
 ## Price Quote
 
@@ -507,67 +505,67 @@ This API returns the cryptocurrency offramp price quote for Robinhood Connect.
 
 ### Query Parameters
 
-| Name | Type | Required/Optional | Comments |
-|------|------|-------------------|----------|
-| applicationId | str | Required | To track the origin of the request |
-| assetCode | str | Required | The asset code for the quote |
-| networkCode | str | Optional | If the user wants quote for a specific network |
-| fiatCode | str | Optional | Fiat code for the quote. Defaults to USD if nothing is provided |
-| fiatAmount | str | Optional | Amount in Fiat for the asset quote |
-| cryptoAmount | str | Optional | Amount in crypto for the asset quote. If both fiatAmount and cryptoAmount are specified, cryptoAmount will take precedence. Defaults to 1 if fiatAmount and cryptoAmount aren't provided |
-| paymentMethod | str | Optional | Enum of payment method type: `crypto_balance`, `buying_power`, `debit_card`, `bank_transfer`. When the parameter is included, the quote will calculate the processingFee associated with the paymentMethod. The default value is "buying_power" |
+| Name          | Type | Required/Optional | Comments                                                                                                                                                                                                                                        |
+| ------------- | ---- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| applicationId | str  | Required          | To track the origin of the request                                                                                                                                                                                                              |
+| assetCode     | str  | Required          | The asset code for the quote                                                                                                                                                                                                                    |
+| networkCode   | str  | Optional          | If the user wants quote for a specific network                                                                                                                                                                                                  |
+| fiatCode      | str  | Optional          | Fiat code for the quote. Defaults to USD if nothing is provided                                                                                                                                                                                 |
+| fiatAmount    | str  | Optional          | Amount in Fiat for the asset quote                                                                                                                                                                                                              |
+| cryptoAmount  | str  | Optional          | Amount in crypto for the asset quote. If both fiatAmount and cryptoAmount are specified, cryptoAmount will take precedence. Defaults to 1 if fiatAmount and cryptoAmount aren't provided                                                        |
+| paymentMethod | str  | Optional          | Enum of payment method type: `crypto_balance`, `buying_power`, `debit_card`, `bank_transfer`. When the parameter is included, the quote will calculate the processingFee associated with the paymentMethod. The default value is "buying_power" |
 
 ### Response
 
-| Name | Type | Comments |
-|------|------|----------|
-| applicationId | str | To track the origin of the request |
-| assetCode | str | The asset code for the quote |
-| networkCode | str | The network code for the quote |
-| fiatCode | str | Defaults to USD if nothing is provided in the request |
-| fiatAmount | str | Amount in Fiat for the asset quote |
-| cryptoAmount | str | Amount in crypto for the asset quote |
-| price | str | Price of the asset quote |
-| processingFee | PriceItem | Robinhood's processing fee for the quote which encompasses fee in fiat and in crypto |
-| partnerFee | PriceItem | Partner's fee for the quote which encompasses fee in fiat and in crypto |
-| totalAmount | PriceItem | Total amount (i.e base amount + network fee + processing fee + partner fee) for the quote which encompasses fee in fiat and in crypto |
-| paymentMethod | str | Same as the `paymentMethod` in the request if specified. Default to "buying_power" |
+| Name          | Type      | Comments                                                                                                                              |
+| ------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| applicationId | str       | To track the origin of the request                                                                                                    |
+| assetCode     | str       | The asset code for the quote                                                                                                          |
+| networkCode   | str       | The network code for the quote                                                                                                        |
+| fiatCode      | str       | Defaults to USD if nothing is provided in the request                                                                                 |
+| fiatAmount    | str       | Amount in Fiat for the asset quote                                                                                                    |
+| cryptoAmount  | str       | Amount in crypto for the asset quote                                                                                                  |
+| price         | str       | Price of the asset quote                                                                                                              |
+| processingFee | PriceItem | Robinhood's processing fee for the quote which encompasses fee in fiat and in crypto                                                  |
+| partnerFee    | PriceItem | Partner's fee for the quote which encompasses fee in fiat and in crypto                                                               |
+| totalAmount   | PriceItem | Total amount (i.e base amount + network fee + processing fee + partner fee) for the quote which encompasses fee in fiat and in crypto |
+| paymentMethod | str       | Same as the `paymentMethod` in the request if specified. Default to "buying_power"                                                    |
 
 ### PriceItem
 
-| Name | Type | Comments |
-|------|------|----------|
-| type | str | Indicates the type of price item (Ex partner fee, processing fee etc) |
-| fiatAmount | str | Amount in fiat for the price item |
-| cryptoQuantity | str | Amount in crypto for the price item |
+| Name           | Type | Comments                                                              |
+| -------------- | ---- | --------------------------------------------------------------------- |
+| type           | str  | Indicates the type of price item (Ex partner fee, processing fee etc) |
+| fiatAmount     | str  | Amount in fiat for the price item                                     |
+| cryptoQuantity | str  | Amount in crypto for the price item                                   |
 
 ### Sample Response
 
 ```json
 {
-  "assetCode":"ETH",
-  "applicationId":"74d09dd4-315f-4281-86c2-b65d2a72d88a",
-  "fiatCode":"USD",
-  "fiatAmount":"3285.09",
-  "cryptoAmount":"1.494751",
-  "price":"2197.75",
-  "processingFee":{
-    "type":"PRICE_ITEM_TYPE_CRYPTO_CURRENCY_PROCESSING_FEE",
-    "fiatAmount":"0",
-    "cryptoQuantity":"0"
+  "assetCode": "ETH",
+  "applicationId": "74d09dd4-315f-4281-86c2-b65d2a72d88a",
+  "fiatCode": "USD",
+  "fiatAmount": "3285.09",
+  "cryptoAmount": "1.494751",
+  "price": "2197.75",
+  "processingFee": {
+    "type": "PRICE_ITEM_TYPE_CRYPTO_CURRENCY_PROCESSING_FEE",
+    "fiatAmount": "0",
+    "cryptoQuantity": "0"
   },
-  "totalAmount":{
-    "type":"PRICE_ITEM_TYPE_TOTAL",
-    "fiatAmount":"3296.63",
-    "cryptoQuantity":"1.5"
+  "totalAmount": {
+    "type": "PRICE_ITEM_TYPE_TOTAL",
+    "fiatAmount": "3296.63",
+    "cryptoQuantity": "1.5"
   },
-  "partnerFee":{
-    "type":"PRICE_ITEM_TYPE_PARTNER_FEE",
-    "fiatAmount":"0",
-    "cryptoQuantity":"0"
+  "partnerFee": {
+    "type": "PRICE_ITEM_TYPE_PARTNER_FEE",
+    "fiatAmount": "0",
+    "cryptoQuantity": "0"
   },
-  "paymentMethod":"buying_power",
-  "networkCode":"ETHEREUM"
+  "paymentMethod": "buying_power",
+  "networkCode": "ETHEREUM"
 }
 ```
 
@@ -665,12 +663,12 @@ func isRobinhoodInstalled() -> Bool {
 ### 2. In the react-native code, check for app installation
 
 ```javascript
-import { Linking } from 'react-native';
+import { Linking } from "react-native";
 
 // to check if the app is installed or not.
 export async function isRobinhoodInstalled() {
   try {
-    const canOpen = await Linking.canOpenURL('robinhood://');
+    const canOpen = await Linking.canOpenURL("robinhood://");
     return canOpen; // true if installed, false otherwise
   } catch (error) {
     return false;
@@ -694,12 +692,12 @@ export async function isRobinhoodInstalled() {
 ### 2. In the react-native code, check for app installation
 
 ```javascript
-import { Linking } from 'react-native';
+import { Linking } from "react-native";
 
 // to check if the app is installed or not.
 export async function isRobinhoodInstalled() {
   try {
-    const canOpen = await Linking.canOpenURL('robinhood://');
+    const canOpen = await Linking.canOpenURL("robinhood://");
     return canOpen; // true if installed, false otherwise
   } catch (error) {
     return false;

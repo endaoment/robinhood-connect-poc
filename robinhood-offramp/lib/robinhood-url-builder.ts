@@ -122,7 +122,7 @@ export function isValidAmount(amount: string): boolean {
  * Get redirect URL for the current environment
  */
 export function getRedirectUrl(): string {
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const baseUrl = process.env.APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3030'
   return `${baseUrl}/callback`
 }
 
@@ -157,60 +157,90 @@ export function storeReferenceId(referenceId: string): void {
  * Build complete offramp URL with all parameters
  */
 export function buildOfframpUrl(params: OfframpUrlParams): OfframpUrlResult {
+  console.log('  🏗️  [BUILD-URL] Starting URL generation')
+  console.log(`     Input params: ${JSON.stringify(params, null, 2)}`)
+
   // Validate environment variables
   if (!process.env.ROBINHOOD_APP_ID) {
+    console.error('  ❌ [VALIDATION] ROBINHOOD_APP_ID environment variable missing')
     throw new Error('ROBINHOOD_APP_ID environment variable is required')
   }
+  console.log(`  ✓ [VALIDATION] App ID present: ${process.env.ROBINHOOD_APP_ID.substring(0, 10)}...`)
 
   // Validate required parameters
   if (!params.supportedNetworks || params.supportedNetworks.length === 0) {
+    console.error('  ❌ [VALIDATION] No supported networks provided')
     throw new Error('At least one supported network is required')
   }
+  console.log(`  ✓ [VALIDATION] Networks provided: ${params.supportedNetworks.length}`)
 
   // Validate supported networks
   for (const network of params.supportedNetworks) {
     if (!isValidNetwork(network)) {
+      console.error(`  ❌ [VALIDATION] Invalid network: ${network}`)
       throw new Error(`Invalid network: ${network}. Supported networks: ${SUPPORTED_NETWORKS.join(', ')}`)
     }
   }
+  console.log(`  ✓ [VALIDATION] All networks valid: ${params.supportedNetworks.join(', ')}`)
 
   // Validate asset code if provided
   if (params.assetCode && !isValidAssetCode(params.assetCode)) {
+    console.error(`  ❌ [VALIDATION] Invalid asset code: ${params.assetCode}`)
     throw new Error(`Invalid asset code: ${params.assetCode}. Must be 2-10 uppercase letters.`)
+  }
+  if (params.assetCode) {
+    console.log(`  ✓ [VALIDATION] Asset code valid: ${params.assetCode}`)
   }
 
   // Validate asset amount if provided
   if (params.assetAmount && !isValidAmount(params.assetAmount)) {
+    console.error(`  ❌ [VALIDATION] Invalid asset amount: ${params.assetAmount}`)
     throw new Error(`Invalid asset amount: ${params.assetAmount}. Must be a positive number.`)
+  }
+  if (params.assetAmount) {
+    console.log(`  ✓ [VALIDATION] Asset amount valid: ${params.assetAmount}`)
   }
 
   // Validate fiat amount if provided
   if (params.fiatAmount && !isValidAmount(params.fiatAmount)) {
+    console.error(`  ❌ [VALIDATION] Invalid fiat amount: ${params.fiatAmount}`)
     throw new Error(`Invalid fiat amount: ${params.fiatAmount}. Must be a positive number.`)
+  }
+  if (params.fiatAmount) {
+    console.log(`  ✓ [VALIDATION] Fiat amount valid: ${params.fiatAmount}`)
   }
 
   // Validate that if assetAmount is provided, assetCode must also be provided
   if (params.assetAmount && !params.assetCode) {
+    console.error('  ❌ [VALIDATION] assetAmount provided without assetCode')
     throw new Error('assetCode is required when assetAmount is specified')
   }
 
   // Validate that if fiatAmount is provided, both assetCode and fiatCode must be provided
   if (params.fiatAmount && (!params.assetCode || !params.fiatCode)) {
+    console.error('  ❌ [VALIDATION] fiatAmount provided without assetCode/fiatCode')
     throw new Error('assetCode and fiatCode are required when fiatAmount is specified')
   }
 
   // Generate or validate referenceId
   const referenceId = params.referenceId || generateReferenceId()
+  console.log(`  🆔 [REFERENCE-ID] Generated: ${referenceId}`)
+
   if (!isValidReferenceId(referenceId)) {
+    console.error(`  ❌ [VALIDATION] Invalid reference ID format: ${referenceId}`)
     throw new Error(`Invalid referenceId format: ${referenceId}`)
   }
+  console.log('  ✓ [VALIDATION] Reference ID format valid')
 
   // Build URL parameters
+  const redirectUrl = getRedirectUrl()
+  console.log(`  🔄 [REDIRECT] URL: ${redirectUrl}`)
+
   const urlParams: RobinhoodOfframpParams = {
     applicationId: process.env.ROBINHOOD_APP_ID,
     offRamp: true,
     supportedNetworks: params.supportedNetworks.join(','),
-    redirectUrl: getRedirectUrl(),
+    redirectUrl: redirectUrl,
     referenceId: referenceId,
   }
 
@@ -228,6 +258,9 @@ export function buildOfframpUrl(params: OfframpUrlParams): OfframpUrlResult {
     urlParams.fiatAmount = params.fiatAmount
   }
 
+  console.log('  📋 [URL-PARAMS] Generated parameters:')
+  console.log(JSON.stringify(urlParams, null, 2))
+
   // Build URL
   const url = new URL('https://applink.robinhood.com/u/connect')
 
@@ -238,6 +271,9 @@ export function buildOfframpUrl(params: OfframpUrlParams): OfframpUrlResult {
     }
   })
 
+  console.log(`  🔗 [URL] Final URL generated`)
+  console.log(`     ${url.toString()}`)
+
   const result = {
     url: url.toString(),
     referenceId,
@@ -245,7 +281,10 @@ export function buildOfframpUrl(params: OfframpUrlParams): OfframpUrlResult {
   }
 
   // Store referenceId for callback handling
+  console.log('  💾 [STORAGE] Storing reference ID for callback')
   storeReferenceId(referenceId)
+
+  console.log('  ✅ [BUILD-URL] URL generation complete')
 
   return result
 }

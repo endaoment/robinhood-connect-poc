@@ -1,0 +1,12 @@
+// Coinbase Prime Trading Balance Deposit Addresses
+// Generated: 2025-10-20T21:18:13.158500
+
+export const PRIME_DEPOSIT_ADDRESSES = {
+  ARBITRUM: '0xE6cBea18f60CE40D699bF39Dd41f240EdcCdf0a4',
+  POLYGON: '0x11362ec5cc119448225abbbb1c9c67e22e776cdd',
+  SUI: '0x5e4072e696853d1d9c7b478c68a5d97f32ac35524e9dee3cf1022bc022e59c9a',
+  ZORA: '0x407506929b5C58992987609539a1D424f2305Cc3',
+}
+
+export const PRIME_DEPOSIT_MEMOS = {
+}

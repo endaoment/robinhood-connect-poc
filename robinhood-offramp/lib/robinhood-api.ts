@@ -34,8 +34,15 @@ export async function redeemDepositAddress(referenceId: string): Promise<Deposit
   const url = 'https://api.robinhood.com/catpay/v1/redeem_deposit_address/'
 
   try {
-    console.log(`Redeeming deposit address for referenceId: ${referenceId}`)
+    console.log('  🔑 [AUTH] Using credentials:')
+    console.log(`     API Key: ${process.env.ROBINHOOD_API_KEY!.substring(0, 10)}...`)
+    console.log(`     App ID: ${process.env.ROBINHOOD_APP_ID!.substring(0, 10)}...`)
 
+    console.log('  📤 [HTTP] Making POST request to Robinhood API')
+    console.log(`     URL: ${url}`)
+    console.log(`     Body: { referenceId: "${referenceId}" }`)
+
+    const requestStartTime = Date.now()
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -48,12 +55,15 @@ export async function redeemDepositAddress(referenceId: string): Promise<Deposit
       cache: 'no-store',
     })
 
-    // Log response status for debugging
-    console.log(`Robinhood API response status: ${response.status}`)
+    const requestDuration = Date.now() - requestStartTime
+    console.log(`  📥 [HTTP] Response received in ${requestDuration}ms`)
+    console.log(`     Status: ${response.status} ${response.statusText}`)
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
-      console.error('Robinhood API error response:', errorData)
+      console.error('  ❌ [HTTP] Error response from Robinhood:')
+      console.error(`     Status: ${response.status}`)
+      console.error(`     Body: ${JSON.stringify(errorData, null, 2)}`)
 
       // Handle specific HTTP status codes
       if (response.status === 404) {
@@ -82,12 +92,16 @@ export async function redeemDepositAddress(referenceId: string): Promise<Deposit
     }
 
     const responseData = await response.json()
-    console.log('Robinhood API success response:', responseData)
+    console.log('  ✅ [HTTP] Success response:')
+    console.log(JSON.stringify(responseData, null, 2))
 
     // Validate response structure
     if (!responseData.address || !responseData.assetCode || !responseData.networkCode) {
+      console.error('  ❌ [VALIDATION] Invalid response format - missing required fields')
       throw new RobinhoodAPIError('Invalid response format from Robinhood API', 'INVALID_RESPONSE_FORMAT')
     }
+
+    console.log('  ✓ [VALIDATION] Response format valid')
 
     return {
       address: responseData.address,
@@ -104,18 +118,18 @@ export async function redeemDepositAddress(referenceId: string): Promise<Deposit
 
     // Handle network errors
     if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED' || error.name === 'FetchError') {
-      console.error('Network error calling Robinhood API:', error)
+      console.error('  ❌ [NETWORK] Network error:', error.message)
       throw new RobinhoodAPIError('Network error communicating with Robinhood', 'NETWORK_ERROR')
     }
 
     // Handle timeout errors
     if (error.name === 'AbortError' || error.code === 'ETIMEDOUT') {
-      console.error('Timeout error calling Robinhood API:', error)
+      console.error('  ❌ [TIMEOUT] Request timeout:', error.message)
       throw new RobinhoodAPIError('Request timeout communicating with Robinhood', 'TIMEOUT_ERROR')
     }
 
     // Generic error handling
-    console.error('Unexpected error calling Robinhood API:', error)
+    console.error('  ❌ [UNEXPECTED] Unexpected error:', error.message)
     throw new RobinhoodAPIError('Unexpected error communicating with Robinhood', 'UNEXPECTED_ERROR')
   }
 }
@@ -131,8 +145,14 @@ export async function getOrderStatus(referenceId: string): Promise<OrderStatusRe
   const url = `https://api.robinhood.com/catpay/v1/external/order/?referenceId=${referenceId}`
 
   try {
-    console.log(`Fetching order status for referenceId: ${referenceId}`)
+    console.log('  🔑 [AUTH] Using credentials:')
+    console.log(`     API Key: ${process.env.ROBINHOOD_API_KEY!.substring(0, 10)}...`)
+    console.log(`     App ID: ${process.env.ROBINHOOD_APP_ID!.substring(0, 10)}...`)
 
+    console.log('  📤 [HTTP] Making GET request to Robinhood API')
+    console.log(`     URL: ${url}`)
+
+    const requestStartTime = Date.now()
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -143,19 +163,19 @@ export async function getOrderStatus(referenceId: string): Promise<OrderStatusRe
       cache: 'no-store',
     })
 
-    console.log(`Robinhood order status API response status: ${response.status}`)
+    const requestDuration = Date.now() - requestStartTime
+    console.log(`  📥 [HTTP] Response received in ${requestDuration}ms`)
+    console.log(`     Status: ${response.status} ${response.statusText}`)
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
-      console.error('Robinhood order status API error:', errorData)
+      console.error('  ❌ [HTTP] Error response from Robinhood:')
+      console.error(`     Status: ${response.status}`)
+      console.error(`     Body: ${JSON.stringify(errorData, null, 2)}`)
 
       // Handle specific HTTP status codes
       if (response.status === 404) {
-        throw new RobinhoodAPIError(
-          'Order not found or referenceId expired',
-          'INVALID_REFERENCE_ID',
-          404,
-        )
+        throw new RobinhoodAPIError('Order not found or referenceId expired', 'INVALID_REFERENCE_ID', 404)
       }
 
       if (response.status === 401 || response.status === 403) {
@@ -180,15 +200,16 @@ export async function getOrderStatus(referenceId: string): Promise<OrderStatusRe
     }
 
     const responseData = await response.json()
-    console.log('Robinhood order status API success:', responseData)
+    console.log('  ✅ [HTTP] Success response:')
+    console.log(JSON.stringify(responseData, null, 2))
 
     // Validate response structure
     if (!responseData.status || !responseData.assetCode || !responseData.referenceID) {
-      throw new RobinhoodAPIError(
-        'Invalid response format from Robinhood order status API',
-        'INVALID_RESPONSE_FORMAT',
-      )
+      console.error('  ❌ [VALIDATION] Invalid response format - missing required fields')
+      throw new RobinhoodAPIError('Invalid response format from Robinhood order status API', 'INVALID_RESPONSE_FORMAT')
     }
+
+    console.log('  ✓ [VALIDATION] Response format valid')
 
     return responseData
   } catch (error: any) {
@@ -199,18 +220,18 @@ export async function getOrderStatus(referenceId: string): Promise<OrderStatusRe
 
     // Handle network errors
     if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED' || error.name === 'FetchError') {
-      console.error('Network error calling Robinhood order status API:', error)
+      console.error('  ❌ [NETWORK] Network error:', error.message)
       throw new RobinhoodAPIError('Network error communicating with Robinhood', 'NETWORK_ERROR')
     }
 
     // Handle timeout errors
     if (error.name === 'AbortError' || error.code === 'ETIMEDOUT') {
-      console.error('Timeout error calling Robinhood order status API:', error)
+      console.error('  ❌ [TIMEOUT] Request timeout:', error.message)
       throw new RobinhoodAPIError('Request timeout communicating with Robinhood', 'TIMEOUT_ERROR')
     }
 
     // Generic error handling
-    console.error('Unexpected error calling Robinhood order status API:', error)
+    console.error('  ❌ [UNEXPECTED] Unexpected error:', error.message)
     throw new RobinhoodAPIError('Unexpected error communicating with Robinhood', 'UNEXPECTED_ERROR')
   }
 }

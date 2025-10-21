@@ -140,7 +140,7 @@ ROBINHOOD_APP_ID=your-app-id-from-robinhood
 ROBINHOOD_API_KEY=your-api-key-from-robinhood
 
 # Application URL (for redirect callback)
-NEXTAUTH_URL=http://localhost:3000  # or your production domain
+NEXTAUTH_URL=http://localhost:3030  # or your production domain
 ```
 
 ### Security Note
@@ -308,17 +308,17 @@ Test API endpoints with curl:
 
 ```bash
 # Generate offramp URL
-curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
   -H "Content-Type: application/json" \
   -d '{"supportedNetworks":["ETHEREUM"],"assetCode":"ETH","assetAmount":"0.1"}'
 
 # Redeem deposit address
-curl -X POST http://localhost:3000/api/robinhood/redeem-deposit-address \
+curl -X POST http://localhost:3030/api/robinhood/redeem-deposit-address \
   -H "Content-Type: application/json" \
   -d '{"referenceId":"f2056f4c-93c7-422b-bd59-fbfb5b05b6ad"}'
 
 # Get order status
-curl "http://localhost:3000/api/robinhood/order-status?referenceId=f2056f4c-93c7-422b-bd59-fbfb5b05b6ad"
+curl "http://localhost:3030/api/robinhood/order-status?referenceId=f2056f4c-93c7-422b-bd59-fbfb5b05b6ad"
 ```
 
 ### Build & Type Check

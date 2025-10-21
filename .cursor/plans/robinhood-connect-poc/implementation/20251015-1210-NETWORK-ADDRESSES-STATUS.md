@@ -72,10 +72,13 @@ Once you have a Toncoin address:
 
 1. Update `robinhood-offramp/lib/network-addresses.ts`
 2. Replace the placeholder value:
+
    ```typescript
    TONCOIN: 'PLACEHOLDER_NEEDED_TON_ADDRESS',
    ```
+
    with your actual TON address in base64 or hexadecimal format
+
 3. Run validation: `npm run build`
 4. Test with small amounts before production
 
@@ -203,7 +206,7 @@ Once TONCOIN is added, we'll have **100% network coverage** of all Robinhood-sup
 
 ## 🔗 References
 
-- **Robinhood Documentation**: https://robinhood.com/us/en/support/articles/crypto-transfers/
+- **Robinhood Documentation**: <https://robinhood.com/us/en/support/articles/crypto-transfers/>
 - **Endaoment OTC Config**: Addresses sourced from production token configuration
 - **Network Addresses File**: `/robinhood-offramp/lib/network-addresses.ts`
 - **Supported Networks List**: `/robinhood-offramp/lib/robinhood-url-builder.ts`

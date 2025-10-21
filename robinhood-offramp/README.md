@@ -22,7 +22,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Visit http://localhost:3000 (automatically goes to dashboard)
+Visit <http://localhost:3030> (automatically goes to dashboard)
 
 ---
 
@@ -44,7 +44,7 @@ ROBINHOOD_APP_ID=your-app-id
 ROBINHOOD_API_KEY=your-api-key
 
 # Optional (legacy, can be removed)
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3030
 NEXTAUTH_SECRET=your-secret
 ```
 
@@ -275,7 +275,7 @@ Total First Load JS: 101-130 kB (excellent performance!)
 ### Manual Testing (Zero-Click Flow)
 
 1. Start dev server: `npm run dev`
-2. Visit http://localhost:3000/dashboard
+2. Visit <http://localhost:3030/dashboard>
 3. Click "Start Transfer"
 4. **Note**: Modal shows all 19 networks - no selection needed!
 5. Click "Open Robinhood" (just one click!)
@@ -360,6 +360,7 @@ See `../SECURITY-AUDIT.md` for complete audit.
 ### For Developers
 
 - **[DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)** - Complete technical reference
+- **[FLOW-DIAGRAMS.md](docs/FLOW-DIAGRAMS.md)** - Visual flow diagrams & architecture ⭐ NEW
 
 ### For Testing
 

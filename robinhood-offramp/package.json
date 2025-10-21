@@ -4,13 +4,12 @@
   "description": "Robinhood Connect offramp integration for crypto donations",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 3030",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --port 3030",
     "lint": "next lint"
   },
   "dependencies": {
-    "@auth/core": "latest",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
@@ -50,9 +49,7 @@
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
-    "next-auth": "latest",
     "next-themes": "^0.4.4",
-    "nodemailer": "latest",
     "react": "^19",
     "react-day-picker": "8.10.1",
     "react-dom": "^19",

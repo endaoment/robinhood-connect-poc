@@ -13,42 +13,42 @@ export const NETWORK_DEPOSIT_ADDRESSES: Record<SupportedNetwork, string> = {
   // ========================================
   // EVM-Compatible Networks (L1 & L2)
   // ========================================
-  // Each EVM network has its own unique Coinbase Prime address
-  ETHEREUM: '0x8e58A3E8835A90EcF53c14C153cCE3aaC44B8113', // CB Prime Ethereum wallet (ndao.eth)
-  POLYGON: '0x3F5a6f6Ce9Dd9e1098f279Eb0aF00aFF317b3d66', // CB Prime Polygon wallet
-  ARBITRUM: '0xE6cBea18f60CE40D699bF39Dd41f240EdcCdf0a4', // CB Prime Arbitrum wallet
-  BASE: '0x8e58A3E8835A90EcF53c14C153cCE3aaC44B8113', // CB Prime Base wallet (ndao.eth - ETH is reserve asset)
-  OPTIMISM: '0xc99970500ae222E95168483155D6Ec0d1FbC2B69', // CB Prime Optimism wallet
-  ZORA: '0xd7A20776F36d7B19F4F5f53B1305aD832A07bf4C', // CB Prime Zora wallet
-  AVALANCHE: '0x7e707c8d5dc65d80162c0a7fb02c634306952385', // CB Prime Avalanche C-Chain wallet
-  ETHEREUM_CLASSIC: '0x6Eca26A6337b1069d3865F54158fA5Bf675C3d37', // CB Prime Ethereum Classic wallet
+  // Trading Balance wallet addresses from Coinbase Prime
+  ETHEREUM: '0xa22d566f52b303049d27a7169ed17a925b3fdb5e', // CB Prime ETH Trading Balance
+  POLYGON: '0x11362ec5cc119448225abbbb1c9c67e22e776cdd', // CB Prime POL Trading Balance
+  ARBITRUM: '0x6931a51e15763C4d8da468cbF7C51323d96F2e80', // CB Prime ARB Trading Balance
+  BASE: '0xa22d566f52b303049d27a7169ed17a925b3fdb5e', // CB Prime Base (same as ETH - ETH is reserve asset)
+  OPTIMISM: '0xE006aBC90950DB9a81A3812502D0b031FaAf28D8', // CB Prime OP Trading Balance
+  ZORA: '0x407506929b5C58992987609539a1D424f2305Cc3', // CB Prime ZORA Trading Balance
+  AVALANCHE: '0x2063115a37f55c19cA60b9d1eca2378De00CD79b', // CB Prime AVAX Trading Balance
+  ETHEREUM_CLASSIC: '0x269285683a921dbce6fcb21513b06998f8fbbc99', // CB Prime ETC Trading Balance
 
   // ========================================
   // Bitcoin-like Networks
   // ========================================
-  BITCOIN: '3NJ48qerB4sWE8qEF1bRzk7jXKh8AJnbBC', // CB Prime Bitcoin wallet
-  BITCOIN_CASH: 'qrja4dr6kjtrrjae2y7jals4jc8up0assspl39fekq', // CB Prime Bitcoin Cash wallet
-  LITECOIN: 'MEDGZCJWX8X1Njy5uRfvGwdi2QxaMNQYad', // CB Prime Litecoin wallet
-  DOGECOIN: 'DC77W64uHRkkmvDwusq2tfEjqBQwch1W7s', // CB Prime Dogecoin wallet
+  BITCOIN: '3NJ48qerB4sWE8qEF1bRzk7jXKh8AJnbBC', // CB Prime BTC Trading Balance
+  BITCOIN_CASH: 'qqqg0e4qs9h6j6z8t53kwmjukwksmkzphvtsfv3j2q', // CB Prime BCH Trading Balance
+  LITECOIN: 'MQNay3B5gRq4o7nHuTJf9LpFkDmxhmockK', // CB Prime LTC Trading Balance
+  DOGECOIN: 'DUGnpFtJGnmmGzFMBoEgSw5nPgRfSzYHF7', // CB Prime DOGE Trading Balance
 
   // ========================================
   // Other Layer 1 Networks
   // ========================================
-  SOLANA: 'DPsUYCziRFjW8dcvitvtrJJfxbPUb1X7Ty8ybn3hRwM1', // CB Prime Solana wallet
-  CARDANO: 'addr1v9fu7mgyyyh63v7kqn57t7nadvv76n2cgjlg7l0r974nj9st03emv', // CB Prime Cardano wallet
-  TEZOS: 'tz1WiBmPs9ZLsvuiS92cxZQjikxEo9Dsv7eh', // CB Prime Tezos wallet
+  SOLANA: 'DPsUYCziRFjW8dcvitvtrJJfxbPUb1X7Ty8ybn3hRwM1', // CB Prime SOL Trading Balance
+  CARDANO: 'addr1vydgw0ruk6q78vl0f26q6zxtssfnh2thxzgqvvthe8je56crgtapt', // CB Prime ADA Trading Balance
+  TEZOS: 'tz1P4FJEdVTEEG5TRREFavjQthzsJuESiCRV', // CB Prime XTZ Trading Balance
 
   // ========================================
   // Networks Requiring Memos
   // ========================================
-  STELLAR: 'GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37', // CB Prime Stellar wallet + memo
-  XRP: 'rn7d8bZhsdz9ecf586XsvbmVePfxYGrs34', // CB Prime XRP wallet + destination tag
-  HEDERA: '0.0.1133968', // CB Prime Hedera account ID + memo
+  STELLAR: 'GB4SJVA7KAFDZJFVTSEV2YWZZA3VEANHHK3WSJRHO2XS2GDYJCGWKDB5', // CB Prime XLM Trading Balance + memo
+  XRP: 'rn7d8bZhsdz9ecf586XsvbmVePfxYGrs34', // CB Prime XRP Trading Balance + destination tag
+  HEDERA: '0.0.5006230', // CB Prime HBAR Trading Balance + memo
 
   // ========================================
   // Additional Networks
   // ========================================
-  SUI: '0x5e4072e696853d1d9c7b478c68a5d97f32ac35524e9dee3cf1022bc022e59c9a', // CB Prime Sui wallet
+  SUI: '0xfb44ad61588e5094d617851c759e35dc72720267b5464eb95284c6d5a1945ce2', // CB Prime SUI Trading Balance
   TONCOIN: 'PLACEHOLDER_CB_PRIME_TON', // 📝 Need: CB Prime Toncoin address
 }
 
@@ -58,9 +58,9 @@ export const NETWORK_DEPOSIT_ADDRESSES: Record<SupportedNetwork, string> = {
  * Reference: https://robinhood.com/us/en/support/articles/crypto-transfers/
  */
 export const NETWORK_ADDRESS_TAGS: Partial<Record<SupportedNetwork, string>> = {
-  STELLAR: '4212863649', // CB Prime Stellar memo
-  XRP: '2237695492', // CB Prime XRP destination tag
-  HEDERA: '2364220028', // CB Prime Hedera memo
+  STELLAR: '1380611530', // CB Prime Stellar memo (Trading Balance)
+  XRP: '2237695492', // CB Prime XRP destination tag (Trading Balance)
+  HEDERA: '904278439', // CB Prime Hedera memo (Trading Balance)
 }
 
 /**
