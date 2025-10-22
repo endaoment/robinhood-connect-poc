@@ -1,4 +1,5 @@
 import type { DepositAddressResponse, OrderStatusResponse } from '@/types/robinhood'
+import { getAssetDepositAddress, isAssetSupported } from './robinhood-asset-addresses'
 
 // Custom error class for Robinhood API errors
 class RobinhoodAPIError extends Error {
@@ -25,8 +26,10 @@ function validateEnvironmentVariables() {
 
 /**
  * Redeem deposit address from Robinhood using referenceId
+ * This endpoint is called by Robinhood AFTER the user selects an asset
+ * We return OUR wallet address based on the asset they selected
  * @param referenceId - UUID v4 generated during offramp initiation
- * @returns Promise<DepositAddressResponse>
+ * @returns Promise<DepositAddressResponse> with our wallet address
  */
 export async function redeemDepositAddress(referenceId: string): Promise<DepositAddressResponse> {
   validateEnvironmentVariables()
@@ -92,20 +95,38 @@ export async function redeemDepositAddress(referenceId: string): Promise<Deposit
     }
 
     const responseData = await response.json()
-    console.log('  ✅ [HTTP] Success response:')
+    console.log('  ✅ [HTTP] Success response from Robinhood:')
     console.log(JSON.stringify(responseData, null, 2))
 
     // Validate response structure
-    if (!responseData.address || !responseData.assetCode || !responseData.networkCode) {
+    if (!responseData.assetCode || !responseData.networkCode) {
       console.error('  ❌ [VALIDATION] Invalid response format - missing required fields')
       throw new RobinhoodAPIError('Invalid response format from Robinhood API', 'INVALID_RESPONSE_FORMAT')
     }
 
     console.log('  ✓ [VALIDATION] Response format valid')
+    console.log(`  📦 [ASSET] User selected: ${responseData.assetCode} on ${responseData.networkCode}`)
 
+    // Get OUR wallet address for the selected asset
+    if (!isAssetSupported(responseData.assetCode)) {
+      console.error(`  ❌ [UNSUPPORTED] Asset ${responseData.assetCode} is not supported`)
+      throw new RobinhoodAPIError(
+        `Asset ${responseData.assetCode} is not supported for transfers`,
+        'UNSUPPORTED_ASSET',
+      )
+    }
+
+    const ourWalletInfo = getAssetDepositAddress(responseData.assetCode)
+    console.log(`  🏦 [WALLET] Using our wallet address:`)
+    console.log(`     Address: ${ourWalletInfo.address}`)
+    if (ourWalletInfo.memo) {
+      console.log(`     Memo: ${ourWalletInfo.memo}`)
+    }
+
+    // Return OUR wallet address instead of Robinhood's
     return {
-      address: responseData.address,
-      addressTag: responseData.addressTag,
+      address: ourWalletInfo.address,
+      addressTag: ourWalletInfo.memo, // Some networks use memos (XLM, XRP, HBAR)
       assetCode: responseData.assetCode,
       assetAmount: responseData.assetAmount,
       networkCode: responseData.networkCode,

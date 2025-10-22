@@ -140,57 +140,111 @@ export function getSupportedAssets(): string[] {
 }
 
 /**
- * Get list of unique networks for all supported assets
- * @returns Array of network names
+ * Networks officially supported by Robinhood Connect offramp
+ * Source: Robinhood Connect API documentation (confirmed Oct 22, 2025)
+ */
+const ROBINHOOD_CONNECT_SUPPORTED_NETWORKS = [
+  'AVALANCHE',
+  'BITCOIN',
+  'BITCOIN_CASH',
+  'DOGECOIN',
+  'ETHEREUM',
+  'ETHEREUM_CLASSIC',
+  'LITECOIN',
+  'POLYGON',
+  'SOLANA',
+  'STELLAR',
+  'TEZOS',
+] as const
+
+/**
+ * Get list of networks supported by Robinhood Connect offramp
+ * Only returns the 11 officially supported networks (confirmed Oct 22, 2025)
+ * @returns Array of network names supported by Robinhood Connect
  */
 export function getSupportedNetworks(): string[] {
-  const networks = new Set<string>()
+  return [...ROBINHOOD_CONNECT_SUPPORTED_NETWORKS]
+}
 
-  // Map assets to their primary networks
-  const assetToNetwork: Record<string, string> = {
-    BTC: 'BITCOIN',
-    BCH: 'BITCOIN_CASH',
-    LTC: 'LITECOIN',
-    DOGE: 'DOGECOIN',
-    ETH: 'ETHEREUM',
-    ETC: 'ETHEREUM_CLASSIC',
-    ARB: 'ARBITRUM',
-    OP: 'OPTIMISM',
-    ZORA: 'ZORA',
-    AVAX: 'AVALANCHE',
-    SOL: 'SOLANA',
-    BONK: 'SOLANA',
-    MOODENG: 'SOLANA',
-    ADA: 'CARDANO',
-    XRP: 'XRP',
-    XLM: 'STELLAR',
-    SUI: 'SUI',
-    XTZ: 'TEZOS',
-    HBAR: 'HEDERA',
-    // ERC-20 tokens on Ethereum
-    AAVE: 'ETHEREUM',
-    LINK: 'ETHEREUM',
-    COMP: 'ETHEREUM',
-    CRV: 'ETHEREUM',
-    UNI: 'ETHEREUM',
-    ONDO: 'ETHEREUM',
-    USDC: 'ETHEREUM',
-    SHIB: 'ETHEREUM',
-    PEPE: 'ETHEREUM',
-    FLOKI: 'ETHEREUM',
-    TRUMP: 'ETHEREUM',
-    VIRTUAL: 'ETHEREUM',
-    WLFI: 'ETHEREUM',
-  }
+/**
+ * Map assets to their networks
+ */
+const ASSET_NETWORK_MAP: Record<string, string> = {
+  // Supported networks
+  BTC: 'BITCOIN',
+  BCH: 'BITCOIN_CASH',
+  LTC: 'LITECOIN',
+  DOGE: 'DOGECOIN',
+  ETH: 'ETHEREUM',
+  ETC: 'ETHEREUM_CLASSIC',
+  AVAX: 'AVALANCHE',
+  MATIC: 'POLYGON',
+  SOL: 'SOLANA',
+  BONK: 'SOLANA',
+  MOODENG: 'SOLANA',
+  XLM: 'STELLAR',
+  XTZ: 'TEZOS',
 
-  Object.keys(ROBINHOOD_ASSET_ADDRESSES).forEach((assetCode) => {
-    const network = assetToNetwork[assetCode]
-    if (network) {
-      networks.add(network)
+  // Unsupported networks (have addresses but not in Connect)
+  ARB: 'ARBITRUM',
+  OP: 'OPTIMISM',
+  ZORA: 'ZORA',
+  ADA: 'CARDANO',
+  SUI: 'SUI',
+  HBAR: 'HEDERA',
+  XRP: 'XRP',
+
+  // ERC-20 tokens on Ethereum (supported)
+  AAVE: 'ETHEREUM',
+  LINK: 'ETHEREUM',
+  COMP: 'ETHEREUM',
+  CRV: 'ETHEREUM',
+  UNI: 'ETHEREUM',
+  ONDO: 'ETHEREUM',
+  USDC: 'ETHEREUM',
+  SHIB: 'ETHEREUM',
+  PEPE: 'ETHEREUM',
+  FLOKI: 'ETHEREUM',
+  TRUMP: 'ETHEREUM',
+  VIRTUAL: 'ETHEREUM',
+  WLFI: 'ETHEREUM',
+}
+
+/**
+ * Get the network for a specific asset
+ */
+export function getAssetNetwork(assetCode: string): string {
+  return ASSET_NETWORK_MAP[assetCode] || 'ETHEREUM'
+}
+
+/**
+ * Check if an asset is on a Robinhood Connect supported network
+ */
+export function isAssetNetworkSupported(assetCode: string): boolean {
+  const network = getAssetNetwork(assetCode)
+  return ROBINHOOD_CONNECT_SUPPORTED_NETWORKS.includes(network as any)
+}
+
+/**
+ * Get assets grouped by network support status
+ */
+export function getAssetsByNetworkSupport(): {
+  supported: string[]
+  unsupported: string[]
+} {
+  const allAssets = getSupportedAssets()
+  const supported: string[] = []
+  const unsupported: string[] = []
+
+  allAssets.forEach((asset) => {
+    if (isAssetNetworkSupported(asset)) {
+      supported.push(asset)
+    } else {
+      unsupported.push(asset)
     }
   })
 
-  return Array.from(networks).sort()
+  return { supported, unsupported }
 }
 
 /**
@@ -209,4 +263,34 @@ export function validateAssetAddress(assetCode: string): void {
   if (asset.address.includes('PLACEHOLDER') || asset.address.includes('YOUR_')) {
     throw new Error(`Deposit address not properly configured for ${assetCode}`)
   }
+}
+
+/**
+ * Build a mapping of assets to their wallet addresses for Robinhood Connect
+ * This allows the user to select from their balances, and we provide the correct address
+ * @returns Object mapping asset codes to {network, address, memo}
+ */
+export function buildAssetAddressMapping(): Record<
+  string,
+  { network: string; address: string; memo?: string }
+> {
+  const mapping: Record<string, { network: string; address: string; memo?: string }> = {}
+
+  const supportedAssets = getSupportedAssets()
+
+  for (const assetCode of supportedAssets) {
+    // Only include assets on Robinhood Connect supported networks
+    if (isAssetNetworkSupported(assetCode)) {
+      const assetInfo = ROBINHOOD_ASSET_ADDRESSES[assetCode]
+      const network = getAssetNetwork(assetCode)
+
+      mapping[assetCode] = {
+        network,
+        address: assetInfo.address,
+        ...(assetInfo.memo && { memo: assetInfo.memo }),
+      }
+    }
+  }
+
+  return mapping
 }

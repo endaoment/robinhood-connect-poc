@@ -56,11 +56,24 @@ npm run build
 
 ## Files
 
+### Coinbase Prime Integration
+
 - `prime_api_client.py` - Coinbase Prime API wrapper (WORKING ✅)
 - `robinhood-assets-config.json` - All 38 Robinhood assets
 - `generate_prime_wallets.py` - Main wallet generation script
 - `check_api_key.py` - Quick activation checker
 - `test_single_wallet.py` - Single wallet CRUD test
+
+### Robinhood Connect Testing
+
+- `test_url_combinations.py` - Generate test URLs for Robinhood Connect parameters
+  - Tests 15 different URL parameter combinations
+  - Helps find the right approach for no-preselection asset transfers
+  - Outputs to `robinhood_url_test_results.json`
+  - See `../URL-TESTING-TRACKER.md` for testing guide
+
+### Dependencies
+
 - `requirements.txt` - Python dependencies
 
 ## API Key Requirements
@@ -95,7 +108,3 @@ Once `check_api_key.py` passes:
 2. Review the CSV export
 3. Copy TypeScript code to network-addresses.ts
 4. Build and test the Next.js app
-
-
-
-
