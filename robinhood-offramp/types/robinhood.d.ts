@@ -28,6 +28,7 @@ export interface OrderStatusResponse {
   fiatCode: string
   fiatAmount: string
   cryptoAmount: string
+  assetAmount?: string // Optional: some responses include this
   price: string
   processingFee: PriceItem
   paymentMethod: string
@@ -109,4 +110,65 @@ export interface OfframpUrlResponse {
     params: RobinhoodOfframpParams
   }
   error?: string
+}
+
+// Asset Pre-Selection Types
+
+/**
+ * Asset category for grouping in UI
+ */
+export type AssetCategory =
+  | 'layer1' // Bitcoin, Ethereum, etc.
+  | 'layer2' // Polygon, Optimism, Arbitrum
+  | 'stablecoin' // USDC, USDT, DAI
+  | 'defi' // AAVE, UNI, LINK, etc.
+  | 'meme' // DOGE, SHIB
+  | 'other'
+
+/**
+ * Network types for Robinhood Connect
+ */
+export type RobinhoodNetwork = SupportedNetwork
+
+/**
+ * Display metadata for a crypto asset
+ */
+export interface AssetMetadata {
+  /** Asset symbol (e.g., 'ETH', 'BTC') */
+  symbol: string
+
+  /** Full display name (e.g., 'Ethereum', 'Bitcoin') */
+  name: string
+
+  /** Brief description for tooltips */
+  description: string
+
+  /** Network the asset operates on */
+  network: RobinhoodNetwork
+
+  /** Category for UI grouping */
+  category: AssetCategory
+
+  /** Icon reference (filename or URL) */
+  icon: string
+
+  /** Whether this asset is currently enabled for donations */
+  enabled: boolean
+
+  /** Sort order for display (lower = higher priority) */
+  sortOrder: number
+
+  /** Popular assets to show first */
+  isPopular?: boolean
+}
+
+/**
+ * Complete asset configuration including metadata and wallet address
+ */
+export interface AssetConfig extends AssetMetadata {
+  /** Destination wallet address for this asset */
+  walletAddress: string
+
+  /** Optional memo/tag for networks that require it */
+  memo?: string
 }
