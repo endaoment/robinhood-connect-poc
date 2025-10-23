@@ -39,10 +39,10 @@ Transitions the Robinhood Connect integration from a **non-working** multi-asset
 
 | Sub-Plan                              | Status             | Priority | Dependencies   | Est. Time |
 | ------------------------------------- | ------------------ | -------- | -------------- | --------- |
-| **Sub-Plan 1**: Asset Metadata        | 📝 Drafted - Ready | High     | None           | 2-3 hours |
-| **Sub-Plan 2**: Asset Selector UI     | 📝 Drafted - Ready | High     | Sub-Plan 1     | 4-6 hours |
-| **Sub-Plan 3**: Dashboard Integration | 📝 Drafted - Ready | Critical | Sub-Plans 1, 2 | 3-4 hours |
-| **Sub-Plan 4**: URL Builder Refactor  | 📝 Drafted - Ready | Critical | Sub-Plan 3     | 2-3 hours |
+| **Sub-Plan 1**: Asset Metadata        | ✅ Complete        | High     | None           | 2-3 hours |
+| **Sub-Plan 2**: Asset Selector UI     | ✅ Complete        | High     | Sub-Plan 1     | 4-6 hours |
+| **Sub-Plan 3**: Dashboard Integration | ✅ Complete        | Critical | Sub-Plans 1, 2 | 3-4 hours |
+| **Sub-Plan 4**: URL Builder Refactor  | ✅ Complete        | Critical | Sub-Plan 3     | 2-3 hours |
 | **Sub-Plan 5**: Callback Verification | 📝 Drafted - Ready | High     | Sub-Plan 4     | 4-6 hours |
 | **Sub-Plan 6**: Testing & Docs        | 📝 Drafted - Ready | Medium   | Sub-Plans 1-5  | 2-3 hours |
 
@@ -179,11 +179,14 @@ Day 3:
 
 **Sub-Plan 4: URL Builder Refactor**
 
-- [ ] `buildDaffyStyleOfframpUrl()` function created
-- [ ] Generates correct URL format
-- [ ] Validates asset/network compatibility
-- [ ] Includes all required parameters
-- [ ] Old URL builder code preserved (commented)
+- [x] `buildDaffyStyleOfframpUrl()` function created
+- [x] Generates correct URL format (verified working)
+- [x] Validates asset/network compatibility
+- [x] Includes all required parameters
+- [x] Old URL builder code preserved (marked deprecated)
+- [x] **Integrates with Robinhood connectId API** (CRITICAL)
+- [x] ngrok auto-start script created
+- [x] Tested end-to-end with ETH transfer ✅
 
 **Sub-Plan 5: Callback Verification**
 
