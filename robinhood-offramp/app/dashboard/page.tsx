@@ -1,5 +1,11 @@
 'use client'
 
+import { useState } from 'react'
+import { AssetMetadata } from '@/types/robinhood'
+import { AssetSelector } from '@/components/asset-selector'
+import { AssetIcon } from '@/components/asset-icon'
+import { useAssetSelection } from '@/hooks/use-asset-selection'
+import { FEATURE_FLAGS } from '@/lib/feature-flags'
 import { TransactionHistory } from '@/components/transaction-history'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -8,14 +14,32 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useToast } from '@/hooks/use-toast'
 import { ROBINHOOD_ASSET_ADDRESSES, getSupportedAssets, getSupportedNetworks } from '@/lib/robinhood-asset-addresses'
-import { AlertCircle, Check, CheckCircle2, Copy, ExternalLink, History, Info, Loader2, TrendingUp } from 'lucide-react'
-import { useState } from 'react'
+import {
+  AlertCircle,
+  ArrowLeft,
+  Check,
+  CheckCircle2,
+  Copy,
+  ExternalLink,
+  History,
+  Info,
+  Loader2,
+  TrendingUp,
+} from 'lucide-react'
 
 export default function Dashboard() {
   const { toast } = useToast()
   const [showHistory, setShowHistory] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null)
+
+  // Asset selection state
+  const { selection, selectAsset, clearSelection, isSelected } = useAssetSelection()
+  const [step, setStep] = useState<'select' | 'confirm'>('select')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // Old flow state
+  const [loading, setLoading] = useState(false)
 
   // Get all supported assets and networks
   const supportedAssets = getSupportedAssets()
@@ -34,6 +58,90 @@ export default function Dashboard() {
     setTimeout(() => setCopiedAddress(null), 2000)
   }
 
+  /**
+   * Handle asset selection - NEW FLOW
+   */
+  const handleAssetSelect = (asset: AssetMetadata) => {
+    selectAsset(asset)
+    setStep('confirm')
+    setError(null)
+
+    // Log asset selection
+    console.log('[Analytics] Asset selected:', {
+      symbol: asset.symbol,
+      name: asset.name,
+      network: asset.network,
+      category: asset.category,
+    })
+  }
+
+  /**
+   * Handle going back to selection - NEW FLOW
+   */
+  const handleBack = () => {
+    setStep('select')
+    setError(null)
+  }
+
+  /**
+   * Handle continue to Robinhood - NEW FLOW
+   */
+  const handleContinue = async () => {
+    if (!selection) return
+
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      console.log('[Analytics] Proceeding to Robinhood:', {
+        asset: selection.asset.symbol,
+        network: selection.asset.network,
+      })
+
+      // TODO: Call URL generation API (Sub-Plan 4)
+      // For now, use the old multi-network approach as fallback
+      const response = await fetch('/api/robinhood/generate-offramp-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          supportedNetworks,
+          // In Sub-Plan 4, we'll change this to pass selected asset
+          selectedAsset: selection.asset.symbol,
+          selectedNetwork: selection.asset.network,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to generate offramp URL')
+      }
+
+      // Open Robinhood Connect URL
+      window.open(result.data.url, '_blank')
+
+      toast({
+        title: 'Opening Robinhood...',
+        description: `Transfer ${selection.asset.symbol} from your Robinhood account`,
+      })
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      toast({
+        title: 'Transfer failed',
+        description: errorMessage,
+        variant: 'destructive',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  /**
+   * OLD FLOW - Handle Give with Robinhood button
+   */
   const handleGiveWithRobinhood = async () => {
     const startTime = Date.now()
     console.log('\n' + '='.repeat(80))
@@ -105,284 +213,222 @@ export default function Dashboard() {
     }
   }
 
+  // OLD FLOW (for feature flag fallback)
+  if (!FEATURE_FLAGS.assetPreselection) {
+    return (
+      <div className="flex min-h-screen flex-col bg-zinc-50 p-4 sm:p-8">
+        <div className="container mx-auto max-w-6xl">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-zinc-900">Give Crypto with Robinhood</h1>
+            <p className="text-zinc-600 mt-2">
+              Transfer crypto from your Robinhood account to support causes you care about
+            </p>
+          </div>
+
+          {/* Main Actions Grid */}
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+            {/* Transfer from Robinhood Card */}
+            <Card className="md:col-span-2 lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="text-2xl">One-Click Crypto Giving</CardTitle>
+                <CardDescription>
+                  We support all major blockchain networks. Choose any crypto in your Robinhood account!
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Give with Robinhood Button - Primary CTA */}
+                <Button
+                  onClick={handleGiveWithRobinhood}
+                  disabled={loading}
+                  size="lg"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-lg py-6"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Opening Robinhood...
+                    </>
+                  ) : (
+                    <>
+                      <ExternalLink className="mr-2 h-5 w-5" />
+                      Give with Robinhood
+                    </>
+                  )}
+                </Button>
+
+                {/* Rest of old dashboard content... */}
+                <Alert>
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    <strong>Classic Flow:</strong> Feature flag is OFF. Using multi-network approach.
+                  </AlertDescription>
+                </Alert>
+              </CardContent>
+            </Card>
+
+            {/* Quick Stats Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <TrendingUp className="h-5 w-5 text-blue-600" />
+                  <span>Your Impact</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <div className="text-2xl font-bold text-zinc-900">$0.00</div>
+                  <div className="text-sm text-zinc-500">Total donated</div>
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-zinc-700">0</div>
+                  <div className="text-sm text-zinc-500">Transfers completed</div>
+                </div>
+                <Button variant="outline" size="sm" className="w-full" onClick={() => setShowHistory(true)}>
+                  <History className="mr-2 h-4 w-4" />
+                  View History
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Transaction History Modal */}
+          <TransactionHistory isOpen={showHistory} onClose={() => setShowHistory(false)} />
+        </div>
+      </div>
+    )
+  }
+
+  // NEW FLOW (with asset pre-selection)
   return (
     <div className="flex min-h-screen flex-col bg-zinc-50 p-4 sm:p-8">
-      <div className="container mx-auto max-w-6xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-zinc-900">Give Crypto with Robinhood</h1>
-          <p className="text-zinc-600 mt-2">
-            Transfer crypto from your Robinhood account to support causes you care about
-          </p>
-        </div>
+      <div className="container mx-auto max-w-7xl">
+        <h1 className="text-3xl font-bold mb-2 text-zinc-900">Give Crypto with Robinhood</h1>
+        <p className="text-zinc-600 mb-8">Choose your cryptocurrency and complete your donation</p>
 
-        {/* Main Actions Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-          {/* Transfer from Robinhood Card */}
-          <Card className="md:col-span-2 lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="text-2xl">One-Click Crypto Giving</CardTitle>
-              <CardDescription>
-                We support all major blockchain networks. Choose any crypto in your Robinhood account!
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Give with Robinhood Button - Primary CTA */}
-              <Button
-                onClick={handleGiveWithRobinhood}
-                disabled={loading}
-                size="lg"
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-lg py-6"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Opening Robinhood...
-                  </>
-                ) : (
-                  <>
-                    <ExternalLink className="mr-2 h-5 w-5" />
-                    Give with Robinhood
-                  </>
+        {/* Asset Selection Step */}
+        {step === 'select' && (
+          <div>
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Select Asset to Donate</CardTitle>
+                <CardDescription>
+                  Choose which cryptocurrency you&apos;d like to contribute from your Robinhood account
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AssetSelector selectedAsset={selection?.asset.symbol} onSelect={handleAssetSelect} variant="grid" />
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Confirmation Step */}
+        {step === 'confirm' && selection && (
+          <div>
+            <Button variant="ghost" onClick={handleBack} className="mb-4">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to asset selection
+            </Button>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Ready to Connect Robinhood</CardTitle>
+                <CardDescription>
+                  You&apos;ve selected {selection.asset.name} ({selection.asset.symbol})
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {/* Error Display */}
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 mb-4">
+                    <p className="font-semibold">Error</p>
+                    <p className="text-sm">{error}</p>
+                  </div>
                 )}
-              </Button>
 
-              {/* How it Works */}
-              <Card className="bg-blue-50 border-blue-200">
-                <CardContent className="pt-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                {/* Selected Asset Summary */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                  <div className="flex items-center gap-4">
+                    <AssetIcon symbol={selection.asset.symbol} icon={selection.asset.icon} size={64} />
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold">{selection.asset.name}</h3>
+                      <p className="text-zinc-600">
+                        {selection.asset.symbol} on {selection.asset.network}
+                      </p>
+                      <p className="text-sm text-zinc-600 mt-1">{selection.asset.description}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* What Happens Next */}
+                <div className="mb-6">
+                  <h4 className="font-semibold mb-3">What happens next:</h4>
+                  <ol className="space-y-2 text-sm">
+                    <li className="flex items-start gap-2">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-semibold">
                         1
-                      </div>
-                      <span className="text-sm font-medium text-blue-800">
-                        Click "Give with Robinhood" to open Robinhood
                       </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                      <span>You&apos;ll be redirected to Robinhood to authenticate</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-semibold">
                         2
-                      </div>
-                      <span className="text-sm font-medium text-blue-800">
-                        Choose ANY crypto and amount from your balances
                       </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                      <span>Review and confirm your {selection.asset.symbol} transfer amount</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-semibold">
                         3
-                      </div>
-                      <span className="text-sm font-medium text-blue-800">Return here to complete your donation</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Supported Assets Display */}
-              <Card className="bg-emerald-50 border-emerald-200">
-                <CardContent className="pt-4">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                    <span className="font-medium text-emerald-800">
-                      ✅ Supported Assets ({supportedAssets.length} available)
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {supportedAssets.sort().map((assetCode) => (
-                      <Badge
-                        key={assetCode}
-                        variant="secondary"
-                        className="bg-emerald-100 border-emerald-300 text-emerald-800 font-mono"
-                      >
-                        {assetCode}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Unsupported Assets Display */}
-              {missingAssets.length > 0 && (
-                <Card className="bg-red-50 border-red-200">
-                  <CardContent className="pt-4">
-                    <div className="flex items-center space-x-2 mb-3">
-                      <AlertCircle className="h-5 w-5 text-red-600" />
-                      <span className="font-medium text-red-800">
-                        ❌ Not Yet Supported ({missingAssets.length} assets)
                       </span>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {missingAssets.map((assetCode) => (
-                        <Badge
-                          key={assetCode}
-                          variant="secondary"
-                          className="bg-red-100 border-red-300 text-red-800 font-mono"
-                        >
-                          {assetCode}
-                        </Badge>
-                      ))}
-                    </div>
-                    <p className="text-xs text-red-700 mt-3">
-                      These assets don't have deposit addresses configured yet. Contact support if you need to transfer
-                      these.
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
+                      <span>Complete the transfer in the Robinhood app</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-semibold">
+                        4
+                      </span>
+                      <span>Return here to see your donation confirmed</span>
+                    </li>
+                  </ol>
+                </div>
 
-              {/* Information Alert */}
-              <Alert>
-                <Info className="h-4 w-4" />
-                <AlertDescription>
-                  <strong>Maximum flexibility!</strong> We support {supportedNetworks.length} blockchain networks.
-                  Select any crypto asset you have in Robinhood - we'll provide the correct deposit address
-                  automatically.
-                </AlertDescription>
-              </Alert>
+                {/* Action Buttons */}
+                <div className="flex gap-3">
+                  <Button onClick={handleContinue} size="lg" className="flex-1" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Connecting...
+                      </>
+                    ) : (
+                      'Continue to Robinhood'
+                    )}
+                  </Button>
+                  <Button onClick={handleBack} variant="outline" size="lg" disabled={isLoading}>
+                    Change Asset
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
-              <div className="flex items-center justify-between text-sm text-zinc-600 pt-2">
-                <span>ETH, USDC, BTC, SOL, MATIC, and more</span>
-                <Badge variant="outline">No fees from us</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Stats Card */}
+        {/* Transaction History */}
+        <div className="mt-12">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <TrendingUp className="h-5 w-5 text-blue-600" />
-                <span>Your Impact</span>
-              </CardTitle>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>Your latest crypto transfers and donations</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <div className="text-2xl font-bold text-zinc-900">$0.00</div>
-                <div className="text-sm text-zinc-500">Total donated</div>
+            <CardContent>
+              <div className="text-center py-8 text-zinc-500">
+                <History className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>No transfers yet</p>
+                <p className="text-sm">Select an asset above to start your first donation</p>
               </div>
-              <div>
-                <div className="text-lg font-semibold text-zinc-700">0</div>
-                <div className="text-sm text-zinc-500">Transfers completed</div>
-              </div>
-              <Button variant="outline" size="sm" className="w-full" onClick={() => setShowHistory(true)}>
-                <History className="mr-2 h-4 w-4" />
-                View History
-              </Button>
             </CardContent>
           </Card>
         </div>
-
-        {/* Accepted Assets & Deposit Addresses Table */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Accepted Crypto Assets & Deposit Addresses</CardTitle>
-            <CardDescription>
-              Complete list of all supported tokens across all networks with Coinbase Prime custody addresses
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">Asset</TableHead>
-                    <TableHead className="w-[150px]">Network</TableHead>
-                    <TableHead>Deposit Address</TableHead>
-                    <TableHead className="w-[120px]">Memo/Tag</TableHead>
-                    <TableHead className="w-[80px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {supportedAssets.sort().map((assetCode) => {
-                    const assetInfo = ROBINHOOD_ASSET_ADDRESSES[assetCode]
-                    const address = assetInfo.address
-                    const memo = assetInfo.memo
-                    const isCopied = copiedAddress === address
-
-                    // Determine network from asset code or address
-                    let network = 'ETHEREUM' // Default for most ERC-20 tokens
-                    if (assetCode === 'BTC') network = 'BITCOIN'
-                    else if (assetCode === 'BCH') network = 'BITCOIN_CASH'
-                    else if (assetCode === 'LTC') network = 'LITECOIN'
-                    else if (assetCode === 'DOGE') network = 'DOGECOIN'
-                    else if (assetCode === 'SOL' || assetCode === 'BONK' || assetCode === 'MOODENG') network = 'SOLANA'
-                    else if (assetCode === 'ADA') network = 'CARDANO'
-                    else if (assetCode === 'AVAX') network = 'AVALANCHE'
-                    else if (assetCode === 'XRP') network = 'XRP'
-                    else if (assetCode === 'XLM') network = 'STELLAR'
-                    else if (assetCode === 'SUI') network = 'SUI'
-                    else if (assetCode === 'XTZ') network = 'TEZOS'
-                    else if (assetCode === 'ETC') network = 'ETHEREUM_CLASSIC'
-                    else if (assetCode === 'HBAR') network = 'HEDERA'
-                    else if (assetCode === 'ARB') network = 'ARBITRUM'
-                    else if (assetCode === 'OP') network = 'OPTIMISM'
-                    else if (assetCode === 'ZORA') network = 'ZORA'
-                    else if (assetCode === 'USDC' && address.startsWith('0x11')) network = 'POLYGON'
-                    else if (assetCode === 'USDC' && address.startsWith('0x6')) network = 'ARBITRUM'
-
-                    return (
-                      <TableRow key={assetCode}>
-                        <TableCell className="font-semibold">
-                          <Badge variant="default" className="font-mono">
-                            {assetCode}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="font-mono text-xs">
-                            {network}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="font-mono text-xs max-w-md truncate" title={address}>
-                          {address}
-                        </TableCell>
-                        <TableCell className="font-mono text-xs">
-                          {memo ? (
-                            <Badge variant="secondary" className="text-xs">
-                              {memo}
-                            </Badge>
-                          ) : (
-                            <span className="text-zinc-400">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => copyToClipboard(address, `${assetCode}`)}
-                            className="h-8 w-8 p-0"
-                          >
-                            {isCopied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-            <div className="mt-4 flex items-center gap-2 text-sm text-zinc-600">
-              <Info className="h-4 w-4" />
-              <span>
-                All addresses are Coinbase Prime Trading Balance wallets • Each asset has its own unique deposit address
-                • {supportedAssets.length} assets supported
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Recent Activity */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Your latest crypto transfers and donations</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-8 text-zinc-500">
-              <History className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No transfers yet</p>
-              <p className="text-sm">Click "Give with Robinhood" above to start your first donation</p>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Transaction History Modal */}
