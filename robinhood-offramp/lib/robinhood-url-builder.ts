@@ -1,4 +1,11 @@
-import type { AssetCode, RobinhoodOfframpParams, SupportedNetwork } from '@/types/robinhood'
+import type {
+  AssetCode,
+  DaffyStyleOfframpParams,
+  DaffyStyleOfframpUrlResult,
+  RobinhoodNetwork,
+  RobinhoodOfframpParams,
+  SupportedNetwork,
+} from '@/types/robinhood'
 import { v4 as uuidv4 } from 'uuid'
 
 // Supported networks from Robinhood SDK
@@ -155,8 +162,19 @@ export function storeReferenceId(referenceId: string): void {
 
 /**
  * Build complete offramp URL with all parameters
+ *
+ * @deprecated Use buildDaffyStyleOfframpUrl instead
+ *
+ * This function allows optional asset pre-selection, but testing proved
+ * that pre-selection is REQUIRED for external wallet transfers.
+ *
+ * See: URL-TESTING-TRACKER.md, transfer_no_preselect_results.json
  */
 export function buildOfframpUrl(params: OfframpUrlParams): OfframpUrlResult {
+  console.warn(
+    '[DEPRECATED] buildOfframpUrl without required asset pre-selection. Use buildDaffyStyleOfframpUrl instead.',
+  )
+
   console.log('  🏗️  [BUILD-URL] Starting URL generation')
   console.log(`     Input params: ${JSON.stringify(params, null, 2)}`)
 
@@ -306,8 +324,21 @@ export function buildSimpleOfframpUrl(
 
 /**
  * Build offramp URL for multiple networks (user chooses in Robinhood)
+ *
+ * @deprecated Use buildDaffyStyleOfframpUrl instead
+ *
+ * This multi-network approach does NOT work for external wallet transfers.
+ * Testing showed it redirects to "Sell" flow instead of "Transfer" flow.
+ *
+ * Preserved for reference and potential rollback only.
+ *
+ * See: URL-TESTING-TRACKER.md for test results
  */
 export function buildMultiNetworkOfframpUrl(networks: SupportedNetwork[]): OfframpUrlResult {
+  console.warn(
+    '[DEPRECATED] buildMultiNetworkOfframpUrl does not work for external wallet transfers. Use buildDaffyStyleOfframpUrl instead.',
+  )
+
   return buildOfframpUrl({
     supportedNetworks: networks,
   })
@@ -351,4 +382,253 @@ export function getNetworksForAsset(assetCode: AssetCode): SupportedNetwork[] {
 export function isAssetNetworkCompatible(assetCode: AssetCode, network: SupportedNetwork): boolean {
   const assetsForNetwork = getAssetsForNetwork(network)
   return assetsForNetwork.includes(assetCode)
+}
+
+// ============================================================================
+// DAFFY-STYLE URL BUILDER (PROVEN WORKING FORMAT)
+// ============================================================================
+
+/**
+ * Build Daffy-style offramp URL for Robinhood Connect
+ *
+ * This uses the PROVEN WORKING format from extensive testing (31 URL variations).
+ * Pre-selection of asset is REQUIRED for external wallet transfers.
+ *
+ * Reference: URL-TESTING-TRACKER.md, daffy_style_url_test_results.json
+ *
+ * @param params - Asset, network, and wallet address
+ * @returns Complete URL and metadata
+ *
+ * @example
+ * ```typescript
+ * const result = buildDaffyStyleOfframpUrl({
+ *   asset: 'ETH',
+ *   network: 'ETHEREUM',
+ *   walletAddress: '0xa22d566f52b303049d27a7169ed17a925b3fdb5e'
+ * });
+ *
+ * window.location.href = result.url;
+ * ```
+ */
+export function buildDaffyStyleOfframpUrl(params: DaffyStyleOfframpParams): DaffyStyleOfframpUrlResult {
+  const { asset, network, walletAddress, redirectUrl, connectId } = params
+
+  // Validate required parameters
+  if (!asset || !network || !walletAddress) {
+    throw new Error('Asset, network, and walletAddress are required for Daffy-style offramp URL')
+  }
+
+  // Validate wallet address format (basic check)
+  if (!isValidWalletAddress(walletAddress, network)) {
+    throw new Error(`Invalid wallet address format for network ${network}: ${walletAddress}`)
+  }
+
+  // Generate or use provided connectId
+  const finalConnectId = connectId || uuidv4()
+
+  // Get base URL and redirect URL
+  const baseUrl = getRobinhoodBaseUrl()
+  const finalRedirectUrl = redirectUrl || getDefaultRedirectUrl()
+
+  // Get application ID
+  const applicationId = getRobinhoodApplicationId()
+
+  // Build URL parameters (EXACT format from Daffy's implementation)
+  // Reference: https://robinhood.com/us/en/applink/connect/?applicationId=<ID>&walletAddress=<DESIRED_ADDRESS>&supportedAssets=<PRE_SELECTED_ASSET>&supportedNetworks=<PRE_SELECTED_NETWORK>&connectId=<UUID>&redirectUrl=<REDIRECT_URL>&paymentMethod=crypto_balance
+  const urlParams = new URLSearchParams({
+    applicationId,
+    walletAddress,
+    supportedAssets: asset, // Single asset only
+    supportedNetworks: network, // Single network only
+    connectId: finalConnectId, // UUID for tracking
+    redirectUrl: finalRedirectUrl,
+    paymentMethod: 'crypto_balance', // Required for transfers from Robinhood balance
+  })
+
+  const url = `${baseUrl}?${urlParams.toString()}`
+
+  // Log for debugging (remove in production or use proper logger)
+  console.log('[URL Builder] Generated Daffy-style URL:', {
+    asset,
+    network,
+    connectId: finalConnectId,
+    urlLength: url.length,
+  })
+
+  return {
+    url,
+    connectId: finalConnectId, // Still return for tracking, but not in URL
+    params: {
+      asset,
+      network,
+      walletAddress,
+    },
+  }
+}
+
+/**
+ * Validate wallet address format for given network
+ */
+function isValidWalletAddress(address: string, network: RobinhoodNetwork): boolean {
+  // Basic validation - can be enhanced
+  if (!address || address.length === 0) {
+    return false
+  }
+
+  // Ethereum-based networks (Ethereum, Polygon, Avalanche, etc.)
+  if (
+    network === 'ETHEREUM' ||
+    network === 'POLYGON' ||
+    network === 'AVALANCHE' ||
+    network === 'ARBITRUM' ||
+    network === 'OPTIMISM' ||
+    network === 'BASE' ||
+    network === 'ZORA' ||
+    network === 'ETHEREUM_CLASSIC'
+  ) {
+    // Ethereum address: 0x followed by 40 hex characters
+    return /^0x[a-fA-F0-9]{40}$/.test(address)
+  }
+
+  // Bitcoin
+  if (network === 'BITCOIN') {
+    // Bitcoin addresses are complex, basic check for now
+    return address.length >= 26 && address.length <= 62
+  }
+
+  // Solana
+  if (network === 'SOLANA') {
+    // Solana addresses are base58, typically 32-44 characters
+    return address.length >= 32 && address.length <= 44
+  }
+
+  // Litecoin
+  if (network === 'LITECOIN') {
+    // Litecoin addresses (L, M, or ltc1 prefixes)
+    return address.length >= 26 && address.length <= 62
+  }
+
+  // Dogecoin
+  if (network === 'DOGECOIN') {
+    // Dogecoin addresses start with D
+    return address.startsWith('D') && address.length >= 26 && address.length <= 34
+  }
+
+  // Bitcoin Cash
+  if (network === 'BITCOIN_CASH') {
+    // BCH addresses can be legacy (1) or cashaddr (q)
+    return address.length >= 26 && address.length <= 62
+  }
+
+  // Cardano
+  if (network === 'CARDANO') {
+    // Cardano addresses start with addr1 (Shelley) or are Byron addresses
+    return address.length >= 30 && address.length <= 110
+  }
+
+  // XRP
+  if (network === 'XRP') {
+    // XRP addresses typically start with 'r'
+    return address.startsWith('r') && address.length >= 25 && address.length <= 35
+  }
+
+  // Stellar
+  if (network === 'STELLAR') {
+    // Stellar addresses start with 'G'
+    return address.startsWith('G') && address.length === 56
+  }
+
+  // Hedera
+  if (network === 'HEDERA') {
+    // Hedera addresses in format 0.0.x
+    return /^0\.0\.\d+$/.test(address)
+  }
+
+  // Tezos
+  if (network === 'TEZOS') {
+    // Tezos addresses start with 'tz'
+    return address.startsWith('tz') && address.length >= 30 && address.length <= 40
+  }
+
+  // Sui
+  if (network === 'SUI') {
+    // Sui addresses are 0x followed by 64 hex characters
+    return /^0x[a-fA-F0-9]{64}$/.test(address)
+  }
+
+  // Toncoin
+  if (network === 'TONCOIN') {
+    // Basic validation for Toncoin addresses
+    return address.length >= 30 && address.length <= 60
+  }
+
+  // Default: assume valid (can add more specific validation per network)
+  return true
+}
+
+/**
+ * Get Robinhood Connect base URL
+ * Using the exact format from Daffy's implementation
+ */
+function getRobinhoodBaseUrl(): string {
+  return 'https://robinhood.com/us/en/applink/connect/'
+}
+
+/**
+ * Get default callback/redirect URL
+ */
+function getDefaultRedirectUrl(): string {
+  // Use environment variable or construct from current host
+  if (typeof window !== 'undefined') {
+    const protocol = window.location.protocol
+    const host = window.location.host
+    return `${protocol}//${host}/callback`
+  }
+
+  // Fallback for server-side rendering
+  return process.env.NEXT_PUBLIC_CALLBACK_URL || 'http://localhost:3000/callback'
+}
+
+/**
+ * Get Robinhood application ID
+ */
+function getRobinhoodApplicationId(): string {
+  // Support both new and legacy environment variable names
+  const appId = process.env.NEXT_PUBLIC_ROBINHOOD_APPLICATION_ID || process.env.ROBINHOOD_APP_ID
+
+  if (!appId) {
+    throw new Error('NEXT_PUBLIC_ROBINHOOD_APPLICATION_ID or ROBINHOOD_APP_ID environment variable not set')
+  }
+
+  return appId
+}
+
+/**
+ * Validate asset/network compatibility using metadata
+ *
+ * Ensures the asset can operate on the specified network
+ */
+export function validateAssetNetworkCompatibility(asset: string, network: RobinhoodNetwork): boolean {
+  // Import asset metadata dynamically to avoid circular dependencies
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { getAssetMetadata } = require('./robinhood-asset-metadata')
+    const metadata = getAssetMetadata(asset)
+
+    if (!metadata) {
+      console.warn(`Unknown asset: ${asset}`)
+      return false
+    }
+
+    if (metadata.network !== network) {
+      console.warn(`Asset ${asset} is on network ${metadata.network}, not ${network}`)
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error('Error validating asset/network compatibility:', error)
+    // If metadata is not available, fall back to basic validation
+    return isAssetNetworkCompatible(asset as AssetCode, network)
+  }
 }

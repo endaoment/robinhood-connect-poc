@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3030",
+    "dev:ngrok": "./scripts/start-with-ngrok.sh",
     "build": "next build",
     "start": "next start --port 3030",
     "lint": "next lint"

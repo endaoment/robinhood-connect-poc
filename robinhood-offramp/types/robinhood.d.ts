@@ -172,3 +172,43 @@ export interface AssetConfig extends AssetMetadata {
   /** Optional memo/tag for networks that require it */
   memo?: string
 }
+
+/**
+ * Parameters for Daffy-style offramp URL generation
+ * Uses proven working format from testing
+ * Reference: URL-TESTING-TRACKER.md, daffy_style_url_test_results.json
+ */
+export interface DaffyStyleOfframpParams {
+  /** Asset symbol (e.g., 'ETH', 'BTC') */
+  asset: string
+
+  /** Network for the asset (e.g., 'ETHEREUM', 'BITCOIN') */
+  network: RobinhoodNetwork
+
+  /** Destination wallet address for this asset */
+  walletAddress: string
+
+  /** Optional custom callback URL (defaults to standard callback) */
+  redirectUrl?: string
+
+  /** Optional custom connect ID (defaults to UUID) */
+  connectId?: string
+}
+
+/**
+ * Result of Daffy-style URL generation
+ */
+export interface DaffyStyleOfframpUrlResult {
+  /** Generated URL */
+  url: string
+
+  /** Connect ID used */
+  connectId: string
+
+  /** Parameters used */
+  params: {
+    asset: string
+    network: string
+    walletAddress: string
+  }
+}
