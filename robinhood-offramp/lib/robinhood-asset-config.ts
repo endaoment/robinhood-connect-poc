@@ -1,6 +1,6 @@
 import { AssetConfig } from '@/types/robinhood'
-import { ASSET_METADATA } from './robinhood-asset-metadata'
 import { ROBINHOOD_ASSET_ADDRESSES } from './robinhood-asset-addresses'
+import { ASSET_METADATA } from './robinhood-asset-metadata'
 
 /**
  * Combine asset metadata with wallet addresses to create complete asset configurations
@@ -97,4 +97,3 @@ export function getAssetStats() {
     byCategory: assetsByCategory,
   }
 }
-

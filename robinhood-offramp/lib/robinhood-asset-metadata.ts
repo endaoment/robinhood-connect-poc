@@ -1,4 +1,4 @@
-import { AssetMetadata, AssetCategory, RobinhoodNetwork } from '@/types/robinhood'
+import { AssetCategory, AssetMetadata } from '@/types/robinhood'
 
 /**
  * Display metadata for all supported Robinhood Connect assets
@@ -360,8 +360,7 @@ export function searchAssets(query: string): AssetMetadata[] {
     .filter(
       (asset) =>
         asset.enabled &&
-        (asset.symbol.toLowerCase().includes(lowercaseQuery) ||
-          asset.name.toLowerCase().includes(lowercaseQuery)),
+        (asset.symbol.toLowerCase().includes(lowercaseQuery) || asset.name.toLowerCase().includes(lowercaseQuery)),
     )
     .sort((a, b) => a.sortOrder - b.sortOrder)
 }
@@ -395,4 +394,3 @@ export const CATEGORY_INFO: Record<AssetCategory, { name: string; description: s
     description: 'Additional supported cryptocurrencies',
   },
 }
-

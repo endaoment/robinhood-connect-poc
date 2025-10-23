@@ -4,12 +4,7 @@
  * Run with: npx tsx scripts/validate-asset-config.ts
  */
 
-import {
-  validateAssetConfiguration,
-  getAssetStats,
-  buildAssetConfigs,
-} from '../lib/robinhood-asset-config'
-import { ASSET_METADATA } from '../lib/robinhood-asset-metadata'
+import { buildAssetConfigs, getAssetStats, validateAssetConfiguration } from '../lib/robinhood-asset-config'
 
 console.log('🔍 Validating Asset Configuration...\n')
 
@@ -68,4 +63,3 @@ configs.forEach((config) => {
 console.log('\n' + '━'.repeat(50))
 console.log('✅ Asset Configuration Validation Complete!')
 console.log('━'.repeat(50))
-
