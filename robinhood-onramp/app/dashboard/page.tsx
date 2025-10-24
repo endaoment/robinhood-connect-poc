@@ -1,7 +1,6 @@
 'use client'
 
 import { AssetIcon } from '@/components/asset-icon'
-import { TransactionHistory } from '@/components/transaction-history'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -15,7 +14,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 export default function Dashboard() {
   const { toast } = useToast()
-  const [showHistory, setShowHistory] = useState(false)
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null)
 
   // Asset selection state
@@ -440,9 +438,6 @@ export default function Dashboard() {
           </div>
         )}
       </div>
-
-      {/* Transaction History Modal */}
-      <TransactionHistory isOpen={showHistory} onClose={() => setShowHistory(false)} />
     </div>
   )
 }

@@ -108,7 +108,6 @@ robinhood-onramp/
 │   ├── layout.tsx              # Root layout (no auth required)
 │   └── page.tsx                # Landing page
 ├── components/
-│   ├── transaction-history.tsx # Transfer history viewer
 │   └── ui/                     # shadcn/ui components
 ├── lib/
 │   ├── robinhood-api.ts        # API client functions

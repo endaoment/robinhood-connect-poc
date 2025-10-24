@@ -90,12 +90,6 @@ Backend API endpoints for Robinhood integration.
 - Transaction details display
 - Blockchain explorer integration
 
-#### Transaction History (`transaction-history.tsx`)
-
-- List of all transfers
-- Status badges and metadata
-- Click-through to order status
-
 ### 4. Robinhood API Client (`lib/robinhood-api.ts`)
 
 Backend functions for Robinhood API calls.

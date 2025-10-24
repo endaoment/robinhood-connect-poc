@@ -1,4 +1,13 @@
 // Robinhood Connect API Types
+/**
+ * ID SYSTEM NOTE:
+ *
+ * This codebase uses "connectId" as the standard term throughout.
+ * This is the identifier returned by the Robinhood Connect API (/catpay/v1/connect_id/).
+ *
+ * Important: "referenceId" is used only in Robinhood's OFFRAMP API (separate from onramp).
+ * This project implements ONRAMP only, so we use connectId exclusively.
+ */
 
 export interface DepositAddressResponse {
   address: string
@@ -140,7 +149,11 @@ export interface DaffyStyleOnrampParams {
   /** Optional custom callback URL (defaults to standard callback) */
   redirectUrl?: string
 
-  /** Optional custom connect ID (defaults to UUID) */
+  /**
+   * The Robinhood Connect ID for tracking this transfer.
+   * This is the official Robinhood API identifier returned from /connect_id endpoint.
+   * Optional - will generate UUID if not provided.
+   */
   connectId?: string
 }
 
@@ -151,7 +164,10 @@ export interface DaffyStyleOnrampUrlResult {
   /** Generated URL */
   url: string
 
-  /** Connect ID used */
+  /**
+   * The Robinhood Connect ID used for this transfer.
+   * This ID is used to track the transfer throughout the Robinhood flow.
+   */
   connectId: string
 
   /** Parameters used */

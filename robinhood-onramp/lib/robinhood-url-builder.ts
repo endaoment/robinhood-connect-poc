@@ -88,18 +88,20 @@ export const NETWORK_ASSET_MAP: Record<SupportedNetwork, AssetCode[]> = {
 }
 
 /**
- * Generate a new UUID v4 referenceId for order tracking
+ * Generate a new UUID v4 connectId for order tracking
+ * Note: For onramp, connectId should be obtained from Robinhood API
+ * This is a fallback for testing/development only
  */
-export function generateReferenceId(): string {
+export function generateConnectId(): string {
   return uuidv4()
 }
 
 /**
- * Validate referenceId format (UUID v4)
+ * Validate connectId format (UUID v4)
  */
-export function isValidReferenceId(referenceId: string): boolean {
+export function isValidConnectId(connectId: string): boolean {
   const uuidV4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-  return uuidV4Regex.test(referenceId)
+  return uuidV4Regex.test(connectId)
 }
 
 /**
@@ -168,15 +170,17 @@ export function isAssetNetworkCompatible(assetCode: AssetCode, network: Supporte
  *
  * Reference: URL-TESTING-TRACKER.md, daffy_style_url_test_results.json
  *
- * @param params - Asset, network, and wallet address
- * @returns Complete URL and metadata
+ * @param params - Asset, network, wallet address, and Robinhood connectId
+ * @param params.connectId - The connectId from Robinhood API (/catpay/v1/connect_id/)
+ * @returns Complete URL with connectId for tracking
  *
  * @example
  * ```typescript
  * const result = buildDaffyStyleOnrampUrl({
  *   asset: 'ETH',
  *   network: 'ETHEREUM',
- *   walletAddress: '0xa22d566f52b303049d27a7169ed17a925b3fdb5e'
+ *   walletAddress: '0xa22d566f52b303049d27a7169ed17a925b3fdb5e',
+ *   connectId: 'abc-123-...' // From Robinhood API
  * });
  *
  * window.location.href = result.url;
@@ -195,7 +199,8 @@ export function buildDaffyStyleOnrampUrl(params: DaffyStyleOnrampParams): DaffyS
     throw new Error(`Invalid wallet address format for network ${network}: ${walletAddress}`)
   }
 
-  // Generate or use provided connectId
+  // Use provided connectId (should come from Robinhood API)
+  // Generate UUID only as fallback for testing
   const finalConnectId = connectId || uuidv4()
 
   // Get base URL and redirect URL

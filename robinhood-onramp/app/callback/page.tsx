@@ -169,13 +169,13 @@ function CallbackPageContent() {
           // These were encoded in the redirectUrl when generating the Robinhood link
           const urlAsset = searchParams.get('asset')
           const urlNetwork = searchParams.get('network')
-          const urlReferenceId = searchParams.get('referenceId')
+          const urlConnectId = searchParams.get('connectId')
           const urlTimestamp = searchParams.get('timestamp')
 
           console.log('🔗 [CALLBACK] Transfer data from URL:', {
             asset: urlAsset,
             network: urlNetwork,
-            referenceId: urlReferenceId,
+            connectId: urlConnectId,
             timestamp: urlTimestamp,
           })
 
@@ -226,7 +226,7 @@ function CallbackPageContent() {
           const orderDetails = {
             // IDs from Robinhood callback
             orderId: orderId || '',
-            connectId: connectId || storedConnectId || '',
+            connectId: urlConnectId || connectId || storedConnectId || '',
             depositQuoteId: depositQuoteId || '',
 
             // Transaction details (URL params → API → localStorage priority)
@@ -270,7 +270,7 @@ function CallbackPageContent() {
           depositAddress,
         }))
 
-        // Clean up localStorage (referenceId no longer needed after callback)
+        // Clean up localStorage (connectId no longer needed after callback)
         localStorage.removeItem('robinhood_reference_id')
         localStorage.removeItem('robinhood_selected_asset')
         localStorage.removeItem('robinhood_selected_network')

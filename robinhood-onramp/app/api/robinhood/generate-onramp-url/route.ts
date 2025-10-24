@@ -1,3 +1,14 @@
+/**
+ * Robinhood Connect Onramp URL Generation API
+ *
+ * ID SYSTEM NOTE:
+ * - This API uses "connectId" exclusively (the official Robinhood onramp term)
+ * - connectId is obtained from Robinhood API: POST /catpay/v1/connect_id/
+ * - "referenceId" is only used in Robinhood's separate offramp API
+ *
+ * See: types/robinhood.d.ts for full ID system documentation
+ */
+
 import { getAssetConfig } from '@/lib/robinhood-asset-config'
 import { buildDaffyStyleOnrampUrl, isValidAssetCode, isValidNetwork } from '@/lib/robinhood-url-builder'
 import type { RobinhoodNetwork } from '@/types/robinhood'
@@ -155,7 +166,7 @@ export async function POST(request: Request) {
       const transferData = new URLSearchParams({
         asset: body.selectedAsset,
         network: body.selectedNetwork,
-        referenceId: validConnectId, // Use connectId as referenceId for order status API
+        connectId: validConnectId, // Robinhood Connect ID for tracking
         timestamp: Date.now().toString(),
       })
 
