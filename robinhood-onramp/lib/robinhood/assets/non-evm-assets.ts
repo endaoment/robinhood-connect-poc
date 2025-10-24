@@ -1,68 +1,17 @@
-import { RobinhoodDepositAddress, RobinhoodNonEvmAsset, RobinhoodTokenType } from '../types'
+import { RobinhoodNonEvmAsset, RobinhoodTokenType } from '../types'
 
 /**
- * Non-EVM Asset Definitions
- * Includes: Bitcoin, Solana, Cardano, and other non-Ethereum chains
+ * Non-EVM Asset Metadata (Display Information Only)
+ *
+ * NOTE: Deposit addresses are fetched dynamically from Coinbase Prime
+ * This file only contains static metadata (icons, descriptions, etc.)
+ *
+ * For static fallback addresses, see: non-evm-assets-static.ts
  */
 
 /**
- * Deposit addresses for non-EVM assets
- * Source: Coinbase Prime Trading Balance wallets
- */
-export const NON_EVM_DEPOSIT_ADDRESSES: Record<string, RobinhoodDepositAddress> = {
-  // Bitcoin-like chains
-  BTC: {
-    address: '3NJ48qerB4sWE8qEF1bRzk7jXKh8AJnbBC',
-  },
-  LTC: {
-    address: 'MQNay3B5gRq4o7nHuTJf9LpFkDmxhmockK',
-  },
-  BCH: {
-    address: 'qqqg0e4qs9h6j6z8t53kwmjukwksmkzphvtsfv3j2q',
-  },
-  DOGE: {
-    address: 'DUGnpFtJGnmmGzFMBoEgSw5nPgRfSzYHF7',
-  },
-
-  // Other L1 chains
-  SOL: {
-    address: 'DPsUYCziRFjW8dcvitvtrJJfxbPUb1X7Ty8ybn3hRwM1',
-  },
-  ADA: {
-    address: 'addr1vydgw0ruk6q78vl0f26q6zxtssfnh2thxzgqvvthe8je56crgtapt',
-  },
-  XTZ: {
-    address: 'tz1P4FJEdVTEEG5TRREFavjQthzsJuESiCRV',
-  },
-  SUI: {
-    address: '0xfb44ad61588e5094d617851c759e35dc72720267b5464eb95284c6d5a1945ce2',
-  },
-
-  // Networks with memos
-  XLM: {
-    address: 'GB4SJVA7KAFDZJFVTSEV2YWZZA3VEANHHK3WSJRHO2XS2GDYJCGWKDB5',
-    memo: '1380611530',
-  },
-  XRP: {
-    address: 'rn7d8bZhsdz9ecf586XsvbmVePfxYGrs34',
-    memo: '2237695492',
-  },
-  HBAR: {
-    address: '0.0.5006230',
-    memo: '904278439',
-  },
-
-  // Solana meme coins
-  BONK: {
-    address: 'puNRXZc4qEYWdUjmx68Lcb87DobBpgZQPdTndoS4U5B',
-  },
-  MOODENG: {
-    address: 'Fd4ir2iU6H8kaYvTbAwXmrdjo6JPt7ABo7b5poCTpAsE',
-  },
-}
-
-/**
- * Non-EVM Asset Registry
+ * Non-EVM Asset Metadata Registry
+ * Static display information for each asset
  */
 export const NON_EVM_ASSETS: Record<string, RobinhoodNonEvmAsset> = {
   // Bitcoin
@@ -161,7 +110,7 @@ export const NON_EVM_ASSETS: Record<string, RobinhoodNonEvmAsset> = {
     icon: 'ada.svg',
     logoUrl: 'https://assets.coingecko.com/coins/images/975/small/cardano.png?1547034860',
     decimals: 6,
-    enabled: false, // Disabled: Not in Robinhood Connect supported networks
+    enabled: true, // NOW SUPPORTED: Found in Robinhood Discovery API
     popularity: 65,
     sortOrder: 15,
     type: RobinhoodTokenType.NonEvmToken,
@@ -209,7 +158,7 @@ export const NON_EVM_ASSETS: Record<string, RobinhoodNonEvmAsset> = {
     icon: 'sui.svg',
     logoUrl: 'https://assets.coingecko.com/coins/images/26375/small/sui_asset.jpeg?1727791290',
     decimals: 9,
-    enabled: false, // Disabled: Not in Robinhood Connect supported networks
+    enabled: true, // Enabled: Robinhood supports SUI_NETWORK
     popularity: 50,
     sortOrder: 17,
     type: RobinhoodTokenType.NonEvmToken,
@@ -242,7 +191,7 @@ export const NON_EVM_ASSETS: Record<string, RobinhoodNonEvmAsset> = {
     icon: 'hbar.svg',
     logoUrl: 'https://assets.coingecko.com/coins/images/3688/small/hbar.png?1637045634',
     decimals: 8,
-    enabled: false,
+    enabled: true, // NOW SUPPORTED: Found in Robinhood Discovery API
     popularity: 48,
     sortOrder: 19,
     type: RobinhoodTokenType.NonEvmToken,
@@ -278,6 +227,23 @@ export const NON_EVM_ASSETS: Record<string, RobinhoodNonEvmAsset> = {
     enabled: true,
     popularity: 55,
     sortOrder: 35,
+    type: RobinhoodTokenType.NonEvmToken,
+  },
+
+  // Other Solana tokens
+  TRUMP: {
+    symbol: 'TRUMP',
+    name: 'OFFICIAL TRUMP',
+    description: 'Political-themed Solana token',
+    network: 'SOLANA',
+    nonEvmIdentifier: 'TRUMP',
+    category: 'other',
+    icon: 'trump.svg',
+    logoUrl: 'https://assets.coingecko.com/coins/images/43379/standard/photo_2025-01-18_05-25-12.jpg?1737159150',
+    decimals: 6,
+    enabled: true,
+    popularity: 50,
+    sortOrder: 40,
     type: RobinhoodTokenType.NonEvmToken,
   },
 }

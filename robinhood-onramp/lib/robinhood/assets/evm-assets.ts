@@ -1,93 +1,17 @@
-import { RobinhoodDepositAddress, RobinhoodEvmAsset, RobinhoodTokenType } from '../types'
+import { RobinhoodEvmAsset, RobinhoodTokenType } from '../types'
 
 /**
- * EVM Asset Definitions
- * Includes: Ethereum L1, L2s (Polygon, Arbitrum, etc.), and all ERC-20 tokens
+ * EVM Asset Metadata (Display Information Only)
+ *
+ * NOTE: Deposit addresses are fetched dynamically from Coinbase Prime
+ * This file only contains static metadata (icons, descriptions, etc.)
+ *
+ * For static fallback addresses, see: evm-assets-static.ts
  */
 
 /**
- * Deposit addresses for EVM assets
- * Source: Coinbase Prime Trading Balance wallets
- */
-export const EVM_DEPOSIT_ADDRESSES: Record<string, RobinhoodDepositAddress> = {
-  // Native assets
-  ETH: {
-    address: '0xa22d566f52b303049d27a7169ed17a925b3fdb5e',
-  },
-  AVAX: {
-    address: '0x2063115a37f55c19cA60b9d1eca2378De00CD79b',
-  },
-  ETC: {
-    address: '0x269285683a921dbce6fcb21513b06998f8fbbc99',
-  },
-
-  // Layer 2 - Currently disabled (no Robinhood Connect support)
-  ARB: {
-    address: '0x6931a51e15763C4d8da468cbF7C51323d96F2e80',
-  },
-  OP: {
-    address: '0xE006aBC90950DB9a81A3812502D0b031FaAf28D8',
-  },
-  ZORA: {
-    address: '0x407506929b5C58992987609539a1D424f2305Cc3',
-  },
-  MATIC: {
-    address: '0x11362ec5cc119448225abbbb1c9c67e22e776cdd',
-  },
-
-  // Stablecoins
-  USDC: {
-    address: '0xd71a079cb64480334ffb400f017a0dde94f553dd',
-  },
-
-  // DeFi tokens
-  AAVE: {
-    address: '0x0788702c7d70914f34b82fb6ad0b405263a00486',
-  },
-  LINK: {
-    address: '0xcf26c0f23e566b42251bc0cf680c8999def1d7f0',
-  },
-  COMP: {
-    address: '0x944bff154f0486b6c834c5607978b45ffc264902',
-  },
-  CRV: {
-    address: '0xe2efa30cca6b06e4436c0f25f2d0409407ac3a4d',
-  },
-  UNI: {
-    address: '0x396b24e9137befef326af9fdba92d95dd124d5d4',
-  },
-  ONDO: {
-    address: '0x894f85323110a0a8883b22b18f26864882c3c63e',
-  },
-
-  // Meme coins
-  SHIB: {
-    address: '0x263dcd3e749b1f00c3998b5a0f14e3255658803b',
-  },
-  PEPE: {
-    address: '0x9D5025B327E6B863E5050141C987d988c07fd8B2',
-    note: 'Fallback address',
-  },
-  FLOKI: {
-    address: '0x9D5025B327E6B863E5050141C987d988c07fd8B2',
-    note: 'Fallback address',
-  },
-  TRUMP: {
-    address: '0x9D5025B327E6B863E5050141C987d988c07fd8B2',
-    note: 'Fallback address',
-  },
-  VIRTUAL: {
-    address: '0x9D5025B327E6B863E5050141C987d988c07fd8B2',
-    note: 'Fallback address',
-  },
-  WLFI: {
-    address: '0x9D5025B327E6B863E5050141C987d988c07fd8B2',
-    note: 'Fallback address',
-  },
-}
-
-/**
- * EVM Asset Registry
+ * EVM Asset Metadata Registry
+ * Static display information for each asset
  */
 export const EVM_ASSETS: Record<string, RobinhoodEvmAsset> = {
   ETH: {
@@ -139,7 +63,7 @@ export const EVM_ASSETS: Record<string, RobinhoodEvmAsset> = {
     type: RobinhoodTokenType.EvmToken,
   },
 
-  // Layer 2 - Currently disabled (no wallet addresses configured)
+  // Layer 2 - Enabled if Robinhood supports
   MATIC: {
     symbol: 'MATIC',
     name: 'Polygon',
@@ -150,9 +74,57 @@ export const EVM_ASSETS: Record<string, RobinhoodEvmAsset> = {
     icon: 'matic.svg',
     logoUrl: 'https://assets.coingecko.com/coins/images/4713/small/polygon.png?1698233684',
     decimals: 18,
-    enabled: false, // Disabled: No Robinhood Connect support
+    enabled: true,
     popularity: 75,
     sortOrder: 11,
+    type: RobinhoodTokenType.EvmToken,
+  },
+
+  ARB: {
+    symbol: 'ARB',
+    name: 'Arbitrum',
+    description: 'Ethereum Layer 2 scaling solution',
+    network: 'ARBITRUM',
+    chainId: 42161,
+    category: 'layer2',
+    icon: 'arb.svg',
+    logoUrl: 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg?1680097630',
+    decimals: 18,
+    enabled: true,
+    popularity: 70,
+    sortOrder: 12,
+    type: RobinhoodTokenType.EvmToken,
+  },
+
+  OP: {
+    symbol: 'OP',
+    name: 'Optimism',
+    description: 'Ethereum Layer 2 optimistic rollup',
+    network: 'OPTIMISM',
+    chainId: 10,
+    category: 'layer2',
+    icon: 'op.svg',
+    logoUrl: 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png?1660904599',
+    decimals: 18,
+    enabled: true,
+    popularity: 68,
+    sortOrder: 13,
+    type: RobinhoodTokenType.EvmToken,
+  },
+
+  ZORA: {
+    symbol: 'ZORA',
+    name: 'Zora',
+    description: 'NFT marketplace and Layer 2 network',
+    network: 'ZORA',
+    chainId: 7777777,
+    category: 'layer2',
+    icon: 'zora.svg',
+    logoUrl: 'https://assets.coingecko.com/coins/images/34782/small/zora.png?1706002107',
+    decimals: 18,
+    enabled: true,
+    popularity: 45,
+    sortOrder: 14,
     type: RobinhoodTokenType.EvmToken,
   },
 
@@ -327,23 +299,6 @@ export const EVM_ASSETS: Record<string, RobinhoodEvmAsset> = {
     enabled: true,
     popularity: 55,
     sortOrder: 33,
-    type: RobinhoodTokenType.EvmToken,
-  },
-
-  // Other Tokens
-  TRUMP: {
-    symbol: 'TRUMP',
-    name: 'OFFICIAL TRUMP',
-    description: 'Political-themed cryptocurrency',
-    network: 'ETHEREUM',
-    chainId: 1,
-    category: 'other',
-    icon: 'trump.svg',
-    logoUrl: 'https://assets.coingecko.com/coins/images/43379/standard/photo_2025-01-18_05-25-12.jpg?1737159150',
-    decimals: 18,
-    enabled: true,
-    popularity: 50,
-    sortOrder: 40,
     type: RobinhoodTokenType.EvmToken,
   },
 

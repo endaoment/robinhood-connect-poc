@@ -6,13 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useAssetSelection } from '@/hooks/use-asset-selection'
 import { useToast } from '@/hooks/use-toast'
-import {
-  getAssetConfig,
-  getEnabledAssets,
-  getSupportedNetworks,
-  searchAssets,
-  type RobinhoodAssetConfig,
-} from '@/lib/robinhood'
+import { getAssetConfig, getEnabledAssets, searchAssets, type RobinhoodAssetConfig } from '@/lib/robinhood'
 import { ChevronDown, ExternalLink, Loader2, Search, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -30,9 +24,6 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
-
-  // Get all supported networks
-  const supportedNetworks = getSupportedNetworks()
 
   // Missing assets (hardcoded for now since export isn't working)
   const missingAssets = ['MEW', 'PENGU', 'PNUT', 'POPCAT', 'WIF', 'TON']
@@ -346,16 +337,15 @@ export default function Dashboard() {
         network: selection.asset.network,
       })
 
-      // TODO: Call URL generation API (Sub-Plan 4)
-      // For now, use the old multi-network approach as fallback
+      // Generate Robinhood onramp URL for the selected asset
       const response = await fetch('/api/robinhood/generate-onramp-url', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          supportedNetworks,
-          // In Sub-Plan 4, we'll change this to pass selected asset
+          // Only send the specific network for this asset (not all networks)
+          supportedNetworks: [selection.asset.network],
           selectedAsset: selection.asset.symbol,
           selectedNetwork: selection.asset.network,
         }),

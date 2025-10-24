@@ -19,9 +19,8 @@ export {
   getEnabledAssets,
   getFeaturedAssets,
   validateAssetRegistry,
-  assetToOtcToken,
-  getOtcTokens,
-  getOtcTokenMap,
+  isRegistryReady,
+  initializeAssetRegistry,
 } from "./assets/registry";
 
 // Asset Helpers

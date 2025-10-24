@@ -29,20 +29,27 @@ export const ALL_ROBINHOOD_NETWORKS: readonly RobinhoodNetwork[] = [
 
 /**
  * Networks officially supported by Robinhood Connect onramp API
- * (Subset of ALL_ROBINHOOD_NETWORKS confirmed via API documentation)
+ * Updated based on actual Discovery API results
  */
 export const ROBINHOOD_CONNECT_SUPPORTED_NETWORKS: readonly RobinhoodNetwork[] = [
-  'AVALANCHE',
-  'BITCOIN',
-  'BITCOIN_CASH',
-  'DOGECOIN',
-  'ETHEREUM',
-  'ETHEREUM_CLASSIC',
-  'LITECOIN',
-  'POLYGON',
-  'SOLANA',
-  'STELLAR',
-  'TEZOS',
+  'ARBITRUM', // Layer 2
+  'AVALANCHE', // Layer 1
+  'BASE', // Layer 2
+  'BITCOIN', // Layer 1
+  'BITCOIN_CASH', // Layer 1
+  'CARDANO', // Layer 1
+  'DOGECOIN', // Layer 1
+  'ETHEREUM', // Layer 1
+  'ETHEREUM_CLASSIC', // Layer 1
+  'LITECOIN', // Layer 1
+  'OPTIMISM', // Layer 2
+  'POLYGON', // Layer 2
+  'SOLANA', // Layer 1
+  'STELLAR', // Layer 1
+  'SUI', // Layer 1
+  'TEZOS', // Layer 1
+  'TONCOIN', // Layer 1
+  'ZORA', // Layer 2
 ] as const
 
 /**

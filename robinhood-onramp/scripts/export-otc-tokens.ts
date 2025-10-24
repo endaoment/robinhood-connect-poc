@@ -14,13 +14,29 @@
 
 import * as fs from 'fs'
 import * as path from 'path'
-import { getOtcTokens } from '../lib/robinhood'
+import {
+  initializeAssetRegistry,
+  getAssetRegistry,
+} from '../lib/robinhood/assets/registry'
 
-function main() {
+async function main() {
   console.log('🚀 Exporting Robinhood Connect assets as OTC tokens...\n')
 
-  // Get all OTC tokens
-  const otcTokens = getOtcTokens()
+  // Initialize dynamic registry
+  console.log('📡 Fetching latest assets from Robinhood API...')
+  await initializeAssetRegistry({ useDynamic: true, serverSide: true })
+
+  // Get all enabled assets
+  const registry = getAssetRegistry()
+  const otcTokens = Object.values(registry)
+    .filter((asset) => asset.enabled)
+    .map((asset) => ({
+      address: asset.depositAddress.address,
+      symbol: asset.symbol,
+      name: asset.name,
+      memo: asset.depositAddress.memo || null,
+      logoUrl: asset.icon ? `/assets/crypto-icons/${asset.icon}` : null,
+    }))
 
   console.log(`✅ Found ${otcTokens.length} enabled assets\n`)
 
@@ -81,5 +97,8 @@ function formatAsTypescriptArray(tokens: readonly any[]): string {
 
 // Run if called directly
 if (require.main === module) {
-  main()
+  main().catch((error) => {
+    console.error('❌ Error:', error)
+    process.exit(1)
+  })
 }
