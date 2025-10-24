@@ -1,6 +1,6 @@
 import { getAssetConfig } from '@/lib/robinhood-asset-config'
-import { buildDaffyStyleOnrampUrl, buildOnrampUrl, isValidAssetCode, isValidNetwork } from '@/lib/robinhood-url-builder'
-import type { AssetCode, RobinhoodNetwork, SupportedNetwork } from '@/types/robinhood'
+import { buildDaffyStyleOnrampUrl, isValidAssetCode, isValidNetwork } from '@/lib/robinhood-url-builder'
+import type { RobinhoodNetwork } from '@/types/robinhood'
 import { NextResponse } from 'next/server'
 
 interface GenerateUrlRequest {
@@ -81,123 +81,109 @@ export async function POST(request: Request) {
       console.log(`✓ [VALIDATION] Asset code valid: ${body.assetCode}`)
     }
 
-    // Build URL - Use Daffy-style if asset pre-selection is provided
+    // Build URL - Daffy-style with asset pre-selection
     console.log('🔨 [BUILD-URL] Generating Robinhood onramp URL...')
 
-    let result: { url: string; referenceId?: string; connectId?: string; params: any }
-
-    // NEW FLOW: Daffy-style URL with asset pre-selection (Sub-Plan 4)
-    if (body.selectedAsset && body.selectedNetwork) {
-      console.log('   ✨ Using Daffy-style URL builder (asset pre-selected)')
-      console.log(`   Asset: ${body.selectedAsset}, Network: ${body.selectedNetwork}`)
-
-      try {
-        // Get asset configuration including wallet address
-        const assetConfig = getAssetConfig(body.selectedAsset)
-
-        if (!assetConfig) {
-          throw new Error(`Asset configuration not found for: ${body.selectedAsset}`)
-        }
-
-        console.log(`   Wallet address: ${assetConfig.walletAddress}`)
-
-        // Get base redirect URL from environment or construct it
-        const baseRedirectUrl =
-          process.env.NEXT_PUBLIC_CALLBACK_URL ||
-          (process.env.APP_URL ? `${process.env.APP_URL}/callback` : 'http://localhost:3030/callback')
-
-        console.log(`   Base redirect URL: ${baseRedirectUrl}`)
-
-        // Step 1: Generate connectId from Robinhood API
-        console.log('   🔑 Calling Robinhood API to generate connectId...')
-        const connectIdResponse = await fetch('https://api.robinhood.com/catpay/v1/connect_id/', {
-          method: 'POST',
-          headers: {
-            'x-api-key': process.env.ROBINHOOD_API_KEY || '',
-            'application-id': process.env.ROBINHOOD_APP_ID || '',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            withdrawal_address: assetConfig.walletAddress,
-            user_identifier: `user_${Date.now()}`, // Unique identifier for this session
-          }),
-        })
-
-        if (!connectIdResponse.ok) {
-          const errorText = await connectIdResponse.text()
-          console.error(`   ❌ Failed to generate connectId: ${connectIdResponse.status}`)
-          console.error(`   Response: ${errorText}`)
-          throw new Error(`Failed to generate connectId from Robinhood: ${connectIdResponse.status}`)
-        }
-
-        const connectIdData = await connectIdResponse.json()
-        const validConnectId = connectIdData.connect_id || connectIdData.connectId
-
-        if (!validConnectId) {
-          console.error(`   ❌ No connectId in response: ${JSON.stringify(connectIdData)}`)
-          throw new Error('No connectId returned from Robinhood API')
-        }
-
-        console.log(`   ✅ Valid connectId received: ${validConnectId}`)
-
-        // Step 2: Encode transfer details + connectId into redirect URL
-        // This ensures data survives the Robinhood roundtrip
-        const transferData = new URLSearchParams({
-          asset: body.selectedAsset,
-          network: body.selectedNetwork,
-          referenceId: validConnectId, // Use connectId as referenceId for order status API
-          timestamp: Date.now().toString(),
-        })
-
-        const redirectUrl = `${baseRedirectUrl}?${transferData.toString()}`
-        console.log(`   Full redirect URL with transfer data: ${redirectUrl}`)
-
-        // Step 3: Generate Daffy-style URL with the valid connectId
-        const daffyResult = buildDaffyStyleOnrampUrl({
-          asset: body.selectedAsset,
-          network: body.selectedNetwork as RobinhoodNetwork,
-          walletAddress: assetConfig.walletAddress,
-          redirectUrl: redirectUrl,
-          connectId: validConnectId, // Use the real connectId from Robinhood
-        })
-
-        result = {
-          url: daffyResult.url,
-          connectId: daffyResult.connectId,
-          referenceId: daffyResult.connectId, // Use connectId as referenceId for order tracking
-          params: daffyResult.params,
-        }
-
-        console.log('✅ [BUILD-URL] Daffy-style URL generated successfully')
-        console.log(`   🆔 Connect ID: ${daffyResult.connectId}`)
-        console.log(`   🔗 FULL URL:\n${daffyResult.url}`)
-        console.log(`   ⚙️  Params: ${JSON.stringify(daffyResult.params)}`)
-      } catch (error: any) {
-        console.error(`❌ [BUILD-URL] Daffy-style URL generation failed: ${error.message}`)
-        throw error
-      }
+    // Validate asset pre-selection is provided (required for external wallet transfers)
+    if (!body.selectedAsset || !body.selectedNetwork) {
+      console.log('❌ [VALIDATION] Asset pre-selection required')
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Asset and network selection required for external wallet transfers',
+        },
+        { status: 400 },
+      )
     }
-    // OLD FLOW: Multi-network URL (deprecated, but kept for backward compatibility)
-    else {
-      console.log('   ⚠️  Using legacy multi-network URL builder (deprecated)')
-      const legacyResult = buildOnrampUrl({
-        supportedNetworks: body.supportedNetworks as SupportedNetwork[],
-        assetCode: body.assetCode as AssetCode,
-        assetAmount: body.assetAmount,
-        fiatCode: body.fiatAmount ? 'USD' : undefined,
-        fiatAmount: body.fiatAmount,
+
+    console.log('   ✨ Using Daffy-style URL builder (asset pre-selected)')
+    console.log(`   Asset: ${body.selectedAsset}, Network: ${body.selectedNetwork}`)
+
+    let result: { url: string; connectId: string; params: any }
+
+    try {
+      // Get asset configuration including wallet address
+      const assetConfig = getAssetConfig(body.selectedAsset)
+
+      if (!assetConfig) {
+        throw new Error(`Asset configuration not found for: ${body.selectedAsset}`)
+      }
+
+      console.log(`   Wallet address: ${assetConfig.walletAddress}`)
+
+      // Get base redirect URL from environment or construct it
+      const baseRedirectUrl =
+        process.env.NEXT_PUBLIC_CALLBACK_URL ||
+        (process.env.APP_URL ? `${process.env.APP_URL}/callback` : 'http://localhost:3030/callback')
+
+      console.log(`   Base redirect URL: ${baseRedirectUrl}`)
+
+      // Step 1: Generate connectId from Robinhood API
+      console.log('   🔑 Calling Robinhood API to generate connectId...')
+      const connectIdResponse = await fetch('https://api.robinhood.com/catpay/v1/connect_id/', {
+        method: 'POST',
+        headers: {
+          'x-api-key': process.env.ROBINHOOD_API_KEY || '',
+          'application-id': process.env.ROBINHOOD_APP_ID || '',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          withdrawal_address: assetConfig.walletAddress,
+          user_identifier: `user_${Date.now()}`, // Unique identifier for this session
+        }),
+      })
+
+      if (!connectIdResponse.ok) {
+        const errorText = await connectIdResponse.text()
+        console.error(`   ❌ Failed to generate connectId: ${connectIdResponse.status}`)
+        console.error(`   Response: ${errorText}`)
+        throw new Error(`Failed to generate connectId from Robinhood: ${connectIdResponse.status}`)
+      }
+
+      const connectIdData = await connectIdResponse.json()
+      const validConnectId = connectIdData.connect_id || connectIdData.connectId
+
+      if (!validConnectId) {
+        console.error(`   ❌ No connectId in response: ${JSON.stringify(connectIdData)}`)
+        throw new Error('No connectId returned from Robinhood API')
+      }
+
+      console.log(`   ✅ Valid connectId received: ${validConnectId}`)
+
+      // Step 2: Encode transfer details + connectId into redirect URL
+      // This ensures data survives the Robinhood roundtrip
+      const transferData = new URLSearchParams({
+        asset: body.selectedAsset,
+        network: body.selectedNetwork,
+        referenceId: validConnectId, // Use connectId as referenceId for order status API
+        timestamp: Date.now().toString(),
+      })
+
+      const redirectUrl = `${baseRedirectUrl}?${transferData.toString()}`
+      console.log(`   Full redirect URL with transfer data: ${redirectUrl}`)
+
+      // Step 3: Generate Daffy-style URL with the valid connectId
+      const daffyResult = buildDaffyStyleOnrampUrl({
+        asset: body.selectedAsset,
+        network: body.selectedNetwork as RobinhoodNetwork,
+        walletAddress: assetConfig.walletAddress,
+        redirectUrl: redirectUrl,
+        connectId: validConnectId, // Use the real connectId from Robinhood
       })
 
       result = {
-        url: legacyResult.url,
-        referenceId: legacyResult.referenceId,
-        params: legacyResult.params,
+        url: daffyResult.url,
+        connectId: daffyResult.connectId,
+        params: daffyResult.params,
       }
 
-      console.log('✅ [BUILD-URL] Legacy URL generated')
-      console.log(`   📋 Reference ID: ${legacyResult.referenceId}`)
-      console.log(`   🔗 URL: ${legacyResult.url.substring(0, 100)}...`)
-      console.log(`   ⚙️  Params: ${JSON.stringify(legacyResult.params)}`)
+      console.log('✅ [BUILD-URL] Daffy-style URL generated successfully')
+      console.log(`   🆔 Connect ID: ${daffyResult.connectId}`)
+      console.log(`   🔗 FULL URL:\n${daffyResult.url}`)
+      console.log(`   ⚙️  Params: ${JSON.stringify(daffyResult.params)}`)
+    } catch (error: any) {
+      console.error(`❌ [BUILD-URL] Daffy-style URL generation failed: ${error.message}`)
+      throw error
     }
 
     const duration = Date.now() - startTime
@@ -208,8 +194,7 @@ export async function POST(request: Request) {
       success: true,
       data: {
         url: result.url,
-        referenceId: result.referenceId || result.connectId, // Support both old and new ID formats
-        connectId: result.connectId, // New Daffy-style ID
+        connectId: result.connectId,
         params: result.params,
       },
     })

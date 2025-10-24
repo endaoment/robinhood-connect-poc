@@ -1,16 +1,5 @@
 // Robinhood Connect API Types
 
-export interface RobinhoodOnrampParams {
-  applicationId: string
-  supportedNetworks: string
-  redirectUrl: string
-  referenceId: string
-  assetCode?: string
-  assetAmount?: string
-  fiatCode?: string
-  fiatAmount?: string
-}
-
 export interface DepositAddressResponse {
   address: string
   addressTag?: string
@@ -71,24 +60,6 @@ export type SupportedNetwork =
 
 // Common asset codes
 export type AssetCode = 'BTC' | 'ETH' | 'USDC' | 'USDT' | 'SOL' | 'MATIC' | 'LTC' | 'DOGE' | 'AVAX' | 'ADA' | string // Allow other asset codes
-
-// Onramp URL Generation Types
-export interface OnrampUrlRequest {
-  supportedNetworks: SupportedNetwork[]
-  assetCode?: AssetCode
-  assetAmount?: string
-  fiatAmount?: string
-}
-
-export interface OnrampUrlResponse {
-  success: boolean
-  data?: {
-    url: string
-    referenceId: string
-    params: RobinhoodOnrampParams
-  }
-  error?: string
-}
 
 // Asset Pre-Selection Types
 
