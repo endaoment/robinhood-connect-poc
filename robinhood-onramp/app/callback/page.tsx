@@ -215,7 +215,11 @@ function CallbackPageContent() {
           // NOTE: Order status API doesn't work for onramp (only offramp)
           // For onramp, we get all the data we need from the callback URL and localStorage
           // The presence of orderId indicates the transfer was initiated successfully
-
+          
+          // IMPORTANT: Robinhood onramp callbacks DO NOT include the transfer amount
+          // The amount is only known from what the user entered in the Robinhood app
+          // We can try to get it from localStorage (if user entered it in our UI),
+          // but it won't be in the callback URL parameters
           const orderAmount = storedAmount || 'Unknown'
           const orderStatus = orderId ? 'COMPLETED' : 'UNKNOWN'
 
@@ -228,40 +232,47 @@ function CallbackPageContent() {
             status: orderStatus,
           })
 
-          // Map to backend pledge format
-          console.log('🔄 [CALLBACK] Mapping to backend pledge format...')
-          const pledgeMappingResult = createPledgeFromCallback(
-            orderId || '',
-            finalAsset,
-            orderAmount,
-            finalNetwork,
-            'fund', // TODO: Get from donation context
-            '00000000-0000-0000-0000-000000000000', // TODO: Get actual fund UUID
-            undefined, // TODO: Get donor name if authenticated
-          )
-
-          console.log('📊 [CALLBACK] Pledge Mapping Result:', {
-            success: pledgeMappingResult.success,
-            hasData: !!pledgeMappingResult.data,
-            errors: pledgeMappingResult.errors,
-            warnings: pledgeMappingResult.warnings,
-          })
-
-          if (pledgeMappingResult.success && pledgeMappingResult.data) {
-            console.log(
-              '✅ [CALLBACK] Backend Pledge Data (CryptoPledgeInput):',
-              JSON.stringify(pledgeMappingResult.data, null, 2),
+          // Map to backend pledge format (only if we have a valid amount)
+          let pledgeMappingResult = null
+          
+          if (orderAmount && orderAmount !== 'Unknown' && orderAmount !== '') {
+            console.log('🔄 [CALLBACK] Mapping to backend pledge format...')
+            pledgeMappingResult = createPledgeFromCallback(
+              orderId || '',
+              finalAsset,
+              orderAmount,
+              finalNetwork,
+              'fund', // TODO: Get from donation context
+              '00000000-0000-0000-0000-000000000000', // TODO: Get actual fund UUID
+              undefined, // TODO: Get donor name if authenticated
             )
 
-            // Validate the pledge input
-            const validation = validatePledgeInput(pledgeMappingResult.data)
-            console.log('🔍 [CALLBACK] Pledge Validation:', {
-              valid: validation.valid,
-              errors: validation.errors,
-              warnings: validation.warnings,
+            console.log('📊 [CALLBACK] Pledge Mapping Result:', {
+              success: pledgeMappingResult.success,
+              hasData: !!pledgeMappingResult.data,
+              errors: pledgeMappingResult.errors,
+              warnings: pledgeMappingResult.warnings,
             })
+
+            if (pledgeMappingResult.success && pledgeMappingResult.data) {
+              console.log(
+                '✅ [CALLBACK] Backend Pledge Data (CryptoPledgeInput):',
+                JSON.stringify(pledgeMappingResult.data, null, 2),
+              )
+
+              // Validate the pledge input
+              const validation = validatePledgeInput(pledgeMappingResult.data)
+              console.log('🔍 [CALLBACK] Pledge Validation:', {
+                valid: validation.valid,
+                errors: validation.errors,
+                warnings: validation.warnings,
+              })
+            } else {
+              console.error('❌ [CALLBACK] Pledge mapping failed:', pledgeMappingResult.errors)
+            }
           } else {
-            console.error('❌ [CALLBACK] Pledge mapping failed:', pledgeMappingResult.errors)
+            console.warn('⚠️ [CALLBACK] Skipping pledge mapping - amount not available from callback')
+            console.warn('   This is expected for Robinhood onramp (amount comes from user input, not callback)')
           }
 
           // Store complete order details for dashboard to display
@@ -281,14 +292,19 @@ function CallbackPageContent() {
             initiatedAt: finalTimestamp ? new Date(parseInt(finalTimestamp)).toISOString() : '',
             completedAt: new Date().toISOString(),
 
-            // Backend pledge data (if mapping succeeded)
-            backendPledge: pledgeMappingResult.success
-              ? {
-                  data: pledgeMappingResult.data,
-                  warnings: pledgeMappingResult.warnings,
-                }
+            // Backend pledge data (if mapping was attempted)
+            backendPledge: pledgeMappingResult
+              ? pledgeMappingResult.success
+                ? {
+                    data: pledgeMappingResult.data,
+                    warnings: pledgeMappingResult.warnings,
+                  }
+                : {
+                    errors: pledgeMappingResult.errors,
+                  }
               : {
-                  errors: pledgeMappingResult.errors,
+                  skipped: true,
+                  reason: 'Amount not available from callback',
                 },
           }
 
