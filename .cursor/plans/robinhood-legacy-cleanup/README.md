@@ -43,16 +43,19 @@ Removes legacy code, deprecated functions, and offramp confusion from the robinh
 
 ### Phases 1-8: Implementation (Ready to Begin)
 
-| Sub-Plan                                                                                   | Status     | Priority | Dependencies | Est. Time |
-| ------------------------------------------------------------------------------------------ | ---------- | -------- | ------------ | --------- |
-| **[Sub-Plan 1](./sub-plans/sub-plan-1-offramp-purge.md)**: Offramp Purge                   | ✅ Planned | High     | None         | 2-3 hours |
-| **[Sub-Plan 2](./sub-plans/sub-plan-2-deprecated-url-builders.md)**: Deprecated Builders   | ✅ Planned | High     | SP1          | 1-2 hours |
-| **[Sub-Plan 3](./sub-plans/sub-plan-3-feature-flag-removal.md)**: Feature Flag Remove      | ✅ Planned | High     | SP2          | 2-3 hours |
-| **[Sub-Plan 4](./sub-plans/sub-plan-4-id-system-consolidation.md)**: ID Consolidation      | ✅ Planned | Medium   | SP3          | 1-2 hours |
-| **[Sub-Plan 5](./sub-plans/sub-plan-5-documentation-consolidation.md)**: Doc Consolidation | ✅ Planned | Medium   | SP4          | 2-3 hours |
-| **[Sub-Plan 6](./sub-plans/sub-plan-6-test-artifact-cleanup.md)**: Test Cleanup            | ✅ Planned | Low      | None         | 1 hour    |
-| **[Sub-Plan 7](./sub-plans/sub-plan-7-naming-consistency.md)**: Naming Consistency         | ✅ Planned | Low      | SP5          | 1-2 hours |
-| **[Sub-Plan 8](./sub-plans/sub-plan-8-final-validation.md)**: Final Validation             | ✅ Planned | Critical | All          | 1-2 hours |
+| Sub-Plan                                                                                     | Status      | Priority | Dependencies | Est. Time |
+| -------------------------------------------------------------------------------------------- | ----------- | -------- | ------------ | --------- |
+| **[Sub-Plan 1](./sub-plans/sub-plan-1-offramp-purge.md)**: Offramp Purge                     | ✅ Planned  | High     | None         | 2-3 hours |
+| **[Sub-Plan 2](./sub-plans/sub-plan-2-deprecated-url-builders.md)**: Deprecated Builders     | ✅ Planned  | High     | SP1          | 1-2 hours |
+| **[Sub-Plan 3](./sub-plans/sub-plan-3-feature-flag-removal.md)**: Feature Flag Remove        | ✅ Planned  | High     | SP2          | 2-3 hours |
+| **[Sub-Plan 4](./sub-plans/sub-plan-4-id-system-consolidation.md)**: ID Consolidation        | ✅ Planned  | Medium   | SP3          | 1-2 hours |
+| **[Sub-Plan 5](./sub-plans/sub-plan-5-documentation-consolidation.md)**: Doc Consolidation   | ✅ Planned  | Medium   | SP4          | 2-3 hours |
+| **[Sub-Plan 6](./sub-plans/sub-plan-6-test-artifact-cleanup.md)**: Test Cleanup              | ✅ Planned  | Low      | None         | 1 hour    |
+| **[Sub-Plan 7](./sub-plans/sub-plan-7-naming-consistency.md)**: Naming Consistency           | ✅ Planned  | Low      | SP5          | 1-2 hours |
+| **[Sub-Plan 8](./sub-plans/sub-plan-8-final-validation.md)**: Final Validation               | ✅ Planned  | Critical | All          | 1-2 hours |
+| **[Sub-Plan 9](./sub-plans/sub-plan-9-backend-alignment-refactor.md)**: Backend Alignment    | ✅ Planned  | High     | SP8          | 4-6 hours |
+| **[Sub-Plan 10](./sub-plans/sub-plan-10-backend-pledge-integration.md)**: Pledge Integration | ✅ COMPLETE | High     | SP9 (rec)    | 3-4 hours |
+| **[Sub-Plan 10.5](./sub-plans/sub-plan-10.5-dynamic-asset-registry.md)**: Dynamic Registry   | ✅ Planned  | High     | SP9, SP10    | 3-4 hours |
 
 ---
 

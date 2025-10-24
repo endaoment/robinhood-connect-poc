@@ -3,13 +3,11 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
-import {
-  getDepositAddress,
-  getDepositMemo,
-} from "@/lib/robinhood";
-import type { CallbackParams, DepositAddressResponse } from "@/types/robinhood";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useToast } from '@/hooks/use-toast'
+import { createPledgeFromCallback, validatePledgeInput } from '@/lib/backend-integration'
+import { getDepositAddress, getDepositMemo } from '@/lib/robinhood'
+import type { CallbackParams, DepositAddressResponse } from '@/types/robinhood'
 import { AlertCircle, ArrowLeft, CheckCircle, Copy, ExternalLink } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
@@ -98,11 +96,11 @@ function CallbackPageContent() {
   const getDepositAddressForAsset = (callbackParams: CallbackParams): DepositAddressResponse => {
     try {
       // Get asset-specific address (not network-based)
-      const address = getDepositAddress(callbackParams.assetCode);
-      const memo = getDepositMemo(callbackParams.assetCode);
+      const address = getDepositAddress(callbackParams.assetCode)
+      const memo = getDepositMemo(callbackParams.assetCode)
 
       if (!address) {
-        throw new Error(`Deposit address not configured for asset: ${callbackParams.assetCode}`);
+        throw new Error(`Deposit address not configured for asset: ${callbackParams.assetCode}`)
       }
 
       return {
@@ -111,14 +109,12 @@ function CallbackPageContent() {
         assetCode: callbackParams.assetCode,
         assetAmount: callbackParams.assetAmount,
         networkCode: callbackParams.network,
-      };
+      }
     } catch (error: any) {
-      console.error("Failed to get deposit address:", error);
-      throw new Error(
-        error.message || "Deposit address not configured for this asset"
-      );
+      console.error('Failed to get deposit address:', error)
+      throw new Error(error.message || 'Deposit address not configured for this asset')
     }
-  };
+  }
 
   // Copy address to clipboard
   const copyToClipboard = async (text: string) => {
@@ -232,6 +228,42 @@ function CallbackPageContent() {
             status: orderStatus,
           })
 
+          // Map to backend pledge format
+          console.log('🔄 [CALLBACK] Mapping to backend pledge format...')
+          const pledgeMappingResult = createPledgeFromCallback(
+            orderId || '',
+            finalAsset,
+            orderAmount,
+            finalNetwork,
+            'fund', // TODO: Get from donation context
+            '00000000-0000-0000-0000-000000000000', // TODO: Get actual fund UUID
+            undefined, // TODO: Get donor name if authenticated
+          )
+
+          console.log('📊 [CALLBACK] Pledge Mapping Result:', {
+            success: pledgeMappingResult.success,
+            hasData: !!pledgeMappingResult.data,
+            errors: pledgeMappingResult.errors,
+            warnings: pledgeMappingResult.warnings,
+          })
+
+          if (pledgeMappingResult.success && pledgeMappingResult.data) {
+            console.log(
+              '✅ [CALLBACK] Backend Pledge Data (CryptoPledgeInput):',
+              JSON.stringify(pledgeMappingResult.data, null, 2),
+            )
+
+            // Validate the pledge input
+            const validation = validatePledgeInput(pledgeMappingResult.data)
+            console.log('🔍 [CALLBACK] Pledge Validation:', {
+              valid: validation.valid,
+              errors: validation.errors,
+              warnings: validation.warnings,
+            })
+          } else {
+            console.error('❌ [CALLBACK] Pledge mapping failed:', pledgeMappingResult.errors)
+          }
+
           // Store complete order details for dashboard to display
           const orderDetails = {
             // IDs from Robinhood callback
@@ -248,6 +280,16 @@ function CallbackPageContent() {
             // Timestamps
             initiatedAt: finalTimestamp ? new Date(parseInt(finalTimestamp)).toISOString() : '',
             completedAt: new Date().toISOString(),
+
+            // Backend pledge data (if mapping succeeded)
+            backendPledge: pledgeMappingResult.success
+              ? {
+                  data: pledgeMappingResult.data,
+                  warnings: pledgeMappingResult.warnings,
+                }
+              : {
+                  errors: pledgeMappingResult.errors,
+                },
           }
 
           console.log('✅ [CALLBACK] Complete order details:', orderDetails)

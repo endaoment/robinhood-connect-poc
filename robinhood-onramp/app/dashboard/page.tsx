@@ -158,6 +158,96 @@ export default function Dashboard() {
                 </div>
               )}
 
+              {/* Backend Pledge Data */}
+              {orderDetails.backendPledge && (
+                <div className="border-t border-zinc-300 pt-3 mt-3">
+                  <div className="text-sm font-semibold text-blue-900 mb-2">
+                    📊 Backend Pledge Data (CryptoPledgeInput)
+                  </div>
+
+                  {orderDetails.backendPledge.data ? (
+                    <div className="space-y-2">
+                      {/* Crypto Given */}
+                      <div className="bg-blue-50 p-2 rounded border border-blue-200">
+                        <div className="text-xs font-semibold text-blue-900 mb-1">Crypto Given:</div>
+                        <div className="text-xs font-mono text-blue-800 space-y-0.5">
+                          <div>
+                            <strong>Token ID:</strong> {orderDetails.backendPledge.data.cryptoGiven.tokenId}
+                          </div>
+                          <div>
+                            <strong>Input Amount:</strong> {orderDetails.backendPledge.data.cryptoGiven.inputAmount}
+                          </div>
+                          <div className="text-[10px] text-blue-600 italic">(smallest unit - e.g., wei for ETH)</div>
+                        </div>
+                      </div>
+
+                      {/* Transaction Hash */}
+                      <div className="bg-purple-50 p-2 rounded border border-purple-200">
+                        <div className="text-xs font-semibold text-purple-900 mb-1">Transaction Hash:</div>
+                        <div className="text-xs font-mono text-purple-800 break-all">
+                          {orderDetails.backendPledge.data.otcDonationTransactionHash}
+                        </div>
+                        <div className="text-[10px] text-purple-600 italic mt-0.5">
+                          (Robinhood orderId used as transaction identifier)
+                        </div>
+                      </div>
+
+                      {/* Receiving Entity */}
+                      <div className="bg-green-50 p-2 rounded border border-green-200">
+                        <div className="text-xs font-semibold text-green-900 mb-1">Receiving Entity:</div>
+                        <div className="text-xs font-mono text-green-800 space-y-0.5">
+                          <div>
+                            <strong>Type:</strong> {orderDetails.backendPledge.data.receivingEntityType}
+                          </div>
+                          <div>
+                            <strong>ID:</strong> {orderDetails.backendPledge.data.receivingEntityId}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Donor Info (if present) */}
+                      {orderDetails.backendPledge.data.donorName && (
+                        <div className="bg-amber-50 p-2 rounded border border-amber-200">
+                          <div className="text-xs font-semibold text-amber-900 mb-1">Donor:</div>
+                          <div className="text-xs text-amber-800">{orderDetails.backendPledge.data.donorName}</div>
+                        </div>
+                      )}
+
+                      {/* Warnings */}
+                      {orderDetails.backendPledge.warnings && orderDetails.backendPledge.warnings.length > 0 && (
+                        <div className="bg-yellow-50 p-2 rounded border border-yellow-300">
+                          <div className="text-xs font-semibold text-yellow-900 mb-1">⚠️ Warnings:</div>
+                          {orderDetails.backendPledge.warnings.map((warning: string, idx: number) => (
+                            <div key={idx} className="text-xs text-yellow-800">
+                              • {warning}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Full JSON (collapsed) */}
+                      <details className="text-xs">
+                        <summary className="cursor-pointer text-blue-700 hover:text-blue-900 font-medium">
+                          View Full JSON →
+                        </summary>
+                        <pre className="mt-2 p-2 bg-zinc-900 text-green-400 rounded text-[10px] overflow-x-auto max-h-60">
+                          {JSON.stringify(orderDetails.backendPledge.data, null, 2)}
+                        </pre>
+                      </details>
+                    </div>
+                  ) : orderDetails.backendPledge.errors ? (
+                    <div className="bg-red-50 p-2 rounded border border-red-200">
+                      <div className="text-xs font-semibold text-red-900 mb-1">❌ Mapping Errors:</div>
+                      {orderDetails.backendPledge.errors.map((error: string, idx: number) => (
+                        <div key={idx} className="text-xs text-red-800">
+                          • {error}
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              )}
+
               {/* Success message */}
               <div className="text-xs text-zinc-600 mt-2 pt-2 border-t border-zinc-200">
                 ✅ Your crypto will arrive at Coinbase Prime within minutes. Click anywhere to dismiss.
