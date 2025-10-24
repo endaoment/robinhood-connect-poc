@@ -318,7 +318,7 @@ export default function Dashboard() {
       console.log(`   Networks: ${supportedNetworks.join(', ')}`)
       console.log(`   Networks count: ${supportedNetworks.length}`)
 
-      // Call server-side API to generate offramp URL
+      // Call server-side API to generate onramp URL
       console.log('\n📤 [CLIENT] Calling API: /api/robinhood/generate-onramp-url')
       const apiStartTime = Date.now()
 

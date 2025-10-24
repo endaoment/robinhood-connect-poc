@@ -1,6 +1,11 @@
 # Callback Page Testing Guide
 
-This guide explains how to test the callback handling functionality once you have your Robinhood API keys configured.
+> ⚠️ **DEPRECATED**: This document contains legacy offramp testing instructions.
+> Offramp has been removed from this codebase. This integration only supports **onramp** (deposits to external wallets).
+>
+> For current callback testing, use the dashboard UI at `/dashboard` which handles the complete onramp flow.
+
+This guide explains how to test the callback handling functionality (legacy offramp documentation).
 
 ---
 

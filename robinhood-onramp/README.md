@@ -101,16 +101,13 @@ See [../NETWORK-ADDRESSES-STATUS.md](../NETWORK-ADDRESSES-STATUS.md) for complet
 robinhood-onramp/
 ├── app/
 │   ├── api/robinhood/          # Backend API routes
-│   │   ├── generate-offramp-url/    # POST - Generate transfer URL (optional)
-│   │   ├── redeem-deposit-address/  # POST - Get deposit address (legacy)
-│   │   └── order-status/            # GET - Check transfer status
+│   │   ├── generate-onramp-url/     # POST - Generate transfer URL
+│   │   └── redeem-deposit-address/  # POST - Get deposit address (legacy)
 │   ├── callback/               # Handles Robinhood redirects
 │   ├── dashboard/              # Main user interface
 │   ├── layout.tsx              # Root layout (no auth required)
 │   └── page.tsx                # Landing page
 ├── components/
-│   ├── offramp-modal.tsx       # Zero-click transfer modal (158 lines)
-│   ├── order-status.tsx        # Real-time status tracking
 │   ├── transaction-history.tsx # Transfer history viewer
 │   └── ui/                     # shadcn/ui components
 ├── lib/
@@ -189,22 +186,19 @@ rm -rf node_modules/.cache  # Clear module cache
 
 ## 📝 API Endpoints
 
-### Generate Offramp URL (Optional - can use client-side)
+### Generate Onramp URL
 
 ```bash
-POST /api/robinhood/generate-offramp-url
+POST /api/robinhood/generate-onramp-url
 Content-Type: application/json
 
 {
-  "supportedNetworks": ["ETHEREUM", "POLYGON", "SOLANA"]
+  "supportedNetworks": ["ETHEREUM", "POLYGON", "SOLANA"],
+  "assetCode": "ETH"
 }
 ```
 
-### Check Order Status
-
-```bash
-GET /api/robinhood/order-status?referenceId=<uuid>
-```
+**Note**: Transfer status is provided via the callback URL parameters. No separate API call needed for onramp flows.
 
 **Note**: The deposit address redemption API is no longer used in Sub-Plan 9. Addresses are retrieved instantly from pre-configured values.
 

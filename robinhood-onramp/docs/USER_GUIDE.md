@@ -1,12 +1,17 @@
 # Robinhood Connect - User Guide
 
-## How to Transfer Crypto from Robinhood
+> ⚠️ **DEPRECATED**: This document contains legacy offramp instructions.
+> Offramp has been removed. This integration only supports **onramp** (deposits to external wallets).
+>
+> For current usage, see the asset pre-selection dashboard at `/dashboard`.
+
+## How to Transfer Crypto from Robinhood (Legacy Documentation)
 
 ### Step 1: Start Transfer
 
 1. Visit the dashboard at [your-domain.com/dashboard](http://localhost:3002/dashboard)
 2. Click **"Start Transfer"** button on the main card
-3. The offramp modal will open with transfer options
+3. The transfer modal will open with transfer options
 
 ### Step 2: Configure Your Transfer
 

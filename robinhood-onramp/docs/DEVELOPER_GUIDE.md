@@ -1,8 +1,13 @@
 # Robinhood Connect - Developer Guide
 
+> ⚠️ **NOTE**: This document contains legacy documentation with offramp references.
+> Offramp has been removed from this codebase. This integration **only supports onramp** (deposits to external wallets).
+>
+> Onramp and offramp are separate Robinhood APIs. This codebase focuses exclusively on onramp.
+
 ## Architecture Overview
 
-This integration uses Robinhood's onramp API (Connect SDK) to enable crypto transfers from Robinhood accounts to external addresses. The system uses a stateless, redirect-based flow with referenceId tracking for order management.
+This integration uses Robinhood's **onramp API** (Connect SDK) to enable crypto transfers from Robinhood accounts to external wallet addresses. The system uses a redirect-based flow with connectId tracking from the Robinhood API.
 
 ### Technology Stack
 

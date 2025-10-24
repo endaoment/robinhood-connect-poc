@@ -1,8 +1,6 @@
 'use client'
 
-import { OrderStatusComponent } from '@/components/order-status'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ExternalLink, History } from 'lucide-react'
@@ -27,7 +25,6 @@ interface Transaction {
 export function TransactionHistory({ isOpen, onClose }: TransactionHistoryProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
 
   // Load transaction history
   useEffect(() => {
@@ -79,27 +76,6 @@ export function TransactionHistory({ isOpen, onClose }: TransactionHistoryProps)
     }
   }
 
-  if (selectedTransaction) {
-    return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Transaction Details</DialogTitle>
-            <DialogDescription>Track the status of your crypto transfer</DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <Button variant="outline" onClick={() => setSelectedTransaction(null)} className="mb-4">
-              ← Back to History
-            </Button>
-
-            <OrderStatusComponent referenceId={selectedTransaction.referenceId} autoRefresh={true} />
-          </div>
-        </DialogContent>
-      </Dialog>
-    )
-  }
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[700px]">
@@ -123,8 +99,8 @@ export function TransactionHistory({ isOpen, onClose }: TransactionHistoryProps)
           ) : (
             <div className="space-y-3">
               {transactions.map((transaction) => (
-                <Card key={transaction.id} className="cursor-pointer hover:bg-zinc-50">
-                  <CardContent className="p-4" onClick={() => setSelectedTransaction(transaction)}>
+                <Card key={transaction.id}>
+                  <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className="h-10 w-10 bg-emerald-100 rounded-lg flex items-center justify-center">

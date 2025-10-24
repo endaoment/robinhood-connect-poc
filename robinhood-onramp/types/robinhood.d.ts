@@ -19,37 +19,16 @@ export interface DepositAddressResponse {
   networkCode: string
 }
 
-export interface OrderStatusResponse {
-  applicationId: string
-  connectId: string
+export interface CallbackParams {
   assetCode: string
-  networkCode: string
-  fiatCode: string
-  fiatAmount: string
-  cryptoAmount: string
-  assetAmount?: string // Optional: some responses include this
-  price: string
-  processingFee: PriceItem
-  paymentMethod: string
-  totalAmount: PriceItem
-  blockchainTransactionId?: string
-  destinationAddress: string
-  referenceID: string
-  status: OrderStatus
+  assetAmount: string
+  network: string
 }
 
 export interface PriceItem {
   type: string
   fiatAmount: string
   cryptoQuantity: string
-}
-
-export type OrderStatus = 'ORDER_STATUS_IN_PROGRESS' | 'ORDER_STATUS_SUCCEEDED' | 'ORDER_STATUS_FAILED'
-
-export interface CallbackParams {
-  assetCode: string
-  assetAmount: string
-  network: string
 }
 
 export interface PriceQuoteResponse {

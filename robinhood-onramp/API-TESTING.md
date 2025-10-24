@@ -1,6 +1,11 @@
 # API Testing Guide
 
-Quick reference for testing Robinhood offramp API endpoints.
+> ⚠️ **DEPRECATED**: This document contains legacy offramp testing instructions.
+> Offramp has been removed from this codebase. This integration only supports **onramp** (deposits to external wallets).
+>
+> For current onramp testing, see the dashboard UI at `/dashboard`.
+
+Quick reference for testing Robinhood API endpoints (legacy offramp documentation).
 
 ## Prerequisites
 
