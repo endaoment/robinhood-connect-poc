@@ -1,29 +1,34 @@
-# Coinbase Prime Wallet Generation Scripts
+# Scripts Directory
 
-## Current Status
+This directory contains utility scripts for Robinhood Connect integration.
 
-✅ API client implemented and tested  
-✅ Authentication working (base64 signature fix applied)  
-⏳ Waiting for new API key to fully activate (created 8:31 PM EDT)  
-⏳ Key has all permissions but needs 15-60 min propagation time
+## Production Utility Scripts
 
-## When API Key is Ready
+### get_all_robinhood_assets.py
 
-### Step 1: Check if key is activated
+Fetches the complete list of supported assets from Robinhood API.
+
+**Usage**:
 
 ```bash
-cd robinhood-onramp/scripts
-source .venv/bin/activate
-python3 check_api_key.py
+python3 get_all_robinhood_assets.py
 ```
 
-**Expected output when ready:**
+### get_trading_balance_addresses.py
 
-```
-✅ API KEY FULLY ACTIVATED AND READY!
+Retrieves trading balance addresses for configured wallets from Coinbase Prime.
+
+**Usage**:
+
+```bash
+python3 get_trading_balance_addresses.py
 ```
 
-### Step 2: Generate all wallets
+### generate_prime_wallets.py
+
+Generates Prime wallet configuration for Robinhood integration.
+
+**Usage**:
 
 ```bash
 python3 generate_prime_wallets.py
@@ -37,74 +42,46 @@ This will:
 4. Create all wallets with name "robinhood-otc"
 5. Fetch deposit addresses
 6. Export to CSV
-7. Generate TypeScript code for network-addresses.ts
 
-### Step 3: Update TypeScript config
+### prime_api_client.py
 
-Copy the generated TypeScript code into:
+Python client for interacting with Coinbase Prime API.
 
+**Usage**: Import and use in other scripts
+
+```python
+from prime_api_client import PrimeAPIClient
 ```
-robinhood-onramp/lib/network-addresses.ts
-```
 
-### Step 4: Verify and build
+## Development Helpers
+
+### start-with-ngrok.sh
+
+Starts the development server with ngrok for testing callbacks locally.
+
+**Usage**:
 
 ```bash
-cd ..
-npm run build
+./start-with-ngrok.sh
 ```
 
-## Files
+## Configuration Files
 
-### Coinbase Prime Integration
+- `robinhood-assets-config.json` - Current asset configuration (JSON)
+- `robinhood-assets-config.ts` - Current asset configuration (TypeScript)
 
-- `prime_api_client.py` - Coinbase Prime API wrapper (WORKING ✅)
-- `robinhood-assets-config.json` - All 38 Robinhood assets
-- `generate_prime_wallets.py` - Main wallet generation script
-- `check_api_key.py` - Quick activation checker
-- `test_single_wallet.py` - Single wallet CRUD test
+## Setup
 
-### Robinhood Connect Testing
+Install Python dependencies:
 
-- `test_url_combinations.py` - Generate test URLs for Robinhood Connect parameters
-  - Tests 15 different URL parameter combinations
-  - Helps find the right approach for no-preselection asset transfers
-  - Outputs to `robinhood_url_test_results.json`
-  - See `../URL-TESTING-TRACKER.md` for testing guide
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-### Dependencies
+## Notes
 
-- `requirements.txt` - Python dependencies
-
-## API Key Requirements
-
-The API key needs these permissions enabled:
-
-- ✅ Wallets: All 8 permissions (8/8)
-  - Especially: "Get Wallet Deposit Instructions"
-  - And: "Create Wallet"
-- ✅ Portfolios: Read permissions
-- ✅ Balances: Read permissions
-
-## Troubleshooting
-
-**"invalid api key" error:**
-
-- New keys take 15-60 minutes to fully activate
-- Run `check_api_key.py` every 15 minutes until it passes
-- Make sure all 8 wallet permissions are enabled
-
-**"document already exists" error:**
-
-- Wallet for that symbol already exists
-- Script will skip and use existing wallet
-- This is fine - we'll fetch addresses for all existing wallets
-
-## Next Steps
-
-Once `check_api_key.py` passes:
-
-1. Run `generate_prime_wallets.py`
-2. Review the CSV export
-3. Copy TypeScript code to network-addresses.ts
-4. Build and test the Next.js app
+- All Python scripts require Python 3.11+
+- Ensure environment variables are set (see main README.md)
+- For production use, always use the latest versions of config files (no timestamps in filename)
