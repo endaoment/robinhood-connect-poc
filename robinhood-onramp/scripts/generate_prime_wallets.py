@@ -94,6 +94,13 @@ def get_robinhood_wallet_addresses(return_all_wallets=False, json_only=False):
         json_only: If True, suppress all print statements (output only JSON)
     """
     
+    # Helper to print progress (goes to stderr in json_only mode)
+    def progress(msg):
+        if json_only:
+            print(msg, file=sys.stderr)
+        else:
+            print(msg)
+    
     if not json_only:
         print("=" * 100)
         print("Coinbase Prime - Robinhood Asset Deposit Addresses")
@@ -115,7 +122,7 @@ def get_robinhood_wallet_addresses(return_all_wallets=False, json_only=False):
     # Initialize client
     logger.info("Initializing API client...")
     client = CoinbasePrimeClient(access_key, signing_key, passphrase, portfolio_id)
-    print("✅ API client initialized\n")
+    progress("✅ API client initialized")
     
     # Get all wallets (ALL pages)
     logger.info("Fetching all wallets across all pages...")
@@ -124,11 +131,11 @@ def get_robinhood_wallet_addresses(return_all_wallets=False, json_only=False):
     page = 1
     
     while True:
-        print(f"  Fetching page {page}...", end=" ")
+        progress(f"  Fetching page {page}...")
         result = client.list_wallets(cursor=cursor)
         wallets = result.get("wallets", [])
         all_wallets.extend(wallets)
-        print(f"found {len(wallets)} wallets (total: {len(all_wallets)})")
+        progress(f"  ✓ Page {page}: found {len(wallets)} wallets (total: {len(all_wallets)})")
         
         # Check for next page
         pagination = result.get("pagination", {})
@@ -155,21 +162,26 @@ def get_robinhood_wallet_addresses(return_all_wallets=False, json_only=False):
                 wallets_by_symbol[symbol] = []
             wallets_by_symbol[symbol].append(wallet)
     
-    print(f"[1/2] Found wallets for {len(wallets_by_symbol)} different symbols")
-    print(f"[2/2] Retrieving deposit addresses for Robinhood assets...\n")
+    progress(f"\n[1/2] Found wallets for {len(wallets_by_symbol)} different symbols")
+    progress(f"[2/2] Retrieving deposit addresses for {len(ROBINHOOD_ASSETS)} Robinhood assets...")
     
-    print("=" * 100)
+    if not json_only:
+        print("=" * 100)
     
     results = []
     found_count = 0
     missing_count = 0
+    total_assets = len(ROBINHOOD_ASSETS)
+    current_asset = 0
     
     for symbol, network_name in sorted(ROBINHOOD_ASSETS.items()):
-        print(f"\n{symbol:10} ({network_name})")
+        current_asset += 1
+        progress(f"[{current_asset}/{total_assets}] Processing {symbol} ({network_name})...")
         
         # Find ALL wallets for this symbol
         if symbol not in wallets_by_symbol:
-            print(f"  ⚠️  No wallet found for {symbol}")
+            if not json_only:
+                print(f"  ⚠️  No wallet found for {symbol}")
             missing_count += 1
             results.append({
                 "symbol": symbol,
@@ -186,19 +198,21 @@ def get_robinhood_wallet_addresses(return_all_wallets=False, json_only=False):
         
         if return_all_wallets:
             # Return ALL wallets for this symbol
-            for wallet in symbol_wallets:
+            for wallet_idx, wallet in enumerate(symbol_wallets, 1):
                 wallet_id = wallet.get("id")
                 wallet_name = wallet.get("name")
                 
-                print(f"  Wallet: {wallet_name}")
-                print(f"  ID:     {wallet_id}")
+                if not json_only:
+                    print(f"  Wallet {wallet_idx}/{len(symbol_wallets)}: {wallet_name}")
+                    print(f"  ID:     {wallet_id}")
                 
                 try:
                     address, memo = client.get_wallet_deposit_address(wallet_id)
                     
-                    print(f"  ✅ Address: {address}")
-                    if memo:
-                        print(f"  📝 Memo:    {memo}")
+                    if not json_only:
+                        print(f"  ✅ Address: {address}")
+                        if memo:
+                            print(f"  📝 Memo:    {memo}")
                     
                     found_count += 1
                     results.append({
@@ -211,11 +225,12 @@ def get_robinhood_wallet_addresses(return_all_wallets=False, json_only=False):
                         "memo": memo
                     })
                     
-                    time.sleep(0.3)
+                    time.sleep(0.05)  # Reduced delay for faster execution (still prevents rate limiting)
                     
                 except Exception as e:
                     logger.error(f"Failed to get address for {symbol} ({wallet_name}): {e}")
-                    print(f"  ❌ Failed: {e}")
+                    if not json_only:
+                        print(f"  ❌ Failed: {e}")
         
         else:
             # Return only PREFERRED wallet (existing priority logic)
@@ -283,13 +298,16 @@ def get_robinhood_wallet_addresses(return_all_wallets=False, json_only=False):
                 continue
     
     # Summary
-    print("\n" + "=" * 100)
-    print("SUMMARY")
-    print("=" * 100)
-    print(f"\nRobinhood Assets: {len(ROBINHOOD_ASSETS)}")
-    print(f"  ✅ Found:     {found_count}")
-    print(f"  ⚠️  Missing:   {missing_count}")
-    print(f"  ❌ Errors:    {len(results) - found_count - missing_count}")
+    progress(f"\n✅ Complete! Found {found_count} addresses ({missing_count} missing)")
+    
+    if not json_only:
+        print("\n" + "=" * 100)
+        print("SUMMARY")
+        print("=" * 100)
+        print(f"\nRobinhood Assets: {len(ROBINHOOD_ASSETS)}")
+        print(f"  ✅ Found:     {found_count}")
+        print(f"  ⚠️  Missing:   {missing_count}")
+        print(f"  ❌ Errors:    {len(results) - found_count - missing_count}")
     
     # Show addresses
     print("\n" + "=" * 100)

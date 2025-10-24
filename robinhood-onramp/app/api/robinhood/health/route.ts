@@ -15,7 +15,7 @@ export async function GET() {
     let sourceBreakdown = {
       fromCBP: 0,
       fromOTC: 0,
-      fromStatic: 0,
+      fromFallback: 0,
       noMatch: 0,
       networkMismatch: 0,
     }
@@ -28,7 +28,7 @@ export async function GET() {
         // Calculate wallet type distribution
         walletTypes = assets.reduce(
           (acc, asset) => {
-            const type = asset.depositAddress?.walletType || 'Static'
+            const type = asset.depositAddress?.walletType || 'undefined'
             acc[type] = (acc[type] || 0) + 1
             return acc
           },
@@ -39,15 +39,22 @@ export async function GET() {
         sourceBreakdown = {
           fromCBP: assets.filter((a) => {
             const wt = a.depositAddress?.walletType
-            return wt === 'Trading' || wt === 'Trading Balance'
+            const hasAddress = a.depositAddress?.address
+            return hasAddress && (wt === 'Trading' || wt === 'Trading Balance' || wt === 'Other')
           }).length,
-          fromOTC: assets.filter((a) => a.depositAddress?.note?.includes('OTC')).length,
-          fromStatic: assets.filter((a) => {
+          fromOTC: assets.filter((a) => {
             const wt = a.depositAddress?.walletType
-            return wt === 'Static' && a.depositAddress?.address
+            const note = a.depositAddress?.note || ''
+            const hasAddress = a.depositAddress?.address
+            return hasAddress && wt === 'OTC' && !note.toLowerCase().includes('fallback')
+          }).length,
+          fromFallback: assets.filter((a) => {
+            const note = a.depositAddress?.note || ''
+            const hasAddress = a.depositAddress?.address
+            return hasAddress && note.toLowerCase().includes('fallback')
           }).length,
           noMatch: assets.filter((a) => !a.depositAddress?.address).length,
-          networkMismatch: assets.filter((a) => a.depositAddress?.note === 'Network mismatch').length,
+          networkMismatch: assets.filter((a) => a.depositAddress?.note?.toLowerCase().includes('mismatch')).length,
         }
       } catch (error) {
         console.error('[Health Check] Failed to get wallet types:', error)

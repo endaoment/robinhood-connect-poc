@@ -19,7 +19,7 @@ export enum PrimeWalletType {
   Trading = 'Trading',
   TradingBalance = 'Trading Balance',
   Other = 'Other',
-  Static = 'Static', // Hardcoded fallback (not from CBP API)
+  OTC = 'OTC', // From backend OTC list (EOA for EVM tokens)
 }
 
 /**
@@ -95,23 +95,24 @@ export async function fetchPrimeWalletAddresses(): Promise<Record<string, PrimeD
     return addresses
   } catch (error) {
     console.error('[Prime Addresses] Failed to fetch addresses:', error)
-    console.warn('[Prime Addresses] Using static fallback addresses')
+    console.warn('[Prime Addresses] Using OTC list fallback addresses')
 
-    // Return static addresses and populate cache
-    const staticAddresses = getStaticPrimeAddresses()
-    PRIME_ADDRESS_CACHE = staticAddresses
+    // Return OTC addresses and populate cache
+    const otcAddresses = getOtcAddresses()
+    PRIME_ADDRESS_CACHE = otcAddresses
 
-    return staticAddresses
+    return otcAddresses
   }
 }
 
 /**
  * Get Prime address for a symbol (from cache)
+ * Falls back to OTC list if not found in CBP
  */
 export function getPrimeAddress(symbol: string): RobinhoodDepositAddress | undefined {
   if (!PRIME_ADDRESS_CACHE) {
     console.warn('[Prime Addresses] Cache not initialized - call fetchPrimeWalletAddresses() first')
-    return getStaticPrimeAddress(symbol)
+    return getOtcAddress(symbol)
   }
 
   return PRIME_ADDRESS_CACHE[symbol]
@@ -132,17 +133,60 @@ async function fetchAddressesViaPythonScript(): Promise<Record<string, PrimeDepo
   }
 
   // Dynamic imports to avoid bundling in client
-  const { execSync } = require('child_process')
+  const { spawn } = require('child_process')
   const path = require('path')
 
   const scriptPath = path.join(process.cwd(), 'scripts', 'generate_prime_wallets.py')
 
   try {
-    // Run Python script with flag to return ALL wallet types
-    const output = execSync(`python3 ${scriptPath} --all-wallets --json-only`, {
-      encoding: 'utf-8',
-      maxBuffer: 10 * 1024 * 1024, // 10MB buffer
-      stdio: ['pipe', 'pipe', 'pipe'], // Suppress stderr from being too verbose
+    // Run Python script with streaming output for real-time progress
+    const output = await new Promise<string>((resolve, reject) => {
+      const pythonProcess = spawn('python3', [scriptPath, '--all-wallets', '--json-only'])
+
+      let stdout = ''
+      let stderr = ''
+      let jsonStarted = false
+
+      pythonProcess.stdout.on('data', (data: Buffer) => {
+        const chunk = data.toString()
+        stdout += chunk
+
+        // Stream non-JSON lines to console for progress visibility
+        const lines = chunk.split('\n')
+        for (const line of lines) {
+          if (line.trim() && !line.includes('[') && !line.includes('{') && !jsonStarted) {
+            console.log(`[Prime API] ${line.trim()}`)
+          }
+          if (line.includes('[')) {
+            jsonStarted = true
+          }
+        }
+      })
+
+      pythonProcess.stderr.on('data', (data: Buffer) => {
+        const chunk = data.toString()
+        stderr += chunk
+
+        // Stream progress messages to console (stderr contains progress in json_only mode)
+        const lines = chunk.split('\n')
+        for (const line of lines) {
+          if (line.trim() && !line.includes('Traceback') && !line.includes('Error')) {
+            console.log(`[Prime API] ${line.trim()}`)
+          }
+        }
+      })
+
+      pythonProcess.on('close', (code: number | null) => {
+        if (code !== 0) {
+          reject(new Error(`Python script exited with code ${code}: ${stderr}`))
+        } else {
+          resolve(stdout)
+        }
+      })
+
+      pythonProcess.on('error', (error: Error) => {
+        reject(error)
+      })
     })
 
     // Extract JSON from output (find the array between [ and ])
@@ -252,27 +296,37 @@ async function fetchAddressesViaPythonScript(): Promise<Record<string, PrimeDepo
 }
 
 /**
- * Fallback: Static addresses from Sub-Plan 9
- * Used if API fetch fails
+ * Fallback: OTC list addresses
+ * Used if CBP API fetch fails
+ *
+ * Tries to get from backend OTC loader first, falls back to hardcoded
  */
-function getStaticPrimeAddresses(): Record<string, RobinhoodDepositAddress> {
-  // Import from static files
-  const { EVM_DEPOSIT_ADDRESSES } = require('./evm-assets-static')
-  const { NON_EVM_DEPOSIT_ADDRESSES } = require('./non-evm-assets-static')
+function getOtcAddresses(): Record<string, RobinhoodDepositAddress> {
+  // Try to get from backend OTC loader cache first
+  const { getCachedOtcAddresses } = require('./otc-loader')
+  const cachedOtc = getCachedOtcAddresses()
 
-  return {
-    ...EVM_DEPOSIT_ADDRESSES,
-    ...NON_EVM_DEPOSIT_ADDRESSES,
+  if (cachedOtc && Object.keys(cachedOtc).length > 0) {
+    console.log('[Prime Addresses] Using OTC addresses from backend')
+    return cachedOtc
   }
+
+  // No static fallback - return empty
+  console.warn('[Prime Addresses] ERROR: No OTC addresses available (backend not loaded, static files removed)')
+  return {}
 }
 
 /**
- * Get static address for single symbol
+ * Get OTC address for single symbol
  */
-function getStaticPrimeAddress(symbol: string): RobinhoodDepositAddress | undefined {
-  const staticAddresses = getStaticPrimeAddresses()
-  return staticAddresses[symbol]
+function getOtcAddress(symbol: string): RobinhoodDepositAddress | undefined {
+  const otcAddresses = getOtcAddresses()
+  return otcAddresses[symbol]
 }
+
+// Backwards compatibility aliases (deprecated)
+const getStaticPrimeAddresses = getOtcAddresses
+const getStaticPrimeAddress = getOtcAddress
 
 /**
  * Validate Prime address cache is ready

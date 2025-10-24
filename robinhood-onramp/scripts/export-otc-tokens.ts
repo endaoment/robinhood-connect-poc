@@ -26,16 +26,17 @@ async function main() {
   console.log('📡 Fetching latest assets from Robinhood API...')
   await initializeAssetRegistry({ useDynamic: true, serverSide: true })
 
-  // Get all enabled assets
+  // Get all enabled assets with addresses
   const registry = getAssetRegistry()
-  const otcTokens = Object.values(registry)
-    .filter((asset) => asset.enabled)
+  const allAssets = Object.values(registry)
+  const otcTokens = allAssets
+    .filter((asset) => asset.depositAddress?.address) // Only include assets with addresses
     .map((asset) => ({
-      address: asset.depositAddress.address,
-      symbol: asset.symbol,
-      name: asset.name,
-      memo: asset.depositAddress.memo || null,
-      logoUrl: asset.icon ? `/assets/crypto-icons/${asset.icon}` : null,
+      address: asset.depositAddress!.address,
+      symbol: (asset as any).symbol,
+      name: (asset as any).name,
+      memo: asset.depositAddress!.memo || null,
+      logoUrl: (asset as any).logoUrl || null, // Use CoinGecko URLs
     }))
 
   console.log(`✅ Found ${otcTokens.length} enabled assets\n`)
@@ -76,8 +77,11 @@ async function main() {
   console.log('\n📋 Next steps:')
   console.log('   1. Review robinhood-otc-tokens.json')
   console.log('   2. Copy TypeScript array to backend APPROVED_OTC_TOKENS')
+  console.log('      File: ../endaoment-backend/libs/api/tokens/src/lib/otc-token.ts')
   console.log('   3. Verify addresses with Coinbase Prime team')
   console.log('   4. Test deposits for each asset')
+  console.log('\n🔄 Note: At startup, this app will automatically load OTC addresses')
+  console.log('   from the backend repository (../endaoment-backend/...)')
 }
 
 function formatAsTypescriptArray(tokens: readonly any[]): string {

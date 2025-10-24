@@ -25,7 +25,13 @@ function shortenAddress(address: string): string {
   return `${address.slice(0, 6)}...${address.slice(-4)}`
 }
 
-function AssetRegistryDetails({ assets }: { assets: RobinhoodAssetConfig[] }) {
+function AssetRegistryDetails({
+  assets,
+  missingAssets,
+}: {
+  assets: RobinhoodAssetConfig[]
+  missingAssets?: RobinhoodAssetConfig[]
+}) {
   const [expanded, setExpanded] = useState(false)
 
   // Group by category
@@ -58,25 +64,31 @@ function AssetRegistryDetails({ assets }: { assets: RobinhoodAssetConfig[] }) {
 
     // Check wallet type to determine source
     const walletType = asset.depositAddress?.walletType
+    const note = asset.depositAddress?.note || ''
 
     if (walletType === 'Trading' || walletType === 'Trading Balance') {
       return { text: 'CBP', emoji: '🏦' } // Coinbase Prime
     }
 
-    // Check if it's from OTC list (would have specific markers)
-    if (asset.depositAddress?.note?.includes('OTC')) {
+    // Generic fallback EOA (for EVM tokens without specific addresses)
+    if (note.toLowerCase().includes('fallback')) {
+      return { text: 'Fallback EOA', emoji: '🔄' }
+    }
+
+    // OTC list (backend EOA addresses)
+    if (walletType === 'OTC' || note.includes('OTC')) {
       return { text: 'OTC List', emoji: '📋' }
     }
 
-    // Fallback to static
-    return { text: 'Static', emoji: '📄' }
+    // Other CBP wallet types
+    return { text: 'CBP Other', emoji: '🏦' }
   }
 
   return (
     <div className="space-y-2">
       {/* Summary */}
       <div className="flex items-center justify-between">
-        <div className="font-semibold">💎 {assets.length} assets enabled</div>
+        <div className="font-semibold">💎 {assets.length} assets available</div>
         <button onClick={() => setExpanded(!expanded)} className="text-xs underline hover:no-underline">
           {expanded ? '▲ Hide Details' : '▼ Show All Assets'}
         </button>
@@ -103,7 +115,7 @@ function AssetRegistryDetails({ assets }: { assets: RobinhoodAssetConfig[] }) {
 
       {/* Expanded Table View */}
       {expanded && (
-        <div className="max-h-96 overflow-y-auto border rounded">
+        <div className="max-h-[600px] overflow-y-auto border rounded">
           <table className="w-full text-[10px]">
             <thead className="sticky top-0 bg-secondary/95 backdrop-blur border-b">
               <tr>
@@ -163,11 +175,15 @@ function AssetRegistryDetails({ assets }: { assets: RobinhoodAssetConfig[] }) {
                               className={`text-[9px] px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 whitespace-nowrap ${
                                 source.text === 'CBP'
                                   ? 'bg-blue-500/20 text-blue-700'
-                                  : source.text === 'OTC List'
-                                    ? 'bg-purple-500/20 text-purple-700'
-                                    : source.text === 'No Match'
-                                      ? 'bg-orange-500/20 text-orange-700'
-                                      : 'bg-gray-500/20 text-gray-700'
+                                  : source.text === 'CBP Other'
+                                    ? 'bg-blue-400/20 text-blue-600'
+                                    : source.text === 'OTC List'
+                                      ? 'bg-purple-500/20 text-purple-700'
+                                      : source.text === 'Fallback EOA'
+                                        ? 'bg-cyan-500/20 text-cyan-700'
+                                        : source.text === 'No Match'
+                                          ? 'bg-orange-500/20 text-orange-700'
+                                          : 'bg-gray-500/20 text-gray-700'
                               }`}
                             >
                               {source.emoji} {source.text}
@@ -178,6 +194,47 @@ function AssetRegistryDetails({ assets }: { assets: RobinhoodAssetConfig[] }) {
                     })}
                 </React.Fragment>
               ))}
+
+              {/* Missing Addresses Section */}
+              {missingAssets && missingAssets.length > 0 && (
+                <React.Fragment>
+                  <tr className="bg-orange-50 border-t-2 border-orange-200">
+                    <td colSpan={4} className="p-2 font-semibold text-xs text-orange-900">
+                      ⚠️ Missing Addresses ({missingAssets.length})
+                    </td>
+                  </tr>
+                  {missingAssets
+                    .sort((a, b) => a.sortOrder - b.sortOrder)
+                    .map((asset) => (
+                      <tr key={asset.symbol} className="border-t hover:bg-orange-50/30 text-muted-foreground">
+                        <td className="p-1.5">
+                          <div className="flex items-center gap-1.5">
+                            {asset.logoUrl && (
+                              <img
+                                src={asset.logoUrl}
+                                alt={asset.symbol}
+                                className="w-4 h-4 rounded-full opacity-50"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none'
+                                }}
+                              />
+                            )}
+                            <span className="font-medium">{asset.symbol}</span>
+                          </div>
+                        </td>
+                        <td className="p-1.5 text-muted-foreground text-[9px]">{asset.network}</td>
+                        <td className="p-1.5 font-mono">
+                          <span className="text-orange-500 text-[9px]">❌ No address found</span>
+                        </td>
+                        <td className="p-1.5">
+                          <span className="text-[9px] px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 whitespace-nowrap bg-orange-500/20 text-orange-700">
+                            ⚠️ No Match
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                </React.Fragment>
+              )}
             </tbody>
           </table>
         </div>
@@ -186,24 +243,11 @@ function AssetRegistryDetails({ assets }: { assets: RobinhoodAssetConfig[] }) {
   )
 }
 
-async function fetchAndShowRegistryStatus() {
+// Export the toast display function so it can be called from anywhere
+export async function showAssetRegistryToast(healthData?: any) {
   try {
-    console.log('[Asset Registry Toast] Fetching /api/robinhood/health...')
-    const response = await fetch('/api/robinhood/health')
-    console.log('[Asset Registry Toast] Health response status:', response.status)
-
-    if (!response.ok) {
-      console.error('[Asset Registry Toast] Health check failed with status:', response.status)
-      return
-    }
-
-    const data = await response.json()
-    console.log('[Asset Registry Toast] Health data received:', {
-      initialized: data.registry?.initialized,
-      hasDiscovery: !!data.discovery,
-      hasPrimeAddresses: !!data.primeAddresses,
-      hasSourceBreakdown: !!data.sourceBreakdown,
-    })
+    // If data not provided, fetch it
+    const data = healthData || (await fetch('/api/robinhood/health').then((r) => r.json()))
 
     if (!data.registry?.initialized) {
       console.error('[Asset Registry Toast] Registry not initialized!')
@@ -227,41 +271,27 @@ async function fetchAndShowRegistryStatus() {
       return
     }
 
-    // Fetch full asset list for expandable view
+    // Fetch enabled asset list for expandable view
     const assetsResponse = await fetch('/api/robinhood/assets')
-    let assets: RobinhoodAssetConfig[] = []
+    let enabledAssets: RobinhoodAssetConfig[] = []
+    let missingAssets: RobinhoodAssetConfig[] = []
 
     if (assetsResponse.ok) {
       const assetsData = await assetsResponse.json()
-      assets = assetsData.assets || []
+      enabledAssets = assetsData.assets || [] // Assets with addresses
+      missingAssets = assetsData.missingAssets || [] // Assets without addresses
 
-      // Debug: Check what client received
-      const clientWalletTypes = assets.reduce(
-        (acc, a) => {
-          const wt = a.depositAddress?.walletType || 'undefined'
-          acc[wt] = (acc[wt] || 0) + 1
-          return acc
-        },
-        {} as Record<string, number>,
-      )
-      console.log('[Asset Registry Toast] Client received wallet types:', clientWalletTypes)
-
-      // Debug: Check first asset
-      if (assets.length > 0 && assets[0].depositAddress) {
-        console.log('[Asset Registry Toast] First asset depositAddress:', {
-          symbol: assets[0].symbol,
-          hasWalletType: 'walletType' in assets[0].depositAddress,
-          walletType: assets[0].depositAddress.walletType,
-          keys: Object.keys(assets[0].depositAddress),
-        })
-      }
+      console.log('[Asset Registry Toast] Received:', {
+        enabled: enabledAssets.length,
+        missing: missingAssets.length,
+      })
     }
 
     // Use server-calculated breakdown (matches server logs exactly)
     const totalFromRH = discovery?.cryptoAssetsDiscovered || validation.totalAssets
     const fromCBP = sourceBreakdown?.fromCBP || 0
     const fromOTC = sourceBreakdown?.fromOTC || 0
-    const fromStatic = sourceBreakdown?.fromStatic || 0
+    const fromFallback = sourceBreakdown?.fromFallback || 0
     const noMatch = sourceBreakdown?.noMatch || 0
     const networkMismatch = sourceBreakdown?.networkMismatch || 0
 
@@ -283,7 +313,7 @@ async function fetchAndShowRegistryStatus() {
       totalFromRH,
       fromCBP,
       fromOTC,
-      fromStatic,
+      fromFallback,
       noMatch,
       networkMismatch,
     })
@@ -291,9 +321,8 @@ async function fetchAndShowRegistryStatus() {
     console.log('[Asset Registry Toast] Showing toast now...')
     toast({
       title: '✅ Asset Registry Loaded',
-      className: 'max-w-3xl w-auto',
       description: (
-        <div className="space-y-3 font-mono text-xs w-full">
+        <div className="space-y-3 font-mono text-xs">
           {/* Receipt-style Source Breakdown - Matches Server Logs */}
           <div className="space-y-1 pb-2 border-b bg-muted/20 p-2 rounded">
             <div className="font-semibold mb-2">📡 API Fetch Results:</div>
@@ -316,21 +345,34 @@ async function fetchAndShowRegistryStatus() {
             <div className="font-semibold mb-2">📋 Address Sources:</div>
             <div className="space-y-1">
               {fromCBP > 0 && (
-                <div className="flex justify-between items-center gap-4">
-                  <span className="whitespace-nowrap">🏦 CBP (Coinbase Prime):</span>
-                  <span className="font-bold text-base text-blue-600 tabular-nums">{fromCBP}</span>
+                <div className="space-y-0.5">
+                  <div className="flex justify-between items-center gap-4">
+                    <span className="whitespace-nowrap">🏦 CBP (Coinbase Prime):</span>
+                    <span className="font-bold text-base text-blue-600 tabular-nums">{fromCBP}</span>
+                  </div>
+                  <div className="text-[9px] text-muted-foreground ml-5">
+                    Network-specific addresses (must match exactly)
+                  </div>
                 </div>
               )}
               {fromOTC > 0 && (
-                <div className="flex justify-between items-center gap-4">
-                  <span className="whitespace-nowrap">📋 OTC List:</span>
-                  <span className="font-bold text-base text-purple-600 tabular-nums">{fromOTC}</span>
+                <div className="space-y-0.5">
+                  <div className="flex justify-between items-center gap-4">
+                    <span className="whitespace-nowrap">📋 OTC List (Backend):</span>
+                    <span className="font-bold text-base text-purple-600 tabular-nums">{fromOTC}</span>
+                  </div>
+                  <div className="text-[9px] text-muted-foreground ml-5">Backend EOA addresses</div>
                 </div>
               )}
-              {fromStatic > 0 && (
-                <div className="flex justify-between items-center gap-4">
-                  <span className="whitespace-nowrap">📄 Static Fallback:</span>
-                  <span className="font-bold text-base text-gray-600 tabular-nums">{fromStatic}</span>
+              {fromFallback > 0 && (
+                <div className="space-y-0.5">
+                  <div className="flex justify-between items-center gap-4">
+                    <span className="whitespace-nowrap">🔄 Fallback EOA:</span>
+                    <span className="font-bold text-base text-cyan-600 tabular-nums">{fromFallback}</span>
+                  </div>
+                  <div className="text-[9px] text-muted-foreground ml-5">
+                    Generic EVM address (works for all EVM tokens)
+                  </div>
                 </div>
               )}
               {noMatch > 0 && (
@@ -355,7 +397,7 @@ async function fetchAndShowRegistryStatus() {
               <div className="flex justify-between items-center gap-4">
                 <span className="whitespace-nowrap">✅ Ready to Use:</span>
                 <span className="font-bold text-base text-green-600 tabular-nums">
-                  {fromCBP + fromOTC + fromStatic}
+                  {fromCBP + fromOTC + fromFallback}
                 </span>
               </div>
               <div className="flex justify-between items-center gap-4">
@@ -372,7 +414,7 @@ async function fetchAndShowRegistryStatus() {
           </div>
 
           {/* Expandable Asset List */}
-          {assets.length > 0 && <AssetRegistryDetails assets={assets} />}
+          {enabledAssets.length > 0 && <AssetRegistryDetails assets={enabledAssets} missingAssets={missingAssets} />}
         </div>
       ),
       duration: 15000, // 15 seconds (more time to explore)
@@ -380,4 +422,8 @@ async function fetchAndShowRegistryStatus() {
   } catch (error) {
     console.error('[Asset Registry Toast] Failed to fetch status:', error)
   }
+}
+
+async function fetchAndShowRegistryStatus() {
+  return showAssetRegistryToast()
 }

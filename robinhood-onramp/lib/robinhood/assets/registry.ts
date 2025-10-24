@@ -2,18 +2,23 @@ import type { RobinhoodAssetConfig } from '../types'
 import { fetchRobinhoodAssets, normalizeNetworkName, type DiscoveredAsset } from './discovery'
 import { EVM_ASSETS } from './evm-assets'
 import { NON_EVM_ASSETS } from './non-evm-assets'
-import { fetchPrimeWalletAddresses, getPrimeAddress } from './prime-addresses'
+import { fetchPrimeWalletAddresses, getPrimeAddress, PrimeWalletType } from './prime-addresses'
+
+/**
+ * Fallback EOA for EVM tokens without CBP or OTC addresses
+ * All EVM tokens can receive transfers to this address
+ */
+const EVM_FALLBACK_EOA = '0x9D5025B327E6B863E5050141C987d988c07fd8B2'
 
 /**
  * Asset Registry Builder
  *
  * Builds the complete asset registry from:
  * 1. Static metadata (from evm-assets.ts and non-evm-assets.ts)
- * 2. Dynamic: Robinhood Discovery API + Coinbase Prime API
- * 3. Fallback: Static deposit addresses (from evm-assets-static.ts and non-evm-assets-static.ts)
+ * 2. Dynamic addresses from Robinhood Discovery API + Coinbase Prime API (server-side only)
  *
- * Synchronous getAssetRegistry() auto-initializes with static data.
- * Async initializeAssetRegistry() can fetch from APIs (server-side only).
+ * Client-side: Must fetch from /api/robinhood/assets endpoint.
+ * Server-side: initializeAssetRegistry() fetches from APIs during startup.
  */
 
 // Use globalThis to persist across Next.js module boundaries
@@ -51,41 +56,13 @@ declare global {
 }
 
 /**
- * Build static registry synchronously
- * Uses hardcoded addresses from static files
- * Works on both client and server
+ * REMOVED: buildOtcRegistry() and buildStaticRegistry()
+ *
+ * The static registry has been removed. The app now ONLY uses the dynamic registry
+ * built from Robinhood Discovery API + Coinbase Prime API on the server.
+ *
+ * Clients must fetch assets from /api/robinhood/assets endpoint.
  */
-function buildStaticRegistry(): Record<string, RobinhoodAssetConfig> {
-  // Synchronous import for immediate availability
-  const { EVM_DEPOSIT_ADDRESSES } = require('./evm-assets-static')
-  const { NON_EVM_DEPOSIT_ADDRESSES } = require('./non-evm-assets-static')
-
-  const registry: Record<string, RobinhoodAssetConfig> = {}
-
-  // Add EVM assets
-  for (const [symbol, asset] of Object.entries(EVM_ASSETS)) {
-    const depositAddress = EVM_DEPOSIT_ADDRESSES[symbol]
-    if (depositAddress) {
-      registry[symbol] = {
-        ...asset,
-        depositAddress,
-      }
-    }
-  }
-
-  // Add Non-EVM assets
-  for (const [symbol, asset] of Object.entries(NON_EVM_ASSETS)) {
-    const depositAddress = NON_EVM_DEPOSIT_ADDRESSES[symbol]
-    if (depositAddress) {
-      registry[symbol] = {
-        ...asset,
-        depositAddress,
-      }
-    }
-  }
-
-  return registry
-}
 
 /**
  * Build dynamic registry from Robinhood Discovery + Prime addresses
@@ -104,6 +81,20 @@ function buildDynamicRegistry(discoveredAssets: DiscoveredAsset[]): Record<strin
       console.warn(`[Asset Registry] No metadata for ${symbol} - creating minimal config`)
       // Create minimal config for assets we don't have metadata for
       const normalizedNetwork = normalizeNetworkName(discovered.networks[0] || 'UNKNOWN')
+
+      // For unknown assets, check if network suggests EVM
+      const evmNetworks = [
+        'ETHEREUM',
+        'POLYGON',
+        'ARBITRUM',
+        'OPTIMISM',
+        'BASE',
+        'ZORA',
+        'AVALANCHE',
+        'ETHEREUM_CLASSIC',
+      ]
+      const isLikelyEvmToken = evmNetworks.includes(normalizedNetwork)
+
       registry[symbol] = {
         symbol,
         name: discovered.name,
@@ -118,7 +109,13 @@ function buildDynamicRegistry(discoveredAssets: DiscoveredAsset[]): Record<strin
         logoUrl: `https://assets.coingecko.com/coins/images/1/small/${symbol.toLowerCase()}.png`,
         featured: false,
         type: 'EvmToken', // Assume EVM unless known otherwise
-        depositAddress: { address: '', note: 'No metadata' }, // Placeholder
+        depositAddress: isLikelyEvmToken
+          ? {
+              address: EVM_FALLBACK_EOA,
+              walletType: PrimeWalletType.OTC,
+              note: 'OTC List - EVM fallback EOA (no metadata)',
+            }
+          : { address: '', note: 'No metadata or address' },
       } as any
       continue
     }
@@ -132,23 +129,59 @@ function buildDynamicRegistry(discoveredAssets: DiscoveredAsset[]): Record<strin
     const normalizedRobinhoodNetworks = discovered.networks.map(normalizeNetworkName)
 
     if (normalizedRobinhoodNetworks.length > 0 && !normalizedRobinhoodNetworks.includes(ourNetwork)) {
-      // Network mismatch - Include but mark as no match
+      // Network mismatch - For EVM tokens, use fallback EOA
+      const isEvmToken = 'chainId' in metadata
+
+      if (isEvmToken) {
+        console.log(
+          `[Asset Registry] ${symbol}: Network mismatch but using EVM fallback EOA - ` +
+            `our address is ${ourNetwork}, Robinhood supports ${normalizedRobinhoodNetworks.join(', ')}`,
+        )
+        registry[symbol] = {
+          ...metadata,
+          depositAddress: {
+            address: EVM_FALLBACK_EOA,
+            walletType: PrimeWalletType.OTC,
+            note: 'OTC List - EVM fallback EOA (network mismatch)',
+          },
+        }
+        continue
+      }
+
+      // Non-EVM network mismatch - cannot use fallback
       console.warn(
-        `[Asset Registry] ${symbol}: Network mismatch - ` +
+        `[Asset Registry] ${symbol}: Network mismatch (non-EVM) - ` +
           `our address is ${ourNetwork}, Robinhood supports ${normalizedRobinhoodNetworks.join(', ')}`,
       )
       registry[symbol] = {
         ...metadata,
-        depositAddress: { address: '', note: 'Network mismatch' },
+        depositAddress: { address: '', note: 'Network mismatch (non-EVM)' },
       }
       continue
     }
 
-    if (!depositAddress) {
-      console.warn(`[Asset Registry] No Prime address for ${symbol} - including without address`)
+    if (!depositAddress || !depositAddress.address) {
+      // For EVM tokens, use fallback EOA (all EVM tokens can use common address)
+      const isEvmToken = 'chainId' in metadata
+
+      if (isEvmToken) {
+        console.log(`[Asset Registry] ${symbol}: Using EVM fallback EOA (no CBP/OTC address found)`)
+        registry[symbol] = {
+          ...metadata,
+          depositAddress: {
+            address: EVM_FALLBACK_EOA,
+            walletType: PrimeWalletType.OTC,
+            note: 'OTC List - EVM fallback EOA',
+          },
+        }
+        continue
+      }
+
+      // For non-EVM tokens, cannot use fallback (each needs specific address)
+      console.warn(`[Asset Registry] No Prime/OTC address for ${symbol} (non-EVM) - including without address`)
       registry[symbol] = {
         ...metadata,
-        depositAddress: { address: '', note: 'No CBP address' },
+        depositAddress: { address: '', note: 'No CBP/OTC address' },
       }
       continue
     }
@@ -201,12 +234,21 @@ export async function initializeAssetRegistry(options?: {
     try {
       console.log('[Asset Registry] Using DYNAMIC mode - fetching from APIs...')
 
+      // Step 0: Load OTC addresses from backend (fallback for non-CBP assets)
+      try {
+        const { loadOtcAddressesFromBackend } = await import('./otc-loader')
+        await loadOtcAddressesFromBackend()
+      } catch (error) {
+        console.warn('[Asset Registry] Failed to load OTC addresses from backend:', error)
+        console.warn('[Asset Registry] Will use hardcoded OTC fallback')
+      }
+
       // Step 1: Fetch supported assets from Robinhood
       const discoveredAssets = await fetchRobinhoodAssets()
 
       if (discoveredAssets.length === 0) {
-        console.warn('[Asset Registry] No assets discovered - falling back to static')
-        setRegistryCache(buildStaticRegistry())
+        console.warn('[Asset Registry] No assets discovered - falling back to OTC list')
+        setRegistryCache(buildOtcRegistry())
         setRegistryMode('STATIC')
         return
       }
@@ -222,13 +264,13 @@ export async function initializeAssetRegistry(options?: {
       console.log(`[Asset Registry] Initialized with ${Object.keys(dynamicRegistry).length} assets (DYNAMIC)`)
     } catch (error) {
       console.error('[Asset Registry] Dynamic initialization failed:', error)
-      console.warn('[Asset Registry] Falling back to static registry')
-      setRegistryCache(buildStaticRegistry())
+      console.warn('[Asset Registry] Falling back to OTC list registry')
+      setRegistryCache(buildOtcRegistry())
       setRegistryMode('STATIC')
     }
   } else {
-    console.log('[Asset Registry] Using STATIC mode')
-    setRegistryCache(buildStaticRegistry())
+    console.log('[Asset Registry] Using OTC LIST mode (static addresses)')
+    setRegistryCache(buildOtcRegistry())
     setRegistryMode('STATIC')
   }
 
@@ -240,35 +282,23 @@ export async function initializeAssetRegistry(options?: {
 
 /**
  * Get asset registry (synchronous)
- * Returns current registry or throws if not initialized
- * Use initializeAssetRegistry() first during app startup
+ * Server-only: Returns initialized registry or throws
+ * Client-side: Should fetch from /api/robinhood/assets instead
  */
 export function getAssetRegistry(): Record<string, RobinhoodAssetConfig> {
   const cachedRegistry = getRegistryCache()
 
   if (!cachedRegistry) {
-    const wasDynamicMode = getRegistryMode() === 'DYNAMIC'
-
-    if (wasDynamicMode) {
-      console.error('='.repeat(60))
-      console.error('WARNING: [Asset Registry] HOT RELOAD DETECTED')
-      console.error('='.repeat(60))
-      console.error('The dynamic registry was cleared by hot reload.')
-      console.error('Falling back to STATIC addresses (not from Coinbase Prime).')
-      console.error('')
-      console.error('To restore DYNAMIC mode with Prime addresses:')
-      console.error('  1. Stop the dev server (Ctrl+C)')
-      console.error('  2. Run: npm run dev:ngrok')
-      console.error('='.repeat(60))
-    } else {
-      console.warn('[Asset Registry] Auto-initializing with static registry')
+    // Server-side: Should be initialized in instrumentation.ts
+    if (typeof window === 'undefined') {
+      throw new Error('[Asset Registry] Not initialized! Call initializeAssetRegistry() in instrumentation.ts first.')
     }
 
-    // Fallback to static
-    const staticRegistry = buildStaticRegistry()
-    setRegistryCache(staticRegistry)
-    setRegistryMode('STATIC')
-    return staticRegistry
+    // Client-side: Return empty registry - client should fetch from API
+    console.warn(
+      '[Asset Registry] Client-side detected - returning empty registry. Use /api/robinhood/assets endpoint instead.',
+    )
+    return {}
   }
 
   return cachedRegistry
@@ -284,22 +314,53 @@ export function getAssetConfig(symbol: string): RobinhoodAssetConfig | undefined
 
 /**
  * Get all assets with deposit addresses (ready to use)
- * Only returns assets that have a valid address for donations
+ * NOTE: This function is deprecated for client-side use.
+ * Clients should fetch from /api/robinhood/assets and use that data.
+ * This is kept for server-side use only.
  */
 export function getEnabledAssets(): RobinhoodAssetConfig[] {
   const registry = getAssetRegistry()
-  return Object.values(registry)
-    .filter((asset) => asset.depositAddress?.address) // Only assets with valid addresses
+
+  // Return empty if client-side
+  if (typeof window !== 'undefined') {
+    console.warn('[getEnabledAssets] Client-side detected - use /api/robinhood/assets endpoint instead')
+    return []
+  }
+
+  const allAssets = Object.values(registry)
+
+  const enabled = allAssets
+    .filter((asset) => {
+      // Must have a deposit address
+      if (!asset.depositAddress?.address) return false
+
+      // Include all assets with addresses (Prime, OTC, and fallback)
+      return true
+    })
     .sort((a, b) => a.sortOrder - b.sortOrder)
+
+  console.log('[getEnabledAssets] Final enabled count:', enabled.length)
+  console.log(
+    '[getEnabledAssets] Enabled assets:',
+    enabled.map((a) => `${a.symbol} (${a.depositAddress.walletType || 'unknown'})`),
+  )
+  return enabled
 }
 
 /**
  * Get featured assets
+ * Only returns truly usable assets (excludes network mismatches)
  */
 export function getFeaturedAssets(): RobinhoodAssetConfig[] {
   const registry = getAssetRegistry()
   return Object.values(registry)
-    .filter((asset) => asset.featured && asset.depositAddress?.address) // Only show if has address
+    .filter((asset) => {
+      // Must be featured and have a deposit address
+      if (!asset.featured || !asset.depositAddress?.address) return false
+
+      // Include all wallet types (Prime, OTC, and fallback)
+      return true
+    })
     .sort((a, b) => b.popularity - a.popularity)
 }
 

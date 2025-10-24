@@ -1,6 +1,7 @@
 'use client'
 
 import { AssetIcon } from '@/components/asset-icon'
+import { showAssetRegistryToast } from '@/components/asset-registry-toast'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -24,17 +25,37 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
-
-  // Missing assets (hardcoded for now since export isn't working)
-  const missingAssets = ['MEW', 'PENGU', 'PNUT', 'POPCAT', 'WIF', 'TON']
+  
+  // Fetch assets from API (server has the correct filtered list)
+  const [apiAssets, setApiAssets] = useState<RobinhoodAssetConfig[]>([])
+  
+  useEffect(() => {
+    fetch('/api/robinhood/assets')
+      .then(res => res.json())
+      .then(data => {
+        if (data.assets) {
+          setApiAssets(data.assets)
+        }
+      })
+      .catch(console.error)
+  }, [])
 
   // Filtered assets based on search
   const filteredAssets = useMemo(() => {
+    const assetsToSearch = apiAssets.length > 0 ? apiAssets : getEnabledAssets()
+    
     if (!searchQuery.trim()) {
-      return getEnabledAssets()
+      return assetsToSearch
     }
-    return searchAssets(searchQuery)
-  }, [searchQuery])
+    
+    // Search through the assets
+    const lowerQuery = searchQuery.toLowerCase()
+    return assetsToSearch.filter(
+      (asset) =>
+        asset.symbol.toLowerCase().includes(lowerQuery) ||
+        asset.name.toLowerCase().includes(lowerQuery)
+    )
+  }, [searchQuery, apiAssets])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -471,11 +492,25 @@ export default function Dashboard() {
                     </div>
                   )}
 
-                  {/* Results count */}
+                  {/* Results count - clickable to show registry toast */}
                   {filteredAssets.length > 0 && (
-                    <div className="p-3 bg-zinc-50 border-t border-zinc-200 text-center text-sm text-zinc-600">
-                      {filteredAssets.length} asset{filteredAssets.length !== 1 ? 's' : ''} available
-                    </div>
+                    <button
+                      onClick={() => {
+                        // Trigger the asset registry toast
+                        fetch('/api/robinhood/health')
+                          .then((res) => res.json())
+                          .then((data) => {
+                            if (data.registry?.initialized) {
+                              // Show detailed registry status
+                              showAssetRegistryToast(data)
+                            }
+                          })
+                          .catch(console.error)
+                      }}
+                      className="w-full p-3 bg-zinc-50 border-t border-zinc-200 text-center text-sm text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-colors cursor-pointer"
+                    >
+                      {filteredAssets.length} asset{filteredAssets.length !== 1 ? 's' : ''} available →
+                    </button>
                   )}
                 </CardContent>
               </Card>

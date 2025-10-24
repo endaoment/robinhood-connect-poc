@@ -3,9 +3,16 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   try {
-    // Get ALL assets (not just enabled) to show complete Robinhood discovery
+    // Get only enabled assets (those with deposit addresses) for consistency with UI
     const registry = getAssetRegistry()
-    const assets = Object.values(registry).sort((a, b) => a.sortOrder - b.sortOrder)
+    const allAssets = Object.values(registry)
+
+    // Separate enabled assets (with addresses) from missing assets (without addresses)
+    const assets = allAssets.filter((asset) => asset.depositAddress?.address).sort((a, b) => a.sortOrder - b.sortOrder)
+
+    const missingAssets = allAssets
+      .filter((asset) => !asset.depositAddress?.address)
+      .sort((a, b) => a.sortOrder - b.sortOrder)
 
     // Debug: Log wallet types being sent to client
     const walletTypeCounts = assets.reduce(
@@ -31,6 +38,8 @@ export async function GET() {
     return NextResponse.json({
       assets,
       count: assets.length,
+      missingAssets,
+      missingCount: missingAssets.length,
       timestamp: new Date().toISOString(),
     })
   } catch (error) {

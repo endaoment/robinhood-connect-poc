@@ -142,8 +142,8 @@ export interface RobinhoodDepositAddress {
   /** Notes about this address (e.g., 'Fallback address') */
   note?: string
 
-  /** Wallet type (indicates source: Trading, Trading Balance, Static, etc.) */
-  walletType?: 'Trading' | 'Trading Balance' | 'Other' | 'Static'
+  /** Wallet type (indicates source: Trading, Trading Balance, Other, OTC) */
+  walletType?: 'Trading' | 'Trading Balance' | 'Other' | 'OTC'
 
   /** Wallet ID from Coinbase Prime (if applicable) */
   walletId?: string
