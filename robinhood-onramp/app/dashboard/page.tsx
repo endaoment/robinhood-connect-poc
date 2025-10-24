@@ -164,7 +164,7 @@ export default function Dashboard() {
                   <div className="text-sm font-semibold text-blue-900 mb-2">
                     📊 Backend Pledge Data (CryptoPledgeInput)
                   </div>
-                  
+
                   {orderDetails.backendPledge.skipped ? (
                     <div className="bg-amber-50 p-2 rounded border border-amber-200">
                       <div className="text-xs font-semibold text-amber-900 mb-1">⚠️ Pledge Mapping Skipped</div>
@@ -172,8 +172,8 @@ export default function Dashboard() {
                         {orderDetails.backendPledge.reason || 'Amount not available from callback'}
                       </div>
                       <div className="text-[10px] text-amber-600 italic mt-1">
-                        Note: Robinhood onramp callbacks don't include the transfer amount. 
-                        You'll need to provide the amount separately for backend pledge creation.
+                        Note: Robinhood onramp callbacks don't include the transfer amount. You'll need to provide the
+                        amount separately for backend pledge creation.
                       </div>
                     </div>
                   ) : orderDetails.backendPledge.data ? (

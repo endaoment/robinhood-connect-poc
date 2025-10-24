@@ -47,26 +47,26 @@ Amounts are converted from human-readable to smallest unit:
 ## Example Usage
 
 ```typescript
-import { createPledgeFromCallback } from "@/lib/backend-integration";
+import { createPledgeFromCallback } from '@/lib/backend-integration'
 
 // From Robinhood callback
 const result = createPledgeFromCallback(
-  "RH_ORD_abc123", // orderId
-  "ETH", // asset
-  "0.5", // assetAmount
-  "ETHEREUM", // network
-  "fund", // destinationType
-  "fund-uuid", // destinationId
-  "Jane Doe" // donorName (optional)
-);
+  'RH_ORD_abc123', // orderId
+  'ETH', // asset
+  '0.5', // assetAmount
+  'ETHEREUM', // network
+  'fund', // destinationType
+  'fund-uuid', // destinationId
+  'Jane Doe', // donorName (optional)
+)
 
 if (result.success && result.data) {
   // Submit to backend
-  await fetch("https://api.endaoment.org/v2/donation-pledges/crypto", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  await fetch('https://api.endaoment.org/v2/donation-pledges/crypto', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(result.data),
-  });
+  })
 }
 ```
 
@@ -153,10 +153,10 @@ The mapping functions return a `PledgeMappingResult` with:
 
 ```typescript
 interface PledgeMappingResult {
-  success: boolean;
-  data?: CryptoPledgeInput;
-  errors?: string[];
-  warnings?: string[];
+  success: boolean
+  data?: CryptoPledgeInput
+  errors?: string[]
+  warnings?: string[]
 }
 ```
 
@@ -178,50 +178,48 @@ if (!result.success) {
 ### Full Donor Information
 
 ```typescript
-import { mapRobinhoodToPledge } from "@/lib/backend-integration";
+import { mapRobinhoodToPledge } from '@/lib/backend-integration'
 
 const result = mapRobinhoodToPledge({
-  orderId: "RH_ORD_123",
-  asset: "ETH",
-  assetAmount: "0.5",
-  network: "ETHEREUM",
+  orderId: 'RH_ORD_123',
+  asset: 'ETH',
+  assetAmount: '0.5',
+  network: 'ETHEREUM',
   timestamp: new Date().toISOString(),
   destination: {
-    type: "fund",
-    id: "fund-uuid-here",
+    type: 'fund',
+    id: 'fund-uuid-here',
   },
   donor: {
-    name: "Jane Doe",
+    name: 'Jane Doe',
     identity: {
-      email: "jane@example.com",
-      firstname: "Jane",
-      lastname: "Doe",
-      addressLine1: "123 Main St",
-      addressCity: "New York",
-      addressCountry: "USA",
-      addressState: "NY",
-      addressZip: "10001",
+      email: 'jane@example.com',
+      firstname: 'Jane',
+      lastname: 'Doe',
+      addressLine1: '123 Main St',
+      addressCity: 'New York',
+      addressCountry: 'USA',
+      addressState: 'NY',
+      addressZip: '10001',
     },
     shareEmail: true,
   },
   metadata: {
-    recommendationId: "recommendation-uuid",
+    recommendationId: 'recommendation-uuid',
     requestRebalance: false,
   },
-});
+})
 ```
 
 ### Fetching Backend Tokens
 
 ```typescript
-import { fetchBackendTokens } from "@/lib/backend-integration";
+import { fetchBackendTokens } from '@/lib/backend-integration'
 
 // Fetch and cache tokens on app startup
-const tokens = await fetchBackendTokens(
-  process.env.NEXT_PUBLIC_BACKEND_URL!
-);
+const tokens = await fetchBackendTokens(process.env.NEXT_PUBLIC_BACKEND_URL!)
 
-console.log("Available tokens:", Object.keys(tokens));
+console.log('Available tokens:', Object.keys(tokens))
 ```
 
 ## Troubleshooting
@@ -248,7 +246,8 @@ console.log("Available tokens:", Object.keys(tokens));
 
 **Error**: 400 Bad Request from backend
 
-**Solution**: 
+**Solution**:
+
 1. Run `validatePledgeInput()` before submission
 2. Check backend logs for constraint violations
 3. Verify token ID exists in backend database
@@ -288,4 +287,3 @@ Potential improvements for production:
 - [Backend API Reference](../../../endaoment-backend/docs/API.md)
 - [CryptoDonationPledge Entity](../../../endaoment-backend/libs/api/data-access/src/lib/entities/donations/donation-pledge.entity.ts)
 - [Architecture Guide](./ARCHITECTURE.md)
-

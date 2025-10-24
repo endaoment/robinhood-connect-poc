@@ -215,7 +215,7 @@ function CallbackPageContent() {
           // NOTE: Order status API doesn't work for onramp (only offramp)
           // For onramp, we get all the data we need from the callback URL and localStorage
           // The presence of orderId indicates the transfer was initiated successfully
-          
+
           // IMPORTANT: Robinhood onramp callbacks DO NOT include the transfer amount
           // The amount is only known from what the user entered in the Robinhood app
           // We can try to get it from localStorage (if user entered it in our UI),
@@ -234,7 +234,7 @@ function CallbackPageContent() {
 
           // Map to backend pledge format (only if we have a valid amount)
           let pledgeMappingResult = null
-          
+
           if (orderAmount && orderAmount !== 'Unknown' && orderAmount !== '') {
             console.log('🔄 [CALLBACK] Mapping to backend pledge format...')
             pledgeMappingResult = createPledgeFromCallback(

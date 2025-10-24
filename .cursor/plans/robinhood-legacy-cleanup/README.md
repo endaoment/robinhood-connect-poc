@@ -55,7 +55,7 @@ Removes legacy code, deprecated functions, and offramp confusion from the robinh
 | **[Sub-Plan 8](./sub-plans/sub-plan-8-final-validation.md)**: Final Validation               | ✅ Planned  | Critical | All          | 1-2 hours |
 | **[Sub-Plan 9](./sub-plans/sub-plan-9-backend-alignment-refactor.md)**: Backend Alignment    | ✅ Planned  | High     | SP8          | 4-6 hours |
 | **[Sub-Plan 10](./sub-plans/sub-plan-10-backend-pledge-integration.md)**: Pledge Integration | ✅ COMPLETE | High     | SP9 (rec)    | 3-4 hours |
-| **[Sub-Plan 10.5](./sub-plans/sub-plan-10.5-dynamic-asset-registry.md)**: Dynamic Registry   | ✅ Planned  | High     | SP9, SP10    | 3-4 hours |
+| **[Sub-Plan 11](./sub-plans/sub-plan-11-dynamic-asset-registry.md)**: Dynamic Registry       | ✅ Planned  | High     | SP9, SP10    | 3-4 hours |
 
 ---
 
