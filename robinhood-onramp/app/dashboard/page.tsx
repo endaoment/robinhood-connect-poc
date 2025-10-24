@@ -2,17 +2,15 @@
 
 import { AssetIcon } from '@/components/asset-icon'
 import { TransactionHistory } from '@/components/transaction-history'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useAssetSelection } from '@/hooks/use-asset-selection'
 import { useToast } from '@/hooks/use-toast'
-import { FEATURE_FLAGS } from '@/lib/feature-flags'
 import { getSupportedAssets, getSupportedNetworks } from '@/lib/robinhood-asset-addresses'
 import { getAssetMetadata, getEnabledAssets, searchAssets } from '@/lib/robinhood-asset-metadata'
 import { AssetMetadata } from '@/types/robinhood'
-import { ChevronDown, ExternalLink, History, Info, Loader2, Search, TrendingUp, X } from 'lucide-react'
+import { ChevronDown, ExternalLink, Loader2, Search, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 export default function Dashboard() {
@@ -30,9 +28,6 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
-
-  // Old flow state
-  const [loading, setLoading] = useState(false)
 
   // Get all supported assets and networks
   const supportedAssets = getSupportedAssets()
@@ -301,166 +296,6 @@ export default function Dashboard() {
     } finally {
       setIsLoading(false)
     }
-  }
-
-  /**
-   * OLD FLOW - Handle Give with Robinhood button
-   */
-  const handleGiveWithRobinhood = async () => {
-    const startTime = Date.now()
-    console.log('\n' + '='.repeat(80))
-    console.log('🎯 [CLIENT] User clicked "Give with Robinhood"')
-    console.log('='.repeat(80))
-
-    setLoading(true)
-    try {
-      console.log('📊 [CLIENT] Preparing request:')
-      console.log(`   Networks: ${supportedNetworks.join(', ')}`)
-      console.log(`   Networks count: ${supportedNetworks.length}`)
-
-      // Call server-side API to generate onramp URL
-      console.log('\n📤 [CLIENT] Calling API: /api/robinhood/generate-onramp-url')
-      const apiStartTime = Date.now()
-
-      const response = await fetch('/api/robinhood/generate-onramp-url', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          supportedNetworks,
-        }),
-      })
-
-      const apiDuration = Date.now() - apiStartTime
-      console.log(`📥 [CLIENT] API response received in ${apiDuration}ms`)
-      console.log(`   Status: ${response.status} ${response.statusText}`)
-
-      const result = await response.json()
-      console.log('   Response body:', JSON.stringify(result, null, 2))
-
-      if (!response.ok || !result.success) {
-        console.error('❌ [CLIENT] API call failed')
-        throw new Error(result.error || 'Failed to generate onramp URL')
-      }
-
-      console.log('✅ [CLIENT] URL generated successfully')
-      console.log(`   📋 Reference ID: ${result.data.referenceId}`)
-      console.log(`   🔗 URL: ${result.data.url.substring(0, 100)}...`)
-
-      // Open Robinhood Connect URL
-      console.log('\n🌐 [CLIENT] Opening Robinhood Connect in new tab...')
-      window.open(result.data.url, '_blank')
-
-      const totalDuration = Date.now() - startTime
-      console.log(`\n✅ [CLIENT] Flow completed successfully in ${totalDuration}ms`)
-      console.log('='.repeat(80) + '\n')
-
-      toast({
-        title: 'Opening Robinhood...',
-        description: 'Choose any crypto from your Robinhood account. We support all major networks!',
-      })
-    } catch (error: any) {
-      const totalDuration = Date.now() - startTime
-      console.error('\n❌ [CLIENT] Transfer failed')
-      console.error(`   Error: ${error.message}`)
-      console.error(`   Duration: ${totalDuration}ms`)
-      console.log('='.repeat(80) + '\n')
-
-      toast({
-        title: 'Transfer failed',
-        description: error.message || 'Failed to start transfer. Please try again.',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // OLD FLOW (for feature flag fallback)
-  if (!FEATURE_FLAGS.assetPreselection) {
-    return (
-      <div className="flex min-h-screen flex-col bg-zinc-50 p-4 sm:p-8">
-        <div className="container mx-auto max-w-6xl">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-zinc-900">Give Crypto with Robinhood</h1>
-            <p className="text-zinc-600 mt-2">
-              Transfer crypto from your Robinhood account to support causes you care about
-            </p>
-          </div>
-
-          {/* Main Actions Grid */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-            {/* Transfer from Robinhood Card */}
-            <Card className="md:col-span-2 lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="text-2xl">One-Click Crypto Giving</CardTitle>
-                <CardDescription>
-                  We support all major blockchain networks. Choose any crypto in your Robinhood account!
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Give with Robinhood Button - Primary CTA */}
-                <Button
-                  onClick={handleGiveWithRobinhood}
-                  disabled={loading}
-                  size="lg"
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-lg py-6"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Opening Robinhood...
-                    </>
-                  ) : (
-                    <>
-                      <ExternalLink className="mr-2 h-5 w-5" />
-                      Give with Robinhood
-                    </>
-                  )}
-                </Button>
-
-                {/* Rest of old dashboard content... */}
-                <Alert>
-                  <Info className="h-4 w-4" />
-                  <AlertDescription>
-                    <strong>Classic Flow:</strong> Feature flag is OFF. Using multi-network approach.
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
-
-            {/* Quick Stats Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="h-5 w-5 text-blue-600" />
-                  <span>Your Impact</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="text-2xl font-bold text-zinc-900">$0.00</div>
-                  <div className="text-sm text-zinc-500">Total donated</div>
-                </div>
-                <div>
-                  <div className="text-lg font-semibold text-zinc-700">0</div>
-                  <div className="text-sm text-zinc-500">Transfers completed</div>
-                </div>
-                <Button variant="outline" size="sm" className="w-full" onClick={() => setShowHistory(true)}>
-                  <History className="mr-2 h-4 w-4" />
-                  View History
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Transaction History Modal */}
-          <TransactionHistory isOpen={showHistory} onClose={() => setShowHistory(false)} />
-        </div>
-      </div>
-    )
   }
 
   // NEW FLOW (with asset pre-selection)
