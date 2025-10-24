@@ -1,10 +1,10 @@
-# Robinhood Connect Offramp Integration
+# Robinhood Connect Onramp Integration
 
 **Status**: ✅ **PRODUCTION READY** (pending Robinhood API credentials)  
 **Network Coverage**: 19 of 20 Robinhood networks (95%) ✅  
 **User Experience**: Zero-click form - ultimate simplicity 🚀
 
-A proof of concept integration that enables users to transfer cryptocurrency FROM their Robinhood accounts TO Endaoment using Robinhood Connect's offramp functionality.
+A proof of concept integration that enables users to transfer cryptocurrency FROM their Robinhood accounts TO Endaoment using Robinhood Connect's onramp functionality.
 
 ---
 
@@ -20,7 +20,7 @@ A proof of concept integration that enables users to transfer cryptocurrency FRO
 ```bash
 # Clone the repository
 git clone https://github.com/endaoment/robinhood-connect-poc.git
-cd robinhood-connect-poc/robinhood-offramp
+cd robinhood-connect-poc/robinhood-onramp
 
 # Install dependencies
 npm install
@@ -134,7 +134,7 @@ See [NETWORK-ADDRESSES-STATUS.md](NETWORK-ADDRESSES-STATUS.md) for complete netw
 
 ### For Users
 
-- **[USER_GUIDE.md](robinhood-offramp/docs/USER_GUIDE.md)** - Complete user documentation
+- **[USER_GUIDE.md](robinhood-onramp/docs/USER_GUIDE.md)** - Complete user documentation
   - Step-by-step transfer instructions
   - Supported assets and networks
   - Troubleshooting guide
@@ -142,7 +142,7 @@ See [NETWORK-ADDRESSES-STATUS.md](NETWORK-ADDRESSES-STATUS.md) for complete netw
 
 ### For Developers
 
-- **[DEVELOPER_GUIDE.md](robinhood-offramp/docs/DEVELOPER_GUIDE.md)** - Complete developer reference
+- **[DEVELOPER_GUIDE.md](robinhood-onramp/docs/DEVELOPER_GUIDE.md)** - Complete developer reference
   - Architecture overview
   - API documentation
   - TypeScript types
@@ -262,7 +262,7 @@ See [SECURITY-AUDIT.md](SECURITY-AUDIT.md) for complete details.
 ### Build for Production
 
 ```bash
-cd robinhood-offramp
+cd robinhood-onramp
 
 # Type check
 npx tsc --noEmit
@@ -293,7 +293,7 @@ Total First Load JS: 101-130 kB (excellent performance!)
 npm i -g vercel
 
 # Deploy
-cd robinhood-offramp
+cd robinhood-onramp
 vercel
 
 # Configure environment variables in Vercel dashboard
@@ -343,7 +343,7 @@ See [TESTING-CHECKLIST.md](TESTING-CHECKLIST.md) for 100+ test items.
 ### Type Checking
 
 ```bash
-cd robinhood-offramp
+cd robinhood-onramp
 npx tsc --noEmit
 ```
 
@@ -519,7 +519,7 @@ This project follows industry best practices:
 - Comprehensive validation
 - Optimal bundle sizes
 
-See [DEVELOPER_GUIDE.md](robinhood-offramp/docs/DEVELOPER_GUIDE.md) for contribution guidelines.
+See [DEVELOPER_GUIDE.md](robinhood-onramp/docs/DEVELOPER_GUIDE.md) for contribution guidelines.
 
 ---
 
