@@ -1,0 +1,735 @@
+---
+globs: .cursor/plans/**/*
+description: Planning methodology and organization structure for complex multi-phase projects
+---
+
+# Planning Methodology and Organization
+
+This rule defines the standard approach for creating comprehensive, phased implementation plans in the `.cursor/plans/` directory.
+
+## Planning Structure Overview
+
+All complex projects should follow this hierarchical planning structure:
+
+```
+.cursor/plans/{project-name}/
+├── sub-plans/
+│   ├── sub-plan-0-drafting-plan.md          # Master planning document
+│   ├── sub-plan-1-{phase-name}.md           # Detailed phase plans
+│   ├── sub-plan-2-{phase-name}.md
+│   └── sub-plan-N-{phase-name}.md
+├── implementation-logs/
+│   ├── YYYYMMDD-HHMM-{DESCRIPTION}.md       # Timestamped logs/docs
+│   └── YYYYMMDD-HHMM-{DESCRIPTION}.md
+├── OVERVIEW.md                               # Project context and architecture
+└── README.md                                 # Navigation and quick reference
+```
+
+## Phase 0: Drafting Plan (sub-plan-0)
+
+**Purpose**: The master planning document that outlines the entire project
+
+**Required Sections**:
+
+1. **Context Required** - File references, current state, gold standards to study
+2. **Objectives** - Clear goals for the overall project
+3. **Phase Outline** - Rough outline of all sub-plans (phases)
+4. **Directory Structure** - Planned file organization
+5. **Dependencies** - What must exist before starting
+6. **Success Criteria** - How to know the project is complete
+7. **Risk Assessment** - Potential issues and mitigation strategies
+
+**Key Characteristics**:
+
+- Provides high-level roadmap of all phases
+- Lists context leads (file paths, line numbers, reference materials)
+- Rough outlines for each subsequent sub-plan
+- Establishes naming conventions and structure
+- Created FIRST before any other sub-plans
+
+## OVERVIEW.md
+
+**Purpose**: Comprehensive project context and architectural documentation
+
+**Required Sections**:
+
+1. **Project Context** - Brief description, goals, gold standards
+2. **Current State Snapshot** - Exact current architecture with line references
+3. **Architecture Comparison** - Current vs target state
+4. **Migration Strategy Overview** - High-level phases
+5. **Environment Mapping** - Project/environment relationships
+6. **Risk Assessment** - High/medium/low risk areas with mitigation
+7. **Rollback Procedure** - Emergency and standard rollback steps
+8. **Success Metrics** - Technical, operational, quality metrics
+9. **Architecture Decisions** - Key decisions with rationale
+10. **Notes for Implementers** - Critical checkpoints, common pitfalls
+
+**Key Characteristics**:
+
+- Most comprehensive document in the project
+- Single source of truth for project context
+- Updated as project evolves
+- Referenced by all sub-plans
+
+## README.md
+
+**Purpose**: Navigation hub and quick reference guide
+
+**Required Sections**:
+
+1. **Header** - Title, brief description, link to OVERVIEW.md
+2. **Plan Structure** - List all sub-plans with status, priority, dependencies
+3. **Implementation Approach** - Sequential vs parallel options
+4. **Dependency Graph** - Visual representation of sub-plan order
+5. **Success Criteria Checklist** - Phase-by-phase completion criteria
+6. **Key Resources** - Links to gold standards, current state, docs
+7. **Testing Strategy** - Validation approach overview
+8. **Critical Warnings** - Safety rules, production protection
+
+**Key Characteristics**:
+
+- Entry point for anyone working on the project
+- Clear navigation to all documents
+- Shows implementation order and dependencies
+- Frequently updated with progress
+
+## Sub-Plans (Detailed Phase Plans)
+
+**Naming Convention**: `sub-plan-{N}-{descriptive-name}.md`
+
+- Use sequential numbering (0, 1, 2, 3...)
+- Use kebab-case for descriptive names
+- Examples: `sub-plan-1-repository-structure.md`, `sub-plan-5-data-reporting-migration.md`
+
+**Required Sections**:
+
+### Header
+
+```markdown
+# Sub-Plan N: Descriptive Title
+
+**Status**: Ready for Implementation / In Progress / Complete
+**Priority**: Critical / High / Medium / Low
+**Dependencies**: Sub-Plan X, Sub-Plan Y
+**Estimated Time**: X-Y minutes/hours
+```
+
+### Context Required
+
+- File paths with exact line numbers to review
+- Gold standard references
+- Current state analysis
+- Understanding required before starting
+
+### Objectives
+
+- Clear, numbered list of what this phase accomplishes
+- Specific, measurable outcomes
+
+### Precise Implementation Steps
+
+- Step-by-step instructions (Step 1, Step 2, etc.)
+- Exact file paths and line numbers
+- Code blocks with complete examples
+- Validation commands after each step
+- "What to expect" for each step
+
+### Deliverables Checklist
+
+- [ ] Checkbox list of all files/changes
+- [ ] Specific verification criteria
+
+### Validation Steps
+
+- Numbered validation commands
+- Expected outputs
+- How to verify success
+
+### Backward Compatibility Checkpoint
+
+- Commands to verify no breaking changes
+- Success criteria (e.g., "0 to add, 0 to change, 0 to destroy")
+- Troubleshooting steps if checkpoint fails
+- Rollback procedures
+
+### Common Issues and Solutions
+
+- Known problems with fixes
+- Troubleshooting guide
+
+### Integration Points
+
+- How this sub-plan connects to others
+- What it provides/requires
+
+### Next Steps
+
+- Which sub-plan comes next
+- Any preparatory work needed
+
+**Key Characteristics**:
+
+- Extremely detailed - implementable without additional context
+- Include exact line numbers and file paths
+- Every command has expected output
+- Validation at every step
+- Self-contained but cross-referenced
+
+## Implementation Logs Directory
+
+**Purpose**: Track progress, document decisions, store helper documentation
+
+**Naming Convention**: `YYYYMMDD-HHMM-{DESCRIPTION}.md`
+
+- **CRITICAL**: Use the ACTUAL file creation timestamp (birth time), not the current time
+- All caps for description
+- Hyphen-separated
+- Examples:
+  - `20251018-1359-CURRENT-STATE-ARCHIVE.md`
+  - `20251018-1444-SP1-COMPLETE.md`
+  - `20251018-1450-BACKWARD-COMPATIBILITY-CHECKPOINTS.md`
+
+**Verifying Timestamps**:
+
+To check if filenames match actual birth times on macOS:
+
+```bash
+cd implementation-logs/
+stat -f "%SB %N" -t "%Y%m%d-%H%M" *.md | sort
+```
+
+The first column shows the actual birth time, the second shows the filename. They must match exactly. If they don't match, rename the file to use the correct birth time.
+
+**File Types**:
+
+1. **Progress Logs**: `YYYYMMDD-HHMM-SPX-COMPLETE.md`
+
+   - Sub-plan completion documentation
+   - Summary of changes made
+   - Deviations from plan
+   - Validation results
+   - Time taken
+   - Next steps
+
+2. **Checkpoint Logs**: `YYYYMMDD-HHMM-SPX-CHECKPOINT.md`
+
+   - Backward compatibility validation
+   - Terraform plan outputs
+   - Resource counts
+   - Pass/fail status
+
+3. **Issue Logs**: `YYYYMMDD-HHMM-SPX-ISSUE.md` or `YYYYMMDD-HHMM-SPX-CHECKPOINT-FAILURE.md`
+
+   - Description of problem
+   - When it occurred
+   - Root cause analysis
+   - Resolution steps
+   - Lessons learned
+
+4. **Helper Documentation**: `YYYYMMDD-HHMM-{TOPIC}.md`
+   - Reference guides (e.g., ROLLBACK-PROCEDURE, BACKWARD-COMPATIBILITY-CHECKPOINTS)
+   - Context snapshots (e.g., CURRENT-STATE-ARCHIVE)
+   - Migration guides
+   - Safety checklists
+
+**Key Characteristics**:
+
+- All files timestamped with creation time
+- Chronological order naturally maintained
+- Easy to audit trail
+- Documents both successes and failures
+- Preserves institutional knowledge
+
+## Best Practices
+
+### When Creating Plans
+
+1. **Start with sub-plan-0** - Don't skip the drafting phase
+2. **Research thoroughly** - Include exact file paths and line numbers
+3. **Be specific** - "Update line 45" not "update the function"
+4. **Include validation** - Every step should be verifiable
+5. **Think about rollback** - How to undo each step
+6. **Consider dependencies** - What must happen first
+7. **Add checkpoints** - Verify no breaking changes at each phase
+
+### When Implementing Plans
+
+1. **Read context first** - Review all referenced files before starting
+2. **Follow order** - Don't skip steps or sub-plans
+3. **Validate constantly** - Run validation after each step
+4. **Document progress** - Create completion logs in implementation-logs/
+5. **Run checkpoints** - Never skip backward compatibility checks
+6. **Ask questions** - If unclear, clarify before proceeding
+
+### When Plans Change
+
+1. **Update OVERVIEW.md** - Keep context current
+2. **Document deviations** - Why you deviated from plan
+3. **Update dependent sub-plans** - Cascade changes forward
+4. **Create issue logs** - Document unexpected problems
+5. **Preserve history** - Don't delete old logs, add new ones
+
+## Common Patterns
+
+### Context References
+
+Always use exact paths and line numbers:
+
+```markdown
+**Reference**: `/path/to/file.ts` (lines 45-67)
+
+- Line 45: Function definition starts
+- Line 52: Critical logic that must be preserved
+- Line 67: Function ends
+```
+
+### Step Format
+
+```markdown
+### Step N: Descriptive Title
+
+**File**: `path/to/file.ext`
+
+**Action**: What to do
+
+**Code**:
+\`\`\`language
+// exact code to add/change
+\`\`\`
+
+**Validation**:
+\`\`\`bash
+
+# command to verify
+
+expected output
+\`\`\`
+```
+
+### Checkpoint Format
+
+```markdown
+## Backward Compatibility Checkpoint
+
+**Purpose**: What this checkpoint verifies
+
+**Commands**:
+\`\`\`bash
+cd path/to/directory
+command to run
+\`\`\`
+
+**Success Criteria**:
+
+- ✅ Specific expected outcome
+- ✅ Another expected outcome
+
+**If Checkpoint Fails**:
+
+- Review X
+- Check Y
+- Rollback Z
+```
+
+## Anti-Patterns to Avoid
+
+❌ **Vague instructions** - "Update the function" instead of exact line numbers
+❌ **Missing validation** - No way to verify step succeeded
+❌ **No checkpoints** - Can't verify backward compatibility
+❌ **Skipping sub-plan-0** - Starting detailed plans without roadmap
+❌ **Wrong timestamps** - Using current time instead of actual file birth time in filenames
+❌ **Unverified timestamps** - Not running stat command to verify filename accuracy
+❌ **Missing context** - No file references or current state analysis
+❌ **No rollback plan** - Can't undo changes if something breaks
+❌ **Ignoring dependencies** - Starting sub-plan before prerequisites complete
+
+## Agent Implementation Prompts
+
+### Starting a New Sub-Plan (One Agent Per Sub-Plan Pattern)
+
+When beginning implementation of a specific sub-plan, use this prompt template:
+
+```
+I need to implement sub-plan-{N}-{name}.md from the {project-name} migration.
+
+Context:
+- Read sub-plan-{N}-{name}.md completely
+- Review the "Context Required" section and read all referenced files
+- Check dependencies: [list prerequisite sub-plans]
+- Review OVERVIEW.md for project context
+
+Approach:
+- Follow the "Precise Implementation Steps" exactly in order
+- Run validation after each step
+- Create checkpoint log when validation passes
+- Document any deviations in implementation-logs/
+
+When complete:
+- Run the backward compatibility checkpoint
+- Create YYYYMMDD-HHMM-SP{N}-COMPLETE.md in implementation-logs/
+- Verify all deliverables in the checklist
+- Confirm next steps before proceeding
+
+Please confirm you've reviewed the context before we begin.
+```
+
+### Checkpoint-Only Prompt
+
+When you need to validate backward compatibility without full implementation:
+
+```
+Run the backward compatibility checkpoint for sub-plan-{N}:
+
+1. Read the "Backward Compatibility Checkpoint" section
+2. Execute the commands exactly as specified
+3. Document results in YYYYMMDD-HHMM-SP{N}-CHECKPOINT.md
+4. If checkpoint fails, create YYYYMMDD-HHMM-SP{N}-CHECKPOINT-FAILURE.md with analysis
+
+Expected: [success criteria from sub-plan]
+
+Do not proceed to implementation - checkpoint validation only.
+```
+
+### Troubleshooting Prompt
+
+When a sub-plan encounters issues:
+
+```
+Sub-plan-{N} encountered an issue during [step name].
+
+Context:
+- Current step: {step number and description}
+- Error: {error message or unexpected behavior}
+- Files affected: {list of files}
+
+Reference:
+- Review "Common Issues and Solutions" in sub-plan-{N}
+- Check implementation-logs/ for similar issues
+- Review ROLLBACK-PROCEDURE.md if needed
+
+Please:
+1. Analyze the root cause
+2. Propose a fix referencing the sub-plan
+3. Create YYYYMMDD-HHMM-SP{N}-ISSUE.md documenting the problem
+4. Test the fix
+5. Re-run validation
+
+Do not proceed to next step until this is resolved.
+```
+
+## Additional Standardization Patterns
+
+### File Reference Format
+
+Always use this exact format for file references:
+
+```markdown
+**File**: `path/from/workspace/root/file.ext`
+**Lines**: 123-145
+**Purpose**: What this code does
+**Critical**: Line 130 contains [important detail]
+```
+
+### Code Change Documentation
+
+When documenting changes, use this format:
+
+```markdown
+**Change Type**: Add / Update / Delete / Move
+
+**Before** (if applicable):
+\`\`\`language
+// old code with line numbers if relevant
+\`\`\`
+
+**After**:
+\`\`\`language  
+// new code
+\`\`\`
+
+**Rationale**: Why this change is necessary
+**Impact**: What this affects
+```
+
+### Dependency Declaration
+
+Standardize how dependencies are listed:
+
+```markdown
+**Required Before This Sub-Plan**:
+
+- ✅ Sub-Plan 0: Drafting (provides overall structure)
+- ✅ Sub-Plan 2: Root Config (provides terraform variables)
+- ⚠️ Sub-Plan 3: Source Modules (partial - only needs locals block)
+
+**Enables After Completion**:
+
+- Sub-Plan 5: Data-Reporting (will use enhanced module)
+- Sub-Plan 8: Legacy Functions (depends on module patterns)
+```
+
+### Risk Level Indicators
+
+Use consistent risk indicators throughout plans:
+
+```markdown
+**🔴 CRITICAL**: Breaking change risk - requires extensive validation
+**🟡 MEDIUM**: Moderate risk - standard validation sufficient  
+**🟢 LOW**: Minimal risk - basic verification needed
+```
+
+### Validation Output Format
+
+Standardize expected output documentation:
+
+```markdown
+**Command**:
+\`\`\`bash
+terraform plan -var-file=terraform.app.tfvars
+\`\`\`
+
+**Expected Output**:
+\`\`\`
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your
+configuration and found no differences, so no changes are needed.
+\`\`\`
+
+**Exit Code**: 0 (success, no changes)
+
+**Alternative Acceptable Output**: [if applicable]
+
+**Failure Indicators**:
+
+- Exit code 1 (error)
+- Exit code 2 (changes present)
+- Any resources showing in "will be created/modified/destroyed"
+```
+
+### Time Estimates
+
+Provide realistic time ranges:
+
+```markdown
+**Estimated Time**:
+
+- Reading context: 15-20 minutes
+- Implementation: 30-45 minutes
+- Validation: 10-15 minutes
+- Documentation: 5-10 minutes
+  **Total**: 60-90 minutes
+
+**Complexity**: Medium
+**Interruption Risk**: Can pause after any step
+```
+
+### Progress Tracking Format
+
+For implementation logs, use this structure:
+
+```markdown
+# Sub-Plan {N} Implementation Complete
+
+**Date**: YYYY-MM-DD HH:MM
+**Duration**: {actual time taken}
+**Implementer**: {name or "AI Agent"}
+**Status**: ✅ COMPLETE / ⚠️ COMPLETE WITH DEVIATIONS / ❌ INCOMPLETE
+
+## Summary
+
+[Brief description of what was accomplished]
+
+## Steps Completed
+
+- [x] Step 1: {description}
+- [x] Step 2: {description}
+- [x] Step 3: {description}
+
+## Deviations from Plan
+
+{List any changes from the original sub-plan, or "None - followed plan exactly"}
+
+## Validation Results
+
+**Backward Compatibility Checkpoint**: ✅ PASS / ❌ FAIL
+
+- Command: {command run}
+- Result: {0 to add, 0 to change, 0 to destroy}
+- Notes: {any observations}
+
+## Files Created/Modified
+
+- Created: {list of new files}
+- Modified: {list of changed files}
+- Deleted: {list of removed files}
+
+## Known Issues
+
+{Any issues encountered or warnings, or "None"}
+
+## Next Steps
+
+- [ ] Review this completion log
+- [ ] Proceed to Sub-Plan {N+1}: {name}
+- [ ] Update OVERVIEW.md if needed
+
+## Time Breakdown
+
+- Context review: {minutes}
+- Implementation: {minutes}
+- Validation: {minutes}
+- Documentation: {minutes}
+
+**Total**: {total time}
+```
+
+### Cross-Reference Format
+
+When referencing other documents:
+
+```markdown
+See [Sub-Plan 5](./sub-plans/sub-plan-5-data-reporting-migration.md) for implementation pattern
+See [OVERVIEW.md](./OVERVIEW.md#risk-assessment) for risk details
+See [implementation-logs/20251018-1400-ROLLBACK-PROCEDURE.md](./implementation-logs/20251018-1400-ROLLBACK-PROCEDURE.md) for emergency procedures
+```
+
+### Decision Log Format
+
+When documenting architectural decisions:
+
+```markdown
+## Decision {N}: {Decision Title}
+
+**Date**: YYYY-MM-DD
+**Context**: What problem needed solving
+**Options Considered**:
+
+1. Option A - {description} (pros/cons)
+2. Option B - {description} (pros/cons)
+3. Option C - {description} (pros/cons)
+
+**Decision**: Chose Option {X}
+
+**Rationale**:
+
+- Reason 1
+- Reason 2
+- Reason 3
+
+**Consequences**:
+
+- Positive: {benefits}
+- Negative: {tradeoffs}
+- Mitigations: {how to address negatives}
+
+**Review Date**: YYYY-MM-DD (when to revisit)
+```
+
+### Warning Box Format
+
+For critical warnings in sub-plans:
+
+```markdown
+> ⚠️ **CRITICAL WARNING**
+>
+> {Specific warning about what could go wrong}
+>
+> **Before proceeding**:
+>
+> - [ ] Verify {condition 1}
+> - [ ] Check {condition 2}
+> - [ ] Backup {what to backup}
+>
+> **If you see {symptom}**: STOP and {corrective action}
+```
+
+## Meta-Planning Patterns
+
+### When to Create a Plan
+
+Create a formal plan structure when:
+
+- ✅ Project has 3+ distinct phases
+- ✅ Changes affect production systems
+- ✅ Multiple people will implement
+- ✅ Rollback capability is critical
+- ✅ Architecture changes are involved
+- ✅ Migration spans multiple weeks
+
+Don't over-plan when:
+
+- ❌ Single file, single change
+- ❌ Pure documentation update
+- ❌ Bug fix with obvious solution
+- ❌ Experimental/prototype work
+
+### Plan Maintenance
+
+Plans are living documents:
+
+**Weekly** (during active implementation):
+
+- Update README.md with current status
+- Mark completed sub-plans
+- Add new implementation logs
+- Run periodic checkpoints
+
+**After Deviations**:
+
+- Document why deviation occurred
+- Update affected sub-plans
+- Create issue log if significant
+- Update OVERVIEW.md if architecture changed
+
+**Post-Completion**:
+
+- Mark all sub-plans complete
+- Create final summary log
+- Archive for future reference
+- Extract lessons learned
+
+### Version Control Integration
+
+**Branch Strategy**:
+
+```markdown
+- Main branch: Stable, completed work only
+- Feature branch: `infrastructure/{project-name}`
+- Sub-plan branches: `infrastructure/{project-name}/sp{N}` (optional)
+```
+
+**Commit Message Format**:
+
+```
+{project}: SP{N} - {brief description}
+
+- Completed steps 1-5 of sub-plan-{N}
+- Backward compatibility checkpoint: PASS
+- See: implementation-logs/YYYYMMDD-HHMM-SP{N}-COMPLETE.md
+
+Refs: #{issue-number}
+```
+
+## Success Indicators
+
+A well-structured plan has:
+
+- ✅ Complete sub-plan-0 with all phases outlined
+- ✅ OVERVIEW.md with comprehensive context
+- ✅ README.md with clear navigation
+- ✅ Each sub-plan includes backward compatibility checkpoint
+- ✅ Implementation logs with accurate timestamps
+- ✅ Exact file paths and line numbers throughout
+- ✅ Validation steps for every change
+- ✅ Clear dependency chain
+- ✅ Rollback procedures documented
+- ✅ Success criteria defined at every level
+- ✅ Risk levels clearly marked
+- ✅ Time estimates provided
+- ✅ Agent implementation prompts included
+- ✅ Standard formats used throughout
+
+---
+
+**When working in `.cursor/plans/**` directories, always follow this methodology to ensure comprehensive, implementable, and safe project planning.\*\*

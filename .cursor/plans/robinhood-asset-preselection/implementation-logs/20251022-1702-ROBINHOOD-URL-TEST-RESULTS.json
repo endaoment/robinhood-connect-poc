@@ -1,0 +1,391 @@
+[
+  {
+    "scenario": 1,
+    "name": "Basic Offramp - No Asset Pre-selection",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&offRamp=true&supportedNetworks=AVALANCHE%2CBITCOIN%2CBITCOIN_CASH%2CDOGECOIN%2CETHEREUM%2CETHEREUM_CLASSIC%2CLITECOIN%2CPOLYGON%2CSOLANA%2CSTELLAR%2CTEZOS&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&referenceId=08498191-8f9b-4da3-b950-ca71797c1f68",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "offRamp": true,
+      "supportedNetworks": [
+        "AVALANCHE",
+        "BITCOIN",
+        "BITCOIN_CASH",
+        "DOGECOIN",
+        "ETHEREUM",
+        "ETHEREUM_CLASSIC",
+        "LITECOIN",
+        "POLYGON",
+        "SOLANA",
+        "STELLAR",
+        "TEZOS"
+      ],
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "referenceId": "08498191-8f9b-4da3-b950-ca71797c1f68"
+    }
+  },
+  {
+    "scenario": 2,
+    "name": "With Supported Assets List",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&offRamp=true&supportedNetworks=AVALANCHE%2CBITCOIN%2CBITCOIN_CASH%2CDOGECOIN%2CETHEREUM%2CETHEREUM_CLASSIC%2CLITECOIN%2CPOLYGON%2CSOLANA%2CSTELLAR%2CTEZOS&supportedAssets=BTC%2CETH%2CUSDC%2CSOL%2CMATIC%2CLTC%2CDOGE%2CAVAX%2CADA%2CXLM%2CXTZ%2CETC%2CBCH%2CAAVE%2CLINK%2CCOMP%2CCRV%2CUNI%2CONDO%2CSHIB%2CPEPE%2CBONK&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&referenceId=a326e8c1-4873-4a37-be73-fb14bb4d4155",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "offRamp": true,
+      "supportedNetworks": [
+        "AVALANCHE",
+        "BITCOIN",
+        "BITCOIN_CASH",
+        "DOGECOIN",
+        "ETHEREUM",
+        "ETHEREUM_CLASSIC",
+        "LITECOIN",
+        "POLYGON",
+        "SOLANA",
+        "STELLAR",
+        "TEZOS"
+      ],
+      "supportedAssets": [
+        "BTC",
+        "ETH",
+        "USDC",
+        "SOL",
+        "MATIC",
+        "LTC",
+        "DOGE",
+        "AVAX",
+        "ADA",
+        "XLM",
+        "XTZ",
+        "ETC",
+        "BCH",
+        "AAVE",
+        "LINK",
+        "COMP",
+        "CRV",
+        "UNI",
+        "ONDO",
+        "SHIB",
+        "PEPE",
+        "BONK"
+      ],
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "referenceId": "a326e8c1-4873-4a37-be73-fb14bb4d4155"
+    }
+  },
+  {
+    "scenario": 3,
+    "name": "Explicit Transfer Flow",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&offRamp=true&flow=transfer&supportedNetworks=AVALANCHE%2CBITCOIN%2CBITCOIN_CASH%2CDOGECOIN%2CETHEREUM%2CETHEREUM_CLASSIC%2CLITECOIN%2CPOLYGON%2CSOLANA%2CSTELLAR%2CTEZOS&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&referenceId=fea3a1dc-f414-4845-a897-bee0088c069b",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "offRamp": true,
+      "flow": "transfer",
+      "supportedNetworks": [
+        "AVALANCHE",
+        "BITCOIN",
+        "BITCOIN_CASH",
+        "DOGECOIN",
+        "ETHEREUM",
+        "ETHEREUM_CLASSIC",
+        "LITECOIN",
+        "POLYGON",
+        "SOLANA",
+        "STELLAR",
+        "TEZOS"
+      ],
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "referenceId": "fea3a1dc-f414-4845-a897-bee0088c069b"
+    }
+  },
+  {
+    "scenario": 4,
+    "name": "With Wallet Address",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&offRamp=true&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedNetworks=AVALANCHE%2CBITCOIN%2CBITCOIN_CASH%2CDOGECOIN%2CETHEREUM%2CETHEREUM_CLASSIC%2CLITECOIN%2CPOLYGON%2CSOLANA%2CSTELLAR%2CTEZOS&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&referenceId=3c877b0f-c29d-43e2-8724-21ab162e2cf3",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "offRamp": true,
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedNetworks": [
+        "AVALANCHE",
+        "BITCOIN",
+        "BITCOIN_CASH",
+        "DOGECOIN",
+        "ETHEREUM",
+        "ETHEREUM_CLASSIC",
+        "LITECOIN",
+        "POLYGON",
+        "SOLANA",
+        "STELLAR",
+        "TEZOS"
+      ],
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "referenceId": "3c877b0f-c29d-43e2-8724-21ab162e2cf3"
+    }
+  },
+  {
+    "scenario": 5,
+    "name": "Payment Method - Crypto Balance",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&offRamp=true&paymentMethod=crypto_balance&supportedNetworks=AVALANCHE%2CBITCOIN%2CBITCOIN_CASH%2CDOGECOIN%2CETHEREUM%2CETHEREUM_CLASSIC%2CLITECOIN%2CPOLYGON%2CSOLANA%2CSTELLAR%2CTEZOS&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&referenceId=1c85a286-dfed-4bcd-bbc5-e87437329f6c",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "offRamp": true,
+      "paymentMethod": "crypto_balance",
+      "supportedNetworks": [
+        "AVALANCHE",
+        "BITCOIN",
+        "BITCOIN_CASH",
+        "DOGECOIN",
+        "ETHEREUM",
+        "ETHEREUM_CLASSIC",
+        "LITECOIN",
+        "POLYGON",
+        "SOLANA",
+        "STELLAR",
+        "TEZOS"
+      ],
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "referenceId": "1c85a286-dfed-4bcd-bbc5-e87437329f6c"
+    }
+  },
+  {
+    "scenario": 6,
+    "name": "Combined Flow + Payment Method",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&offRamp=true&flow=transfer&paymentMethod=crypto_balance&supportedNetworks=AVALANCHE%2CBITCOIN%2CBITCOIN_CASH%2CDOGECOIN%2CETHEREUM%2CETHEREUM_CLASSIC%2CLITECOIN%2CPOLYGON%2CSOLANA%2CSTELLAR%2CTEZOS&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&referenceId=a7b7b9fb-0553-4f4a-9e44-79dcc54071d8",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "offRamp": true,
+      "flow": "transfer",
+      "paymentMethod": "crypto_balance",
+      "supportedNetworks": [
+        "AVALANCHE",
+        "BITCOIN",
+        "BITCOIN_CASH",
+        "DOGECOIN",
+        "ETHEREUM",
+        "ETHEREUM_CLASSIC",
+        "LITECOIN",
+        "POLYGON",
+        "SOLANA",
+        "STELLAR",
+        "TEZOS"
+      ],
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "referenceId": "a7b7b9fb-0553-4f4a-9e44-79dcc54071d8"
+    }
+  },
+  {
+    "scenario": 7,
+    "name": "Wallet + Transfer Flow",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&offRamp=true&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&flow=transfer&supportedNetworks=AVALANCHE%2CBITCOIN%2CBITCOIN_CASH%2CDOGECOIN%2CETHEREUM%2CETHEREUM_CLASSIC%2CLITECOIN%2CPOLYGON%2CSOLANA%2CSTELLAR%2CTEZOS&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&referenceId=d34e7aba-f2a1-4b21-ac4e-521292103a63",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "offRamp": true,
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "flow": "transfer",
+      "supportedNetworks": [
+        "AVALANCHE",
+        "BITCOIN",
+        "BITCOIN_CASH",
+        "DOGECOIN",
+        "ETHEREUM",
+        "ETHEREUM_CLASSIC",
+        "LITECOIN",
+        "POLYGON",
+        "SOLANA",
+        "STELLAR",
+        "TEZOS"
+      ],
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "referenceId": "d34e7aba-f2a1-4b21-ac4e-521292103a63"
+    }
+  },
+  {
+    "scenario": 8,
+    "name": "Full Combination",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&offRamp=true&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&flow=transfer&paymentMethod=crypto_balance&supportedNetworks=AVALANCHE%2CBITCOIN%2CBITCOIN_CASH%2CDOGECOIN%2CETHEREUM%2CETHEREUM_CLASSIC%2CLITECOIN%2CPOLYGON%2CSOLANA%2CSTELLAR%2CTEZOS&supportedAssets=BTC%2CETH%2CUSDC%2CSOL%2CMATIC%2CLTC%2CDOGE%2CAVAX%2CADA%2CXLM%2CXTZ%2CETC%2CBCH%2CAAVE%2CLINK%2CCOMP%2CCRV%2CUNI%2CONDO%2CSHIB%2CPEPE%2CBONK&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&referenceId=34cd414c-ca83-45cd-b022-663b83c9c7b7",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "offRamp": true,
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "flow": "transfer",
+      "paymentMethod": "crypto_balance",
+      "supportedNetworks": [
+        "AVALANCHE",
+        "BITCOIN",
+        "BITCOIN_CASH",
+        "DOGECOIN",
+        "ETHEREUM",
+        "ETHEREUM_CLASSIC",
+        "LITECOIN",
+        "POLYGON",
+        "SOLANA",
+        "STELLAR",
+        "TEZOS"
+      ],
+      "supportedAssets": [
+        "BTC",
+        "ETH",
+        "USDC",
+        "SOL",
+        "MATIC",
+        "LTC",
+        "DOGE",
+        "AVAX",
+        "ADA",
+        "XLM",
+        "XTZ",
+        "ETC",
+        "BCH",
+        "AAVE",
+        "LINK",
+        "COMP",
+        "CRV",
+        "UNI",
+        "ONDO",
+        "SHIB",
+        "PEPE",
+        "BONK"
+      ],
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "referenceId": "34cd414c-ca83-45cd-b022-663b83c9c7b7"
+    }
+  },
+  {
+    "scenario": 9,
+    "name": "Connect ID Parameter",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&offRamp=true&supportedNetworks=AVALANCHE%2CBITCOIN%2CBITCOIN_CASH%2CDOGECOIN%2CETHEREUM%2CETHEREUM_CLASSIC%2CLITECOIN%2CPOLYGON%2CSOLANA%2CSTELLAR%2CTEZOS&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&connectId=c6bbf0ef-9641-41ff-b3fa-02b7e6a8a220",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "offRamp": true,
+      "supportedNetworks": [
+        "AVALANCHE",
+        "BITCOIN",
+        "BITCOIN_CASH",
+        "DOGECOIN",
+        "ETHEREUM",
+        "ETHEREUM_CLASSIC",
+        "LITECOIN",
+        "POLYGON",
+        "SOLANA",
+        "STELLAR",
+        "TEZOS"
+      ],
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "connectId": "c6bbf0ef-9641-41ff-b3fa-02b7e6a8a220"
+    }
+  },
+  {
+    "scenario": 10,
+    "name": "Email Example Format",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&connectId=6bdd42f9-657a-4e07-b83a-b74454757613&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&paymentMethod=crypto_balance",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "connectId": "6bdd42f9-657a-4e07-b83a-b74454757613",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "paymentMethod": "crypto_balance"
+    }
+  },
+  {
+    "scenario": 11,
+    "name": "No OffRamp Flag",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&flow=transfer&supportedNetworks=AVALANCHE%2CBITCOIN%2CBITCOIN_CASH%2CDOGECOIN%2CETHEREUM%2CETHEREUM_CLASSIC%2CLITECOIN%2CPOLYGON%2CSOLANA%2CSTELLAR%2CTEZOS&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&referenceId=07c0e8f8-f0a8-4ad3-857c-1b78889da8c7",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "flow": "transfer",
+      "supportedNetworks": [
+        "AVALANCHE",
+        "BITCOIN",
+        "BITCOIN_CASH",
+        "DOGECOIN",
+        "ETHEREUM",
+        "ETHEREUM_CLASSIC",
+        "LITECOIN",
+        "POLYGON",
+        "SOLANA",
+        "STELLAR",
+        "TEZOS"
+      ],
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "referenceId": "07c0e8f8-f0a8-4ad3-857c-1b78889da8c7"
+    }
+  },
+  {
+    "scenario": 12,
+    "name": "With Deposit Quote ID",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&offRamp=true&supportedNetworks=AVALANCHE%2CBITCOIN%2CBITCOIN_CASH%2CDOGECOIN%2CETHEREUM%2CETHEREUM_CLASSIC%2CLITECOIN%2CPOLYGON%2CSOLANA%2CSTELLAR%2CTEZOS&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&referenceId=4919447b-8097-4fb2-a20e-cfce7b8fee9a&depositQuoteId=e7223cc0-50b7-47f8-8242-9ebf35f8b2ce",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "offRamp": true,
+      "supportedNetworks": [
+        "AVALANCHE",
+        "BITCOIN",
+        "BITCOIN_CASH",
+        "DOGECOIN",
+        "ETHEREUM",
+        "ETHEREUM_CLASSIC",
+        "LITECOIN",
+        "POLYGON",
+        "SOLANA",
+        "STELLAR",
+        "TEZOS"
+      ],
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "referenceId": "4919447b-8097-4fb2-a20e-cfce7b8fee9a",
+      "depositQuoteId": "e7223cc0-50b7-47f8-8242-9ebf35f8b2ce"
+    }
+  },
+  {
+    "scenario": 13,
+    "name": "Network-Asset Mapping",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&offRamp=true&supportedNetworks=ETHEREUM%2CBITCOIN%2CSOLANA%2CPOLYGON%2CAVALANCHE&networkAssets=%7B%22ETHEREUM%22%3A+%5B%22ETH%22%2C+%22USDC%22%2C+%22AAVE%22%2C+%22LINK%22%2C+%22COMP%22%2C+%22UNI%22%5D%2C+%22BITCOIN%22%3A+%5B%22BTC%22%5D%2C+%22SOLANA%22%3A+%5B%22SOL%22%2C+%22BONK%22%5D%2C+%22POLYGON%22%3A+%5B%22MATIC%22%2C+%22USDC%22%5D%2C+%22AVALANCHE%22%3A+%5B%22AVAX%22%2C+%22USDC%22%5D%7D&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&referenceId=52aa6891-0418-46e2-89d1-20eee667eb64",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "offRamp": true,
+      "supportedNetworks": [
+        "ETHEREUM",
+        "BITCOIN",
+        "SOLANA",
+        "POLYGON",
+        "AVALANCHE"
+      ],
+      "networkAssets": "{\"ETHEREUM\": [\"ETH\", \"USDC\", \"AAVE\", \"LINK\", \"COMP\", \"UNI\"], \"BITCOIN\": [\"BTC\"], \"SOLANA\": [\"SOL\", \"BONK\"], \"POLYGON\": [\"MATIC\", \"USDC\"], \"AVALANCHE\": [\"AVAX\", \"USDC\"]}",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "referenceId": "52aa6891-0418-46e2-89d1-20eee667eb64"
+    }
+  },
+  {
+    "scenario": 14,
+    "name": "Action Withdraw",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&action=withdraw&supportedNetworks=AVALANCHE%2CBITCOIN%2CBITCOIN_CASH%2CDOGECOIN%2CETHEREUM%2CETHEREUM_CLASSIC%2CLITECOIN%2CPOLYGON%2CSOLANA%2CSTELLAR%2CTEZOS&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&referenceId=e39c9d69-c0e4-4e75-b401-d29d9990e8de",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "action": "withdraw",
+      "supportedNetworks": [
+        "AVALANCHE",
+        "BITCOIN",
+        "BITCOIN_CASH",
+        "DOGECOIN",
+        "ETHEREUM",
+        "ETHEREUM_CLASSIC",
+        "LITECOIN",
+        "POLYGON",
+        "SOLANA",
+        "STELLAR",
+        "TEZOS"
+      ],
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "referenceId": "e39c9d69-c0e4-4e75-b401-d29d9990e8de"
+    }
+  },
+  {
+    "scenario": 15,
+    "name": "Minimal Parameters",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback"
+    }
+  }
+]

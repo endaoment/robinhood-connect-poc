@@ -1,0 +1,240 @@
+[
+  {
+    "scenario": 1,
+    "name": "Minimal Daffy Style",
+    "description": "Just wallet, asset, network, no extra params",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback"
+    }
+  },
+  {
+    "scenario": 2,
+    "name": "Daffy + connectId",
+    "description": "Wallet + asset + network + connectId (from your email)",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&connectId=ce5dd6ca-885d-48b0-af13-e24d0172c5f3&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "connectId": "ce5dd6ca-885d-48b0-af13-e24d0172c5f3",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback"
+    }
+  },
+  {
+    "scenario": 3,
+    "name": "Daffy + referenceId",
+    "description": "Wallet + asset + network + referenceId",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&referenceId=a453239b-c467-4cc1-963e-e745d836dca5&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "referenceId": "a453239b-c467-4cc1-963e-e745d836dca5",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback"
+    }
+  },
+  {
+    "scenario": 4,
+    "name": "Daffy + Payment Method",
+    "description": "Add paymentMethod=crypto_balance",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&paymentMethod=crypto_balance&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "paymentMethod": "crypto_balance",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback"
+    }
+  },
+  {
+    "scenario": 5,
+    "name": "Email Example (Exact)",
+    "description": "Format from your email to Will (PREFERRED)",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&connectId=2f0a7f0d-8152-4c36-bd3c-1003d485e261&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&paymentMethod=crypto_balance",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "connectId": "2f0a7f0d-8152-4c36-bd3c-1003d485e261",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "paymentMethod": "crypto_balance"
+    }
+  },
+  {
+    "scenario": 6,
+    "name": "Daffy + Payment + Reference",
+    "description": "paymentMethod + referenceId combo",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&referenceId=71d5b631-11ab-4038-b54e-3cb083b4429d&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&paymentMethod=crypto_balance",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "referenceId": "71d5b631-11ab-4038-b54e-3cb083b4429d",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "paymentMethod": "crypto_balance"
+    }
+  },
+  {
+    "scenario": 7,
+    "name": "Daffy + Transfer Flow",
+    "description": "Add flow=transfer parameter",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&flow=transfer&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "flow": "transfer",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback"
+    }
+  },
+  {
+    "scenario": 8,
+    "name": "Daffy + Flow + Payment",
+    "description": "flow=transfer + paymentMethod=crypto_balance",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&flow=transfer&paymentMethod=crypto_balance&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "flow": "transfer",
+      "paymentMethod": "crypto_balance",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback"
+    }
+  },
+  {
+    "scenario": 9,
+    "name": "Full Daffy (connectId)",
+    "description": "flow + paymentMethod + connectId",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&flow=transfer&paymentMethod=crypto_balance&connectId=616fad63-438e-4cc0-81a3-4c257aa4dc77&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "flow": "transfer",
+      "paymentMethod": "crypto_balance",
+      "connectId": "616fad63-438e-4cc0-81a3-4c257aa4dc77",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback"
+    }
+  },
+  {
+    "scenario": 10,
+    "name": "Full Daffy (referenceId)",
+    "description": "flow + paymentMethod + referenceId",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&flow=transfer&paymentMethod=crypto_balance&referenceId=7665ab33-1744-4021-a228-5722ef32702d&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "flow": "transfer",
+      "paymentMethod": "crypto_balance",
+      "referenceId": "7665ab33-1744-4021-a228-5722ef32702d",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback"
+    }
+  },
+  {
+    "scenario": 11,
+    "name": "Daffy + OffRamp Flag",
+    "description": "Add offRamp=true",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&offRamp=true&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "offRamp": true,
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback"
+    }
+  },
+  {
+    "scenario": 12,
+    "name": "Daffy + OffRamp + Payment",
+    "description": "offRamp + paymentMethod + connectId",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&offRamp=true&paymentMethod=crypto_balance&connectId=00f72d86-0fdb-4ed9-8fae-fe4053f7ff2e&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "offRamp": true,
+      "paymentMethod": "crypto_balance",
+      "connectId": "00f72d86-0fdb-4ed9-8fae-fe4053f7ff2e",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback"
+    }
+  },
+  {
+    "scenario": 13,
+    "name": "Kitchen Sink",
+    "description": "ALL parameters: offRamp + flow + paymentMethod + connectId",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xa22d566f52b303049d27a7169ed17a925b3fdb5e&supportedAssets=ETH&supportedNetworks=ETHEREUM&offRamp=true&flow=transfer&paymentMethod=crypto_balance&connectId=6e09f004-674c-4dfe-86a1-a72ea5ac9abc&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "supportedAssets": "ETH",
+      "supportedNetworks": "ETHEREUM",
+      "offRamp": true,
+      "flow": "transfer",
+      "paymentMethod": "crypto_balance",
+      "connectId": "6e09f004-674c-4dfe-86a1-a72ea5ac9abc",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback"
+    }
+  },
+  {
+    "scenario": 14,
+    "name": "Daffy Style - BTC",
+    "description": "BTC on BITCOIN (email pattern)",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=3NJ48qerB4sWE8qEF1bRzk7jXKh8AJnbBC&supportedAssets=BTC&supportedNetworks=BITCOIN&connectId=69c02b2e-48ed-4cfd-b8ca-e118c703b9dd&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&paymentMethod=crypto_balance",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "3NJ48qerB4sWE8qEF1bRzk7jXKh8AJnbBC",
+      "supportedAssets": "BTC",
+      "supportedNetworks": "BITCOIN",
+      "connectId": "69c02b2e-48ed-4cfd-b8ca-e118c703b9dd",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "paymentMethod": "crypto_balance"
+    }
+  },
+  {
+    "scenario": 15,
+    "name": "Daffy Style - SOL",
+    "description": "SOL on SOLANA (email pattern)",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=DPsUYCziRFjW8dcvitvtrJJfxbPUb1X7Ty8ybn3hRwM1&supportedAssets=SOL&supportedNetworks=SOLANA&connectId=0537c098-bd62-49d6-bc68-b70af9d12ef5&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&paymentMethod=crypto_balance",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "DPsUYCziRFjW8dcvitvtrJJfxbPUb1X7Ty8ybn3hRwM1",
+      "supportedAssets": "SOL",
+      "supportedNetworks": "SOLANA",
+      "connectId": "0537c098-bd62-49d6-bc68-b70af9d12ef5",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "paymentMethod": "crypto_balance"
+    }
+  },
+  {
+    "scenario": 16,
+    "name": "Daffy Style - USDC",
+    "description": "USDC on ETHEREUM (email pattern)",
+    "url": "https://applink.robinhood.com/u/connect?applicationId=db2c834a-a740-4dfc-bbaf-06887558185f&walletAddress=0xd71a079cb64480334ffb400f017a0dde94f553dd&supportedAssets=USDC&supportedNetworks=ETHEREUM&connectId=7c8b06f6-149d-4e8a-8ebe-fcb8c4e6b302&redirectUrl=https%3A%2F%2Funsinfully-microcosmical-pierce.ngrok-free.dev%2Fcallback&paymentMethod=crypto_balance",
+    "params": {
+      "applicationId": "db2c834a-a740-4dfc-bbaf-06887558185f",
+      "walletAddress": "0xd71a079cb64480334ffb400f017a0dde94f553dd",
+      "supportedAssets": "USDC",
+      "supportedNetworks": "ETHEREUM",
+      "connectId": "7c8b06f6-149d-4e8a-8ebe-fcb8c4e6b302",
+      "redirectUrl": "https://unsinfully-microcosmical-pierce.ngrok-free.dev/callback",
+      "paymentMethod": "crypto_balance"
+    }
+  }
+]

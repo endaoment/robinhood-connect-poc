@@ -7,7 +7,7 @@
 ### 1. Install Dependencies
 
 ```bash
-cd robinhood-offramp
+cd robinhood-onramp
 npm install
 ```
 
@@ -44,7 +44,7 @@ npm start
 ## 📁 Project Structure
 
 ```
-robinhood-offramp/
+robinhood-onramp/
 ├── app/
 │   ├── api/robinhood/          # API endpoints
 │   │   ├── generate-offramp-url/
@@ -97,11 +97,11 @@ robinhood-offramp/
 
 ### For Users
 
-- **[USER_GUIDE.md](robinhood-offramp/docs/USER_GUIDE.md)** - How to transfer crypto from Robinhood
+- **[USER_GUIDE.md](robinhood-onramp/docs/USER_GUIDE.md)** - How to transfer crypto from Robinhood
 
 ### For Developers
 
-- **[DEVELOPER_GUIDE.md](robinhood-offramp/docs/DEVELOPER_GUIDE.md)** - Architecture and API reference
+- **[DEVELOPER_GUIDE.md](robinhood-onramp/docs/DEVELOPER_GUIDE.md)** - Architecture and API reference
 - **[TESTING-CHECKLIST.md](TESTING-CHECKLIST.md)** - Manual testing guide
 - **[SECURITY-AUDIT.md](SECURITY-AUDIT.md)** - Security review and recommendations
 - **[READY-FOR-PRODUCTION.md](READY-FOR-PRODUCTION.md)** - Deployment checklist
@@ -164,8 +164,8 @@ See **READY-FOR-PRODUCTION.md** for complete checklist.
 
 ## 📞 Need Help?
 
-- **Technical Issues**: See [DEVELOPER_GUIDE.md](robinhood-offramp/docs/DEVELOPER_GUIDE.md)
-- **User Questions**: See [USER_GUIDE.md](robinhood-offramp/docs/USER_GUIDE.md)
+- **Technical Issues**: See [DEVELOPER_GUIDE.md](robinhood-onramp/docs/DEVELOPER_GUIDE.md)
+- **User Questions**: See [USER_GUIDE.md](robinhood-onramp/docs/USER_GUIDE.md)
 - **Security Concerns**: See [SECURITY-AUDIT.md](SECURITY-AUDIT.md)
 - **Deployment**: See [READY-FOR-PRODUCTION.md](READY-FOR-PRODUCTION.md)
 

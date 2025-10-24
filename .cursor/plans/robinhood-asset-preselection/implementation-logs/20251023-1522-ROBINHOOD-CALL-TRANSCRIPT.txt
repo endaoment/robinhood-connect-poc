@@ -1,0 +1,127 @@
+Speaker 1  0:00  
+Coins coming to RobinHood. It's not from RobinHood. So the off on ramp doc, the
+
+Speaker 2  0:08  
+Yeah, you should only, yeah, the off ramp. I don't think you need here, unless it's going the other way. So everything should be in the on ramp docs, which is more verbose.
+
+Robbie Heeger  0:18  
+Oh, okay, that's very helpful. All right, cool. That might solve a lot of my problems very
+
+Speaker 2  0:23  
+quickly. Yeah, make sure I have that. Yeah, you should definitely send both. But okay, I can go in. But yeah, maybe you just let the wrong doc, and then it probably confused the hell I think, Well, I started with the SDK, yeah, it doesn't. There's still, there's an SDK separate for all prompt on on ramp. That's why. So they're separate SDKs,
+
+Robbie Heeger  0:43  
+and there's the Connect SDK as well, right on ramp, and all prop is all
+
+Speaker 2  0:47  
+part of RobinHood Connect. It's just a different it's about whether the funds go from RobinHood to an external source, and external source A to RobinHood. That's the only difference. So like, let me just
+
+Robbie Heeger  0:56  
+make sure I compare this back to you before I say goodbye, because I don't want to, you know, have to come back with the same stupid question. And please forgive me if this is like so obvious to you guys, and I'm just like burning your time, I'm very sorry for that. It's all good. It's all good. Okay, so we have the external RobinHood Connect. SDK, yes, that's the on ramp. That's the on ramp. SDK, yeah. And then the the off ramp should be labeled here,
+
+Speaker 2  1:31  
+RobinHood. SDK, off ramp, 1.3 so the external connect SDK is the right one.
+
+Robbie Heeger  1:38  
+So the external connect SDK is like on Route, because, because the county, the the list of asset, the list of supported networks that you sent me was for off ramp, which is different than the on ramp supported networks based on those two documents, there's, there's no, there's a shorter list for off ramp. So the on ramp, yeah, the on ramp, off ramp, the
+
+Speaker 2  2:03  
+docs made up. But everything that's supported on RobinHood is supported on RobinHood connects. So this doc is, yeah, the assets actually made need to be updated so we can take that, but everything that's available RobinHood is available on RobinHood connect. So yeah, it's probably the doc. There's probably a delta between we've launched a bunch of new tokens. So that's
+
+Robbie Heeger  2:22  
+probably why I believe it. Yeah, no, I believe it. I just wanted to try and figure out I was using both the website to so I was like, Okay, maybe the website is, like, the most up to date. And then I was looking at the doc, and I was like, Okay, this, this is different than what. And so I was just trying to parse between those things. And, you know, I just want to make sure there were four resources that you sent me though originally, right? There's a there's a
+
+Speaker 2  2:47  
+deck, there's a RobinHood connect SDK. That's all you need for this. The demo, which is basically like a deck showing just like, what's a high level, like, business deck. There's a, which is a separate SDK that's, if you want to offer, it's, I don't think it's pickle here. And then there's another one. There's another one, which is basically, if you want to identify it, type of deep link to RobinHood customers on mobile to so that's only if you want, right, right, right. Okay, optimization if you want to touch as well as RobinHood, so that you can filter through to them. So the main document for this build is just RobinHood connect, SDK. The rest are bonus.
+
+Robbie Heeger  3:22  
+Okay, so I am going to, I guess, like the URL that I'm using now, the the slash app link slash, connect with the, you know, supported assets and supported networks, with the redirect and the payment method, query parameter, that's all the on ramp. SDK
+
+Speaker 1  3:51  
+should be no, you have off ramp equals true, right? That is off ramp. So in the URL, if the if the URL has off ramp equals true, Param, that's then
+
+Robbie Heeger  4:00  
+it's going to do the off ramp. Okay, that makes sense, obviously. All right, I have just a couple other questions for you guys real quick, sure, which is testing and additional accounts. We have a few other people on the team who want to get their their IDs registered, or don't have a RobinHood account because they're not in a RobinHood jurisdiction, they don't live in the US. Is it possible to get a test account for developers, and we don't have a
+
+Speaker 2  4:36  
+test side market camp, what we can do is we can whitelist a RobinHood account, but, yeah, we don't have the sandbox. It's just one of the limitations. But it's very straightforward, so you just need to build it well, whitelist the whatever account. They can just test it. We can do some testing on our side as well. Is it possible
+
+Robbie Heeger  4:52  
+for them to establish an account from from Brazil,
+
+Speaker 2  4:55  
+for example? Yeah, this is one of the pains. The reason we can't is because it's like a regular career too, because they're actually setting up an account, and then you're setting up like a fake account. So that's why it's it's annoying, I know. So they do need to be in in America, and they can't be in New York, but we can test on our side, and then if you just make you say, Hey, do the build. We can why list us for the app. We can do some testing.
+
+Robbie Heeger  5:19  
+And when you say they can't be in New York, they can't be residents of New York. Well, yeah, whatever the KYC,
+
+Speaker 2  5:25  
+so if they're as long as they can use
+
+Speaker 2  5:27  
+the withdrawal features just New York's gonna say, we can't withdraw yet. We're working on it. So that's why this, because it's ultimately a withdrawal,
+
+Robbie Heeger  5:36  
+okay, okay, cool. And is it possible for me to share. One of the things that I'm running into that's making development a little bit challenging is i, the push notifications for my account that's been whitelisted are not coming through for two factor onto the app. I'm having to do the selfie every time and and the two factor off every time, I was wondering, every time, every single time, yeah, and I, and I deleted the RobinHood app and reinstalled it, logged out, logged in. You know, did everything I could think of as, you know, as a humble QA engineer, to try and reset, but I don't know.
+
+Speaker 2  6:18  
+Okay, do you want to just send me your email account? I can look at those. I can escalate it.
+
+Robbie Heeger  6:23  
+Yeah, yeah, that would be amazing, because would it be possible then for me to share access to my account with other people on the team? I
+
+Speaker 2  6:31  
+mean, they'd have to log in with their login, but not, we can't duplicate it for them.
+
+Robbie Heeger  6:37  
+Yes, like, if I shared the credentials with them, will they get geo fenced out of
+
+Speaker 2  6:42  
+No, you actually use like reference Rob Prasanna. But, yeah, I've
+
+Speaker 2  6:46  
+used like RobinHood Mexico. It's all that way, not where you are. Just maybe,
+
+Speaker 1  6:52  
+if our risk system identifies it's like a
+
+Speaker 1  6:54  
+fraudulent then it will ask for ID and self. We probably that's the reason it's more like we can't bypass those things. It's like the risk has, we have risk scores, like, whatever the scores if we if the system identifies it's a fraudulent or some, some untrusted login, we ask for all KYC, which is the idea and surface,
+
+Robbie Heeger  7:15  
+I totally understand, like I was, if anything, I was impressed by how, you know, well, I was being KYC to just move this, which is cool, like it means you guys are running a very secure ship, and, like, have a ton of respect for that. If there's any way we can, like, put my account in a box or something, or know that it's doing integration testing right now, that would be super helpful for our team to be able to just move fast and make sure that we get this integration done in, you know, as short of a time as possible. And I don't know if
+
+Speaker 2  7:48  
+that's possible, but if it is, I had to ask, basically, okay, yeah, it's Yeah. We can do is share the account to try maybe
+
+Speaker 2  7:58  
+VPN, that's it. But again, it's all done based on the KYC. And then, yeah, obviously, as Prasanna says, probably triggered some additional security checks because maybe there's something scheduled. But yeah, if you add separately to that, if you have an issue, just log in to make it transfers your accounts and you're not like doing anything sketchy. Let me know, and I'll, I'll
+
+Unknown Speaker  8:15  
+ask it to our CX team. I'm going
+
+Robbie Heeger  8:17  
+to start a thread with just you, William, about my account, one other person from our team, who's who's in the US and and the push notification thing, yeah, that sounds good. Okay, let me just make sure that my other questions. All right, I'm gonna go revisit trying to do this as an onboarding, as an on ramping exercise, rather than an off ramping exercise. I just want to say that it means so much to me that you guys are replying to my emails. Sometimes I send emails to people and they never reply, and you guys hitting me back is like so appreciated. And I promise I will leave you alone as soon as we hear this out.
+
+Unknown Speaker  9:06  
+Yeah, just go through the on
+
+Speaker 2  9:08  
+run, flow separately, message, it kind I think once you go through the automatic properly, it should, everything should work. And then now we'll figure out testing, once you get that
+
+Robbie Heeger  9:16  
+done, stick. Well, thank you guys. Appreciate you bearing with me. I, I definitely had to had a learning curve here with some of the documentation. So if there's any feedback I can give on on Docs or anything like that, or if you're like, whatever this guy, you know, it's the up from down. But
+
+Speaker 2  9:33  
+I mean, yeah, something I probably need to refresh as dogs, so it's good feedback, yeah, happy to sort of
+
+Robbie Heeger  9:39  
+like, write up how we wind up doing it, and whether anything, you know, it's easy for us to make notes like that and share them
+
+Unknown Speaker  9:47  
+cool. All right. Well, appreciate that. All right. Thanks, Robbie, and we'll be in touch. Yeah, thank you guys.
+
+Unknown Speaker  9:53  
+Bye. You.
+
+Transcribed by https://otter.ai
