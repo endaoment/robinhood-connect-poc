@@ -9,10 +9,21 @@
  * See: types/robinhood.d.ts for full ID system documentation
  */
 
-import { getAssetConfig } from '@/lib/robinhood-asset-config'
-import { buildDaffyStyleOnrampUrl, isValidAssetCode, isValidNetwork } from '@/lib/robinhood-url-builder'
-import type { RobinhoodNetwork } from '@/types/robinhood'
-import { NextResponse } from 'next/server'
+import {
+  getAssetConfig,
+  buildDaffyStyleOnrampUrl,
+  isValidAssetCode,
+  type RobinhoodNetwork,
+} from "@/lib/robinhood";
+import { ROBINHOOD_CONNECT_SUPPORTED_NETWORKS } from "@/lib/robinhood";
+import { NextResponse } from "next/server";
+
+// Helper function for network validation
+function isValidNetwork(network: string): boolean {
+  return ROBINHOOD_CONNECT_SUPPORTED_NETWORKS.includes(
+    network as RobinhoodNetwork
+  );
+}
 
 interface GenerateUrlRequest {
   supportedNetworks: string[]
@@ -120,7 +131,7 @@ export async function POST(request: Request) {
         throw new Error(`Asset configuration not found for: ${body.selectedAsset}`)
       }
 
-      console.log(`   Wallet address: ${assetConfig.walletAddress}`)
+      console.log(`   Wallet address: ${assetConfig.depositAddress.address}`)
 
       // Get base redirect URL from environment or construct it
       const baseRedirectUrl =
@@ -139,7 +150,7 @@ export async function POST(request: Request) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          withdrawal_address: assetConfig.walletAddress,
+          withdrawal_address: assetConfig.depositAddress.address,
           user_identifier: `user_${Date.now()}`, // Unique identifier for this session
         }),
       })
@@ -177,7 +188,7 @@ export async function POST(request: Request) {
       const daffyResult = buildDaffyStyleOnrampUrl({
         asset: body.selectedAsset,
         network: body.selectedNetwork as RobinhoodNetwork,
-        walletAddress: assetConfig.walletAddress,
+        walletAddress: assetConfig.depositAddress.address,
         redirectUrl: redirectUrl,
         connectId: validConnectId, // Use the real connectId from Robinhood
       })

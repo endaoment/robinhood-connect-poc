@@ -14,6 +14,7 @@
 **Reference**: `/Users/rheeger/Code/endaoment/endaoment-backend/libs/api/data-access/src/lib/entities/donations/donation-pledge.entity.ts` (lines 341-387)
 
 **Entity Definition**:
+
 ```typescript
 @ChildEntity(PledgeType.CryptoPledge)
 export class CryptoDonationPledge extends DonationPledge {
@@ -21,26 +22,26 @@ export class CryptoDonationPledge extends DonationPledge {
    * Input amount of the donation crypto pledge. Denominated in the smallest unit of the given asset
    */
   @Column(cryptoNumericColumn)
-  inputAmount!: bigint
+  inputAmount!: bigint;
 
   /**
    * Input token of the donation pledge
    */
   @ManyToOne(() => Token, { nullable: false })
   @JoinColumn()
-  inputToken!: Token | undefined
+  inputToken!: Token | undefined;
 
   @Column()
-  inputTokenId!: number
+  inputTokenId!: number;
 
   /**
    * OTC Transaction hash proving that the crypto token was indeed transferred to an Endaoment-controlled wallet.
    */
   @Column({
-    type: 'varchar',
+    type: "varchar",
     length: 200,
   })
-  otcTransactionHash!: string
+  otcTransactionHash!: string;
 
   /**
    * Dollar amount pledged in microdollars. This amount is quoted on the API, at the time of donation. This
@@ -48,28 +49,29 @@ export class CryptoDonationPledge extends DonationPledge {
    * time of liquidation.
    */
   @Column(cryptoNumericColumn)
-  pledgedAmountMicroDollars!: bigint | null
+  pledgedAmountMicroDollars!: bigint | null;
 }
 ```
 
 **Inherited from DonationPledge** (lines 196-339):
+
 ```typescript
 export abstract class DonationPledge {
-  id!: string                                    // UUID (auto-generated)
-  pledgerUser!: User | undefined | null          // Optional - can be null
-  pledgerUserId!: string | null
-  pledgerName!: string | null                    // Display name
-  pledgerIdentity!: NullableIdentity             // PII (optional)
-  sharePledgerEmail!: boolean                    // Default: false
-  destinationOrg!: Org | null                    // One of these must be set
-  destinationFund!: Fund | null
-  destinationSubproject!: Subproject | null
-  status!: PledgeStatus                          // PendingLiquidation, Liquidated, Failed, Cancelled
-  statusDescription!: string | null              // Only for Failed/Cancelled
-  registeredAtUtc!: Date                         // Auto-set on creation
-  liquidatedAtUtc!: Date | null                  // Set when liquidated
-  resultedDonationId!: string | null             // Set after liquidation
-  pendingRebalance!: boolean                     // Default: false
+  id!: string; // UUID (auto-generated)
+  pledgerUser!: User | undefined | null; // Optional - can be null
+  pledgerUserId!: string | null;
+  pledgerName!: string | null; // Display name
+  pledgerIdentity!: NullableIdentity; // PII (optional)
+  sharePledgerEmail!: boolean; // Default: false
+  destinationOrg!: Org | null; // One of these must be set
+  destinationFund!: Fund | null;
+  destinationSubproject!: Subproject | null;
+  status!: PledgeStatus; // PendingLiquidation, Liquidated, Failed, Cancelled
+  statusDescription!: string | null; // Only for Failed/Cancelled
+  registeredAtUtc!: Date; // Auto-set on creation
+  liquidatedAtUtc!: Date | null; // Set when liquidated
+  resultedDonationId!: string | null; // Set after liquidation
+  pendingRebalance!: boolean; // Default: false
 }
 ```
 
@@ -78,23 +80,24 @@ export abstract class DonationPledge {
 **Reference**: `/Users/rheeger/Code/endaoment/endaoment-backend/libs/api/donation-pledges/src/lib/dtos/crypto-pledge-input.ts` (lines 34-154)
 
 **Input DTO**:
+
 ```typescript
 export class CryptoGivenDto {
-  inputAmount!: bigint                           // Smallest unit of token
-  tokenId!: number                               // Token ID from backend database
+  inputAmount!: bigint; // Smallest unit of token
+  tokenId!: number; // Token ID from backend database
 }
 
 export class CryptoPledgeInputDto {
-  cryptoGiven!: CryptoGivenDto                   // REQUIRED
-  otcDonationTransactionHash!: string            // REQUIRED - Transaction hash
-  receivingEntityType!: DestinationType          // REQUIRED - 'fund', 'org', 'subproject'
-  receivingEntityId!: string                     // REQUIRED - UUID of entity
-  recommendationId?: string                      // OPTIONAL - UUID
-  isRebalanceRequested?: boolean                 // OPTIONAL - Default: false
-  donorName?: string                             // OPTIONAL
-  donorIdentity?: IdentityInputDto               // OPTIONAL
-  updateIdentity?: boolean                       // OPTIONAL
-  shareMyEmail?: boolean                         // OPTIONAL
+  cryptoGiven!: CryptoGivenDto; // REQUIRED
+  otcDonationTransactionHash!: string; // REQUIRED - Transaction hash
+  receivingEntityType!: DestinationType; // REQUIRED - 'fund', 'org', 'subproject'
+  receivingEntityId!: string; // REQUIRED - UUID of entity
+  recommendationId?: string; // OPTIONAL - UUID
+  isRebalanceRequested?: boolean; // OPTIONAL - Default: false
+  donorName?: string; // OPTIONAL
+  donorIdentity?: IdentityInputDto; // OPTIONAL
+  updateIdentity?: boolean; // OPTIONAL
+  shareMyEmail?: boolean; // OPTIONAL
 }
 ```
 
@@ -103,18 +106,20 @@ export class CryptoPledgeInputDto {
 **Current Implementation**: `app/callback/page.tsx`
 
 **URL Parameters**:
+
 ```typescript
 interface RobinhoodCallbackParams {
-  orderId: string          // Robinhood's unique order ID (e.g., "RH_ORDER_123456")
-  asset: string            // Asset symbol (e.g., "ETH", "BTC", "SOL")
-  assetAmount: string      // Human-readable amount (e.g., "0.5" for 0.5 ETH)
-  network: string          // Network name (e.g., "ETHEREUM", "BITCOIN")
-  timestamp: string        // ISO timestamp of transfer
-  referenceId?: string     // Additional tracking ID (optional)
+  orderId: string; // Robinhood's unique order ID (e.g., "RH_ORDER_123456")
+  asset: string; // Asset symbol (e.g., "ETH", "BTC", "SOL")
+  assetAmount: string; // Human-readable amount (e.g., "0.5" for 0.5 ETH)
+  network: string; // Network name (e.g., "ETHEREUM", "BITCOIN")
+  timestamp: string; // ISO timestamp of transfer
+  referenceId?: string; // Additional tracking ID (optional)
 }
 ```
 
 **Example Callback URL**:
+
 ```
 https://yourapp.com/callback?orderId=RH_ORD_abc123&asset=ETH&assetAmount=0.5&network=ETHEREUM&timestamp=2025-10-24T16:30:00Z
 ```
@@ -122,11 +127,13 @@ https://yourapp.com/callback?orderId=RH_ORD_abc123&asset=ETH&assetAmount=0.5&net
 ### Files to Review
 
 **POC Current State**:
+
 - `robinhood-onramp/app/callback/page.tsx` (lines 1-530)
 - `robinhood-onramp/lib/robinhood-asset-metadata.ts` (lines 1-397)
 - `robinhood-onramp/types/robinhood.d.ts` (lines 1-180)
 
 **Backend Reference**:
+
 - `/Users/rheeger/Code/endaoment/endaoment-backend/libs/api/donation-pledges/src/lib/dtos/crypto-pledge-input.ts` (lines 1-155)
 - `/Users/rheeger/Code/endaoment/endaoment-backend/libs/api/donation-pledges/src/lib/pledge-service/crypto-pledge.service.ts` (lines 30-128)
 - `/Users/rheeger/Code/endaoment/endaoment-backend/libs/api/data-access/src/lib/entities/donations/donation-pledge.entity.ts` (lines 341-387)
@@ -171,13 +178,14 @@ robinhood-onramp/lib/
 **Action**: Define types matching backend exactly
 
 **Code**:
+
 ```typescript
 /**
  * Backend Integration Types for CryptoDonationPledge
- * 
+ *
  * These types mirror the backend's donation-pledges module to ensure
  * type-safe integration when submitting Robinhood transfers as pledges.
- * 
+ *
  * Reference: endaoment-backend/libs/api/donation-pledges/src/lib/dtos/
  */
 
@@ -347,17 +355,18 @@ export interface TokenLookup {
 **Action**: Map asset symbols to backend token IDs
 
 **Code**:
+
 ```typescript
 import { TokenLookup } from "./types";
 
 /**
  * Token ID mapping from backend database
- * 
+ *
  * This maps Robinhood asset symbols to Endaoment backend token IDs.
- * 
+ *
  * ⚠️ IMPORTANT: These IDs must match your backend database exactly.
  * Run: GET /v2/tokens to get the current list from your backend.
- * 
+ *
  * Example backend token structure:
  * {
  *   id: 1,
@@ -621,21 +630,22 @@ export async function fetchBackendTokens(
 **Action**: Convert human-readable amounts to smallest unit
 
 **Code**:
+
 ```typescript
 /**
  * Amount Conversion Utilities
- * 
+ *
  * Converts human-readable token amounts to smallest unit (bigint)
  * as required by backend CryptoDonationPledge entity.
  */
 
 /**
  * Convert human-readable amount to smallest unit
- * 
+ *
  * @param amount - Human-readable amount (e.g., "0.5" for 0.5 ETH)
  * @param decimals - Token decimals (e.g., 18 for ETH, 8 for BTC)
  * @returns Amount in smallest unit as string (for JSON serialization)
- * 
+ *
  * @example
  * convertToSmallestUnit("0.5", 18)  // "500000000000000000" (0.5 ETH in wei)
  * convertToSmallestUnit("1.0", 8)   // "100000000" (1 BTC in satoshi)
@@ -744,6 +754,7 @@ export function formatTokenAmount(
 **Action**: Map Robinhood callback data to CryptoPledgeInput
 
 **Code**:
+
 ```typescript
 import {
   RobinhoodPledgeData,
@@ -755,10 +766,10 @@ import { convertToSmallestUnit } from "./amount-converter";
 
 /**
  * Map Robinhood Connect callback data to backend CryptoPledgeInputDto format
- * 
+ *
  * This is the main integration point between Robinhood Connect and
  * Endaoment's backend donation-pledges API.
- * 
+ *
  * @param robinhoodData - Data from Robinhood callback + destination info
  * @returns Mapping result with CryptoPledgeInput or errors
  */
@@ -812,7 +823,9 @@ export function mapRobinhoodToPledge(
     );
   } catch (error) {
     errors.push(
-      `Failed to convert amount: ${error instanceof Error ? error.message : String(error)}`
+      `Failed to convert amount: ${
+        error instanceof Error ? error.message : String(error)
+      }`
     );
     return { success: false, errors };
   }
@@ -861,8 +874,7 @@ export function mapRobinhoodToPledge(
   }
 
   if (robinhoodData.metadata?.requestRebalance !== undefined) {
-    pledgeInput.isRebalanceRequested =
-      robinhoodData.metadata.requestRebalance;
+    pledgeInput.isRebalanceRequested = robinhoodData.metadata.requestRebalance;
   }
 
   // Add warnings for optional but recommended fields
@@ -871,7 +883,9 @@ export function mapRobinhoodToPledge(
   }
 
   if (!donorIdentity) {
-    warnings.push("No donor identity provided - no tax receipt will be generated");
+    warnings.push(
+      "No donor identity provided - no tax receipt will be generated"
+    );
   }
 
   return {
@@ -968,6 +982,7 @@ export function createPledgeFromCallback(
 **Action**: Pre-submission validation
 
 **Code**:
+
 ```typescript
 import { CryptoPledgeInput } from "./types";
 
@@ -982,7 +997,7 @@ export interface ValidationResult {
 
 /**
  * Validate CryptoPledgeInput before sending to backend
- * 
+ *
  * Ensures data meets all backend constraints and requirements
  */
 export function validatePledgeInput(
@@ -1028,9 +1043,7 @@ export function validatePledgeInput(
   } else if (
     !["fund", "org", "subproject"].includes(input.receivingEntityType)
   ) {
-    errors.push(
-      'receivingEntityType must be "fund", "org", or "subproject"'
-    );
+    errors.push('receivingEntityType must be "fund", "org", or "subproject"');
   }
 
   if (!input.receivingEntityId) {
@@ -1049,9 +1062,7 @@ export function validatePledgeInput(
     const identity = input.donorIdentity;
 
     if (!identity.email || !identity.firstname || !identity.lastname) {
-      errors.push(
-        "donorIdentity requires email, firstname, and lastname"
-      );
+      errors.push("donorIdentity requires email, firstname, and lastname");
     }
 
     if (
@@ -1151,10 +1162,11 @@ export function sanitizePledgeInput(
 **Action**: Export clean public API
 
 **Code**:
+
 ```typescript
 /**
  * Backend Integration - Public API
- * 
+ *
  * Utilities for mapping Robinhood Connect transfers to
  * Endaoment backend CryptoDonationPledge format.
  */
@@ -1186,10 +1198,7 @@ export {
 } from "./pledge-mapper";
 
 // Validation
-export {
-  validatePledgeInput,
-  sanitizePledgeInput,
-} from "./validation";
+export { validatePledgeInput, sanitizePledgeInput } from "./validation";
 ```
 
 ### Step 7: Update Callback Page to Use Mapping
@@ -1199,6 +1208,7 @@ export {
 **Action**: Integrate pledge mapping into callback handling
 
 **Code** (add to existing file):
+
 ```typescript
 // Add import at top of file
 import {
@@ -1319,6 +1329,7 @@ function handleSuccessfulTransfer() {
 **Action**: Add backend URL configuration
 
 **Code**:
+
 ```bash
 # Existing Robinhood config
 NEXT_PUBLIC_ROBINHOOD_APPLICATION_ID=your-app-id
@@ -1338,7 +1349,8 @@ NEXT_PUBLIC_BACKEND_URL=https://api.endaoment.org
 **Action**: Document the integration
 
 **Code**:
-```markdown
+
+````markdown
 # Backend Integration Guide
 
 This document explains how Robinhood Connect transfers are mapped to Endaoment backend `CryptoDonationPledge` entities.
@@ -1356,15 +1368,15 @@ When a user completes a transfer via Robinhood Connect, the callback handler:
 
 ### Robinhood → Backend
 
-| Robinhood Field | Backend Field | Transformation | Notes |
-|----------------|---------------|----------------|-------|
-| `orderId` | `otcDonationTransactionHash` | Direct | Robinhood's unique order ID |
-| `asset` | `cryptoGiven.tokenId` | Symbol → ID lookup | Requires token resolution |
-| `assetAmount` | `cryptoGiven.inputAmount` | Amount → smallest unit | Converted to bigint string |
-| N/A | `receivingEntityType` | From context | 'fund', 'org', or 'subproject' |
-| N/A | `receivingEntityId` | From context | UUID of destination entity |
-| N/A | `donorName` | From user | Optional display name |
-| N/A | `donorIdentity` | From user | Optional for tax receipt |
+| Robinhood Field | Backend Field                | Transformation         | Notes                          |
+| --------------- | ---------------------------- | ---------------------- | ------------------------------ |
+| `orderId`       | `otcDonationTransactionHash` | Direct                 | Robinhood's unique order ID    |
+| `asset`         | `cryptoGiven.tokenId`        | Symbol → ID lookup     | Requires token resolution      |
+| `assetAmount`   | `cryptoGiven.inputAmount`    | Amount → smallest unit | Converted to bigint string     |
+| N/A             | `receivingEntityType`        | From context           | 'fund', 'org', or 'subproject' |
+| N/A             | `receivingEntityId`          | From context           | UUID of destination entity     |
+| N/A             | `donorName`                  | From user              | Optional display name          |
+| N/A             | `donorIdentity`              | From user              | Optional for tax receipt       |
 
 ## Token ID Resolution
 
@@ -1376,6 +1388,7 @@ curl https://api.endaoment.org/v2/tokens
 
 # Update BACKEND_TOKEN_MAP with actual IDs
 ```
+````
 
 ## Amount Conversion
 
@@ -1392,13 +1405,13 @@ import { createPledgeFromCallback } from "@/lib/backend-integration";
 
 // From Robinhood callback
 const result = createPledgeFromCallback(
-  "RH_ORD_abc123",  // orderId
-  "ETH",            // asset
-  "0.5",            // assetAmount
-  "ETHEREUM",       // network
-  "fund",           // destinationType
-  "fund-uuid",      // destinationId
-  "Jane Doe"        // donorName (optional)
+  "RH_ORD_abc123", // orderId
+  "ETH", // asset
+  "0.5", // assetAmount
+  "ETHEREUM", // network
+  "fund", // destinationType
+  "fund-uuid", // destinationId
+  "Jane Doe" // donorName (optional)
 );
 
 if (result.success && result.data) {
@@ -1427,7 +1440,8 @@ npm test -- backend-integration
 - [ ] Test with real Robinhood transfers
 - [ ] Verify pledges appear in backend database
 - [ ] Test tax receipt generation (if donor identity provided)
-```
+
+````
 
 ---
 
@@ -1469,7 +1483,7 @@ console.log(convertToSmallestUnit("1.0", 8));
 // Test USDC (6 decimals)
 console.log(convertToSmallestUnit("100", 6));
 // Expected: "100000000"
-```
+````
 
 ### 2. Test Token Resolution
 
@@ -1547,6 +1561,7 @@ if (mappingResult.success && mappingResult.data) {
 ```
 
 Run:
+
 ```bash
 ts-node scripts/test-pledge-mapping.ts
 ```
@@ -1558,6 +1573,7 @@ ts-node scripts/test-pledge-mapping.ts
 **Purpose**: Ensure integration doesn't break existing functionality
 
 **Commands**:
+
 ```bash
 # 1. Build should pass
 npm run build
@@ -1571,6 +1587,7 @@ npm run dev
 ```
 
 **Success Criteria**:
+
 - ✅ Build completes with 0 errors
 - ✅ Callback page loads successfully
 - ✅ Amount conversion works correctly
@@ -1579,6 +1596,7 @@ npm run dev
 - ✅ Mapping produces valid CryptoPledgeInput
 
 **If Checkpoint Fails**:
+
 1. Check TypeScript errors in build output
 2. Verify token decimals are correct
 3. Test amount conversion with various values
@@ -1593,6 +1611,7 @@ npm run dev
 **Symptom**: "Asset ETH not supported in backend"
 
 **Solution**:
+
 ```typescript
 // Update BACKEND_TOKEN_MAP in token-resolver.ts
 // OR fetch from backend:
@@ -1607,6 +1626,7 @@ console.log(tokens);
 **Symptom**: Converted amount doesn't match expected value
 
 **Solution**:
+
 ```typescript
 import { validateAmountConversion } from "@/lib/backend-integration";
 
@@ -1621,6 +1641,7 @@ if (!isValid) {
 **Symptom**: 400 Bad Request from backend API
 
 **Solution**:
+
 1. Check validation errors: `validatePledgeInput(pledgeData)`
 2. Verify token ID exists in backend
 3. Ensure destination entity UUID is valid
@@ -1631,6 +1652,7 @@ if (!isValid) {
 **Symptom**: Pledge created but no tax receipt generated
 
 **Solution**:
+
 ```typescript
 // Ensure donor identity is provided
 const pledgeData: RobinhoodPledgeData = {
@@ -1666,6 +1688,7 @@ const pledgeData: RobinhoodPledgeData = {
 **Endpoint**: `POST /v2/donation-pledges/crypto`
 
 **Headers**:
+
 ```json
 {
   "Content-Type": "application/json",
@@ -1676,6 +1699,7 @@ const pledgeData: RobinhoodPledgeData = {
 **Request Body**: `CryptoPledgeInput`
 
 **Response**:
+
 ```json
 {
   "id": "pledge-uuid",
@@ -1702,16 +1726,19 @@ After completing this sub-plan:
 ## Risk Assessment
 
 **🟢 LOW RISK**:
+
 - New directory (additive only)
 - No changes to existing flows
 - Backend data format is well-defined
 
 **🟡 MEDIUM RISK**:
+
 - Token ID mapping must be accurate
 - Amount conversion must preserve precision
 - Backend API must be available
 
 **🔴 CRITICAL RISK**:
+
 - **Token ID mismatch**: Wrong token in backend → pledge fails
   - **Mitigation**: Validate token IDs before production
   - **Fallback**: Fetch tokens from backend API on startup
@@ -1739,22 +1766,25 @@ After completing this sub-plan:
 ## Success Indicators
 
 ✅ **Type Safety**:
+
 - All backend types properly defined
 - No TypeScript errors
 - Full IntelliSense support
 
 ✅ **Conversion Accuracy**:
+
 - Amount conversion reversible
 - No precision loss
 - Correct for all token decimals
 
 ✅ **Validation**:
+
 - Invalid data caught before submission
 - Clear error messages
 - Backend constraints satisfied
 
 ✅ **Integration**:
+
 - Pledges successfully created in backend
 - Data appears correctly in database
 - Tax receipts generated (if identity provided)
-

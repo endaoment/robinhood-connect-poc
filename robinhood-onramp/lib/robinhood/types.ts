@@ -10,44 +10,38 @@
  * Supported blockchain networks on Robinhood Connect
  */
 export type RobinhoodNetwork =
-  | "ARBITRUM"
-  | "AVALANCHE"
-  | "BASE"
-  | "BITCOIN"
-  | "BITCOIN_CASH"
-  | "CARDANO"
-  | "DOGECOIN"
-  | "ETHEREUM"
-  | "ETHEREUM_CLASSIC"
-  | "HEDERA"
-  | "LITECOIN"
-  | "OPTIMISM"
-  | "POLYGON"
-  | "SOLANA"
-  | "STELLAR"
-  | "SUI"
-  | "TEZOS"
-  | "TONCOIN"
-  | "XRP"
-  | "ZORA";
+  | 'ARBITRUM'
+  | 'AVALANCHE'
+  | 'BASE'
+  | 'BITCOIN'
+  | 'BITCOIN_CASH'
+  | 'CARDANO'
+  | 'DOGECOIN'
+  | 'ETHEREUM'
+  | 'ETHEREUM_CLASSIC'
+  | 'HEDERA'
+  | 'LITECOIN'
+  | 'OPTIMISM'
+  | 'POLYGON'
+  | 'SOLANA'
+  | 'STELLAR'
+  | 'SUI'
+  | 'TEZOS'
+  | 'TONCOIN'
+  | 'XRP'
+  | 'ZORA'
 
 /**
  * Asset categories for UI grouping
  */
-export type AssetCategory =
-  | "layer1"
-  | "layer2"
-  | "stablecoin"
-  | "defi"
-  | "meme"
-  | "other";
+export type AssetCategory = 'layer1' | 'layer2' | 'stablecoin' | 'defi' | 'meme' | 'other'
 
 /**
  * Token type discriminator (matches backend)
  */
 export enum RobinhoodTokenType {
-  EvmToken = "EvmToken",
-  NonEvmToken = "NonEvmToken",
+  EvmToken = 'EvmToken',
+  NonEvmToken = 'NonEvmToken',
 }
 
 /**
@@ -56,37 +50,40 @@ export enum RobinhoodTokenType {
  */
 export interface RobinhoodBaseAsset {
   /** Unique symbol (e.g., 'BTC', 'ETH', 'SOL') */
-  symbol: string;
+  symbol: string
 
   /** Full display name (e.g., 'Bitcoin', 'Ethereum') */
-  name: string;
+  name: string
 
   /** Brief description for tooltips/UI */
-  description: string;
+  description: string
 
-  /** Icon filename (e.g., 'btc.svg') */
-  icon: string;
+  /** Icon filename (e.g., 'btc.svg') - local fallback */
+  icon: string
+
+  /** Logo URL (CoinGecko format for backend integration) */
+  logoUrl: string | null
 
   /** Decimals for display formatting */
-  decimals: number;
+  decimals: number
 
   /** Whether asset is enabled for transfers */
-  enabled: boolean;
+  enabled: boolean
 
   /** Featured/pinned in UI */
-  featured?: boolean;
+  featured?: boolean
 
   /** Popularity score for sorting (higher = more popular) */
-  popularity: number;
+  popularity: number
 
   /** Sort order for display */
-  sortOrder: number;
+  sortOrder: number
 
   /** UI category */
-  category: AssetCategory;
+  category: AssetCategory
 
   /** Token type discriminator */
-  type: RobinhoodTokenType;
+  type: RobinhoodTokenType
 }
 
 /**
@@ -94,26 +91,19 @@ export interface RobinhoodBaseAsset {
  * Mirrors backend EvmToken entity
  */
 export interface RobinhoodEvmAsset extends RobinhoodBaseAsset {
-  type: RobinhoodTokenType.EvmToken;
+  type: RobinhoodTokenType.EvmToken
 
   /** EVM Chain ID (1 = Ethereum, 137 = Polygon, etc.) */
-  chainId: number;
+  chainId: number
 
   /** Blockchain network name */
   network: Extract<
     RobinhoodNetwork,
-    | "ETHEREUM"
-    | "POLYGON"
-    | "ARBITRUM"
-    | "OPTIMISM"
-    | "BASE"
-    | "ZORA"
-    | "AVALANCHE"
-    | "ETHEREUM_CLASSIC"
-  >;
+    'ETHEREUM' | 'POLYGON' | 'ARBITRUM' | 'OPTIMISM' | 'BASE' | 'ZORA' | 'AVALANCHE' | 'ETHEREUM_CLASSIC'
+  >
 
   /** ERC-20 contract address (or native asset address) */
-  contractAddress?: string;
+  contractAddress?: string
 }
 
 /**
@@ -121,29 +111,22 @@ export interface RobinhoodEvmAsset extends RobinhoodBaseAsset {
  * Mirrors backend NonEvmToken entity
  */
 export interface RobinhoodNonEvmAsset extends RobinhoodBaseAsset {
-  type: RobinhoodTokenType.NonEvmToken;
+  type: RobinhoodTokenType.NonEvmToken
 
   /** Blockchain network name */
   network: Exclude<
     RobinhoodNetwork,
-    | "ETHEREUM"
-    | "POLYGON"
-    | "ARBITRUM"
-    | "OPTIMISM"
-    | "BASE"
-    | "ZORA"
-    | "AVALANCHE"
-    | "ETHEREUM_CLASSIC"
-  >;
+    'ETHEREUM' | 'POLYGON' | 'ARBITRUM' | 'OPTIMISM' | 'BASE' | 'ZORA' | 'AVALANCHE' | 'ETHEREUM_CLASSIC'
+  >
 
   /** Non-EVM identifier (often same as symbol) */
-  nonEvmIdentifier: string;
+  nonEvmIdentifier: string
 }
 
 /**
  * Union type for all assets
  */
-export type RobinhoodAsset = RobinhoodEvmAsset | RobinhoodNonEvmAsset;
+export type RobinhoodAsset = RobinhoodEvmAsset | RobinhoodNonEvmAsset
 
 /**
  * Deposit address configuration for an asset
@@ -151,13 +134,34 @@ export type RobinhoodAsset = RobinhoodEvmAsset | RobinhoodNonEvmAsset;
  */
 export interface RobinhoodDepositAddress {
   /** Destination wallet address (Coinbase Prime Trading Balance) */
-  address: string;
+  address: string
 
   /** Optional memo/tag for networks that require it (XRP, XLM, HBAR) */
-  memo?: string;
+  memo?: string | null
 
   /** Notes about this address (e.g., 'Fallback address') */
-  note?: string;
+  note?: string
+}
+
+/**
+ * OTC Token format (for backend integration)
+ * Matches backend libs/api/tokens/src/lib/otc-token.ts IOtcToken interface
+ */
+export interface IOtcToken {
+  /** Address to receive the token OTC */
+  readonly address: string
+
+  /** Symbol of the token */
+  readonly symbol: string
+
+  /** Name of the token */
+  readonly name: string
+
+  /** Logo URL (CoinGecko format) */
+  readonly logoUrl: string | null
+
+  /** Memo to receive the token OTC, if applicable */
+  readonly memo: string | null
 }
 
 /**
@@ -166,30 +170,29 @@ export interface RobinhoodDepositAddress {
  */
 export interface RobinhoodAssetConfig extends RobinhoodAsset {
   /** Deposit address configuration */
-  depositAddress: RobinhoodDepositAddress;
+  depositAddress: RobinhoodDepositAddress
 }
 
 /**
  * Daffy-style onramp URL parameters
  */
 export interface DaffyStyleOnrampParams {
-  asset: string;
-  network: RobinhoodNetwork;
-  walletAddress: string;
-  redirectUrl?: string;
-  connectId?: string;
+  asset: string
+  network: RobinhoodNetwork
+  walletAddress: string
+  redirectUrl?: string
+  connectId?: string
 }
 
 /**
  * Daffy-style onramp URL result
  */
 export interface DaffyStyleOnrampUrlResult {
-  url: string;
-  connectId: string;
+  url: string
+  connectId: string
   params: {
-    asset: string;
-    network: string;
-    walletAddress: string;
-  };
+    asset: string
+    network: string
+    walletAddress: string
+  }
 }
-

@@ -4,6 +4,26 @@ This directory contains utility scripts for Robinhood Connect integration.
 
 ## Production Utility Scripts
 
+### export-otc-tokens.ts
+
+**NEW**: Exports Robinhood Connect assets in backend OTC token format for integration into `endaoment-backend/libs/api/tokens/src/lib/otc-token.ts`.
+
+**Usage**:
+
+```bash
+npx tsx scripts/export-otc-tokens.ts
+```
+
+**Output**: `scripts/robinhood-otc-tokens.json`
+
+**Contains**:
+
+- JSON array of all enabled Robinhood assets
+- Ready-to-paste TypeScript array for backend
+- Metadata (25 assets with addresses, symbols, names, logoUrls, memos)
+
+**Purpose**: Prepare Robinhood assets for backend integration
+
 ### get_all_robinhood_assets.py
 
 Fetches the complete list of supported assets from Robinhood API.

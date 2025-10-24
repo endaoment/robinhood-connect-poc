@@ -6,9 +6,13 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useAssetSelection } from '@/hooks/use-asset-selection'
 import { useToast } from '@/hooks/use-toast'
-import { getSupportedAssets, getSupportedNetworks } from '@/lib/robinhood-asset-addresses'
-import { getAssetMetadata, getEnabledAssets, searchAssets } from '@/lib/robinhood-asset-metadata'
-import { AssetMetadata } from '@/types/robinhood'
+import {
+  getAssetConfig,
+  getEnabledAssets,
+  getSupportedNetworks,
+  searchAssets,
+  type RobinhoodAssetConfig,
+} from '@/lib/robinhood'
 import { ChevronDown, ExternalLink, Loader2, Search, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -27,8 +31,7 @@ export default function Dashboard() {
   const [showDropdown, setShowDropdown] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
 
-  // Get all supported assets and networks
-  const supportedAssets = getSupportedAssets()
+  // Get all supported networks
   const supportedNetworks = getSupportedNetworks()
 
   // Missing assets (hardcoded for now since export isn't working)
@@ -79,7 +82,7 @@ export default function Dashboard() {
             : null
 
         // Get asset metadata for icon and details
-        const assetInfo = orderDetails.asset ? getAssetMetadata(orderDetails.asset) : null
+        const assetInfo = orderDetails.asset ? getAssetConfig(orderDetails.asset) : null
 
         // Show dismissible toast with rich order details
         toast({
@@ -90,7 +93,14 @@ export default function Dashboard() {
               {(orderDetails.asset || orderDetails.network) && (
                 <div className="border-l-4 border-emerald-500 bg-emerald-50 p-3 rounded">
                   <div className="flex items-center gap-3 mb-2">
-                    {assetInfo && <AssetIcon symbol={assetInfo.symbol} icon={assetInfo.icon} size={32} />}
+                    {assetInfo && (
+                      <AssetIcon
+                        symbol={assetInfo.symbol}
+                        icon={assetInfo.icon}
+                        logoUrl={assetInfo.logoUrl}
+                        size={32}
+                      />
+                    )}
                     <div className="flex-1">
                       <div className="text-sm font-semibold text-emerald-900">Transaction Summary</div>
                       {assetInfo && <div className="text-xs text-emerald-700">{assetInfo.name}</div>}
@@ -188,7 +198,7 @@ export default function Dashboard() {
   /**
    * Handle asset selection - NEW FLOW
    */
-  const handleAssetSelect = (asset: AssetMetadata) => {
+  const handleAssetSelect = (asset: RobinhoodAssetConfig) => {
     selectAsset(asset)
     setShowDropdown(false)
     setSearchQuery('')
@@ -358,7 +368,7 @@ export default function Dashboard() {
                           onClick={() => handleAssetSelect(asset)}
                           className="w-full p-4 flex items-center gap-4 hover:bg-zinc-50 transition-colors border-b border-zinc-100 last:border-0 text-left"
                         >
-                          <AssetIcon symbol={asset.symbol} icon={asset.icon} size={40} />
+                          <AssetIcon symbol={asset.symbol} icon={asset.icon} logoUrl={asset.logoUrl} size={40} />
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold text-zinc-900">{asset.name}</div>
                             <div className="text-sm text-zinc-500">
@@ -385,7 +395,12 @@ export default function Dashboard() {
           <Card className="shadow-2xl border-2 border-emerald-500">
             <CardContent className="p-6">
               <div className="flex items-center gap-4 h-14">
-                <AssetIcon symbol={selection.asset.symbol} icon={selection.asset.icon} size={56} />
+                <AssetIcon
+                  symbol={selection.asset.symbol}
+                  icon={selection.asset.icon}
+                  logoUrl={selection.asset.logoUrl}
+                  size={56}
+                />
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-bold text-zinc-900 truncate">{selection.asset.name}</h3>
                   <p className="text-sm text-zinc-600 truncate">

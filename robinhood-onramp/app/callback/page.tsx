@@ -3,10 +3,13 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useToast } from '@/hooks/use-toast'
-import { getAssetDepositAddress } from '@/lib/robinhood-asset-addresses'
-import type { CallbackParams, DepositAddressResponse } from '@/types/robinhood'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import {
+  getDepositAddress,
+  getDepositMemo,
+} from "@/lib/robinhood";
+import type { CallbackParams, DepositAddressResponse } from "@/types/robinhood";
 import { AlertCircle, ArrowLeft, CheckCircle, Copy, ExternalLink } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
@@ -95,20 +98,27 @@ function CallbackPageContent() {
   const getDepositAddressForAsset = (callbackParams: CallbackParams): DepositAddressResponse => {
     try {
       // Get asset-specific address (not network-based)
-      const assetInfo = getAssetDepositAddress(callbackParams.assetCode)
+      const address = getDepositAddress(callbackParams.assetCode);
+      const memo = getDepositMemo(callbackParams.assetCode);
+
+      if (!address) {
+        throw new Error(`Deposit address not configured for asset: ${callbackParams.assetCode}`);
+      }
 
       return {
-        address: assetInfo.address,
-        addressTag: assetInfo.memo,
+        address,
+        addressTag: memo,
         assetCode: callbackParams.assetCode,
         assetAmount: callbackParams.assetAmount,
         networkCode: callbackParams.network,
-      }
+      };
     } catch (error: any) {
-      console.error('Failed to get deposit address:', error)
-      throw new Error(error.message || 'Deposit address not configured for this asset')
+      console.error("Failed to get deposit address:", error);
+      throw new Error(
+        error.message || "Deposit address not configured for this asset"
+      );
     }
-  }
+  };
 
   // Copy address to clipboard
   const copyToClipboard = async (text: string) => {
