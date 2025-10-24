@@ -1,0 +1,189 @@
+{
+  "metadata": {
+    "generated": "2025-10-24T03:10:29.642Z",
+    "source": "robinhood-connect-poc",
+    "totalAssets": 25,
+    "format": "IOtcToken (matches libs/api/tokens/src/lib/otc-token.ts)"
+  },
+  "tokens": [
+    {
+      "address": "0x0788702c7d70914f34b82fb6ad0b405263a00486",
+      "symbol": "AAVE",
+      "name": "Aave",
+      "logoUrl": "https://assets.coingecko.com/coins/images/12645/small/AAVE.png?1601374110",
+      "memo": null
+    },
+    {
+      "address": "0x2063115a37f55c19cA60b9d1eca2378De00CD79b",
+      "symbol": "AVAX",
+      "name": "Avalanche",
+      "logoUrl": "https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574",
+      "memo": null
+    },
+    {
+      "address": "qqqg0e4qs9h6j6z8t53kwmjukwksmkzphvtsfv3j2q",
+      "symbol": "BCH",
+      "name": "Bitcoin Cash",
+      "logoUrl": "https://assets.coingecko.com/coins/images/780/small/bitcoin-cash-circle.png?1594689492",
+      "memo": null
+    },
+    {
+      "address": "puNRXZc4qEYWdUjmx68Lcb87DobBpgZQPdTndoS4U5B",
+      "symbol": "BONK",
+      "name": "BONK",
+      "logoUrl": "https://assets.coingecko.com/coins/images/28600/small/bonk.jpg?1672304290",
+      "memo": null
+    },
+    {
+      "address": "3NJ48qerB4sWE8qEF1bRzk7jXKh8AJnbBC",
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "logoUrl": "https://assets.coingecko.com/coins/images/1/small/bitcoin.png?1547033579",
+      "memo": null
+    },
+    {
+      "address": "0x944bff154f0486b6c834c5607978b45ffc264902",
+      "symbol": "COMP",
+      "name": "Compound",
+      "logoUrl": "https://assets.coingecko.com/coins/images/10775/small/COMP.png?1592625425",
+      "memo": null
+    },
+    {
+      "address": "0xe2efa30cca6b06e4436c0f25f2d0409407ac3a4d",
+      "symbol": "CRV",
+      "name": "Curve DAO",
+      "logoUrl": "https://assets.coingecko.com/coins/images/12124/small/Curve.png?1597369484",
+      "memo": null
+    },
+    {
+      "address": "DUGnpFtJGnmmGzFMBoEgSw5nPgRfSzYHF7",
+      "symbol": "DOGE",
+      "name": "Dogecoin",
+      "logoUrl": "https://assets.coingecko.com/coins/images/5/small/dogecoin.png?1547792256",
+      "memo": null
+    },
+    {
+      "address": "0x269285683a921dbce6fcb21513b06998f8fbbc99",
+      "symbol": "ETC",
+      "name": "Ethereum Classic",
+      "logoUrl": "https://assets.coingecko.com/coins/images/453/small/ethereum-classic-logo.png?1547034169",
+      "memo": null
+    },
+    {
+      "address": "0xa22d566f52b303049d27a7169ed17a925b3fdb5e",
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "logoUrl": "https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880",
+      "memo": null
+    },
+    {
+      "address": "0x9D5025B327E6B863E5050141C987d988c07fd8B2",
+      "symbol": "FLOKI",
+      "name": "Floki",
+      "logoUrl": "https://assets.coingecko.com/coins/images/16746/small/PNG_image.png?1643184642",
+      "memo": null
+    },
+    {
+      "address": "0xcf26c0f23e566b42251bc0cf680c8999def1d7f0",
+      "symbol": "LINK",
+      "name": "Chainlink",
+      "logoUrl": "https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png?1547034700",
+      "memo": null
+    },
+    {
+      "address": "MQNay3B5gRq4o7nHuTJf9LpFkDmxhmockK",
+      "symbol": "LTC",
+      "name": "Litecoin",
+      "logoUrl": "https://assets.coingecko.com/coins/images/2/small/litecoin.png?1547033580",
+      "memo": null
+    },
+    {
+      "address": "Fd4ir2iU6H8kaYvTbAwXmrdjo6JPt7ABo7b5poCTpAsE",
+      "symbol": "MOODENG",
+      "name": "Moo Deng",
+      "logoUrl": "https://assets.coingecko.com/coins/images/40327/standard/moodeng.jpg?1728033449",
+      "memo": null
+    },
+    {
+      "address": "0x894f85323110a0a8883b22b18f26864882c3c63e",
+      "symbol": "ONDO",
+      "name": "Ondo",
+      "logoUrl": "https://assets.coingecko.com/coins/images/26580/small/ONDO.png?1696525656",
+      "memo": null
+    },
+    {
+      "address": "0x9D5025B327E6B863E5050141C987d988c07fd8B2",
+      "symbol": "PEPE",
+      "name": "Pepecoin",
+      "logoUrl": "https://assets.coingecko.com/coins/images/29850/small/pepe-token.jpeg?1682922725",
+      "memo": null
+    },
+    {
+      "address": "0x263dcd3e749b1f00c3998b5a0f14e3255658803b",
+      "symbol": "SHIB",
+      "name": "Shiba Inu",
+      "logoUrl": "https://assets.coingecko.com/coins/images/11939/small/shiba.png?1622619446",
+      "memo": null
+    },
+    {
+      "address": "DPsUYCziRFjW8dcvitvtrJJfxbPUb1X7Ty8ybn3hRwM1",
+      "symbol": "SOL",
+      "name": "Solana",
+      "logoUrl": "https://assets.coingecko.com/coins/images/4128/small/solana.png?1640133422",
+      "memo": null
+    },
+    {
+      "address": "0x9D5025B327E6B863E5050141C987d988c07fd8B2",
+      "symbol": "TRUMP",
+      "name": "OFFICIAL TRUMP",
+      "logoUrl": "https://assets.coingecko.com/coins/images/43379/standard/photo_2025-01-18_05-25-12.jpg?1737159150",
+      "memo": null
+    },
+    {
+      "address": "0x396b24e9137befef326af9fdba92d95dd124d5d4",
+      "symbol": "UNI",
+      "name": "Uniswap",
+      "logoUrl": "https://assets.coingecko.com/coins/images/12504/small/uni.jpg?1687143398",
+      "memo": null
+    },
+    {
+      "address": "0xd71a079cb64480334ffb400f017a0dde94f553dd",
+      "symbol": "USDC",
+      "name": "USD Coin",
+      "logoUrl": "https://assets.coingecko.com/coins/images/6319/small/usdc.png?1547042389",
+      "memo": null
+    },
+    {
+      "address": "0x9D5025B327E6B863E5050141C987d988c07fd8B2",
+      "symbol": "VIRTUAL",
+      "name": "Virtuals Protocol",
+      "logoUrl": "https://assets.coingecko.com/coins/images/41486/standard/virtual.png?1728529786",
+      "memo": null
+    },
+    {
+      "address": "0x9D5025B327E6B863E5050141C987d988c07fd8B2",
+      "symbol": "WLFI",
+      "name": "World Liberty Financial",
+      "logoUrl": "https://assets.coingecko.com/coins/images/42721/standard/WLFI_Token.png?1732760729",
+      "memo": null
+    },
+    {
+      "address": "GB4SJVA7KAFDZJFVTSEV2YWZZA3VEANHHK3WSJRHO2XS2GDYJCGWKDB5",
+      "symbol": "XLM",
+      "name": "Stellar",
+      "logoUrl": "https://assets.coingecko.com/coins/images/100/small/Stellar_symbol_black_RGB.png?1552356157",
+      "memo": "1380611530"
+    },
+    {
+      "address": "tz1P4FJEdVTEEG5TRREFavjQthzsJuESiCRV",
+      "symbol": "XTZ",
+      "name": "Tezos",
+      "logoUrl": "https://assets.coingecko.com/coins/images/976/small/Tezos-logo.png?1547034862",
+      "memo": null
+    }
+  ],
+  "typescript": {
+    "description": "TypeScript array for direct copy-paste into backend",
+    "code": "export const ROBINHOOD_OTC_TOKENS: ReadonlyArray<IOtcToken> = [\n  {\n    address: '0x0788702c7d70914f34b82fb6ad0b405263a00486',\n    symbol: 'AAVE',\n    name: 'Aave',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/12645/small/AAVE.png?1601374110',\n  },\n  {\n    address: '0x2063115a37f55c19cA60b9d1eca2378De00CD79b',\n    symbol: 'AVAX',\n    name: 'Avalanche',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',\n  },\n  {\n    address: 'qqqg0e4qs9h6j6z8t53kwmjukwksmkzphvtsfv3j2q',\n    symbol: 'BCH',\n    name: 'Bitcoin Cash',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/780/small/bitcoin-cash-circle.png?1594689492',\n  },\n  {\n    address: 'puNRXZc4qEYWdUjmx68Lcb87DobBpgZQPdTndoS4U5B',\n    symbol: 'BONK',\n    name: 'BONK',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/28600/small/bonk.jpg?1672304290',\n  },\n  {\n    address: '3NJ48qerB4sWE8qEF1bRzk7jXKh8AJnbBC',\n    symbol: 'BTC',\n    name: 'Bitcoin',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png?1547033579',\n  },\n  {\n    address: '0x944bff154f0486b6c834c5607978b45ffc264902',\n    symbol: 'COMP',\n    name: 'Compound',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/10775/small/COMP.png?1592625425',\n  },\n  {\n    address: '0xe2efa30cca6b06e4436c0f25f2d0409407ac3a4d',\n    symbol: 'CRV',\n    name: 'Curve DAO',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/12124/small/Curve.png?1597369484',\n  },\n  {\n    address: 'DUGnpFtJGnmmGzFMBoEgSw5nPgRfSzYHF7',\n    symbol: 'DOGE',\n    name: 'Dogecoin',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/5/small/dogecoin.png?1547792256',\n  },\n  {\n    address: '0x269285683a921dbce6fcb21513b06998f8fbbc99',\n    symbol: 'ETC',\n    name: 'Ethereum Classic',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/453/small/ethereum-classic-logo.png?1547034169',\n  },\n  {\n    address: '0xa22d566f52b303049d27a7169ed17a925b3fdb5e',\n    symbol: 'ETH',\n    name: 'Ethereum',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880',\n  },\n  {\n    address: '0x9D5025B327E6B863E5050141C987d988c07fd8B2',\n    symbol: 'FLOKI',\n    name: 'Floki',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/16746/small/PNG_image.png?1643184642',\n  },\n  {\n    address: '0xcf26c0f23e566b42251bc0cf680c8999def1d7f0',\n    symbol: 'LINK',\n    name: 'Chainlink',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png?1547034700',\n  },\n  {\n    address: 'MQNay3B5gRq4o7nHuTJf9LpFkDmxhmockK',\n    symbol: 'LTC',\n    name: 'Litecoin',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/2/small/litecoin.png?1547033580',\n  },\n  {\n    address: 'Fd4ir2iU6H8kaYvTbAwXmrdjo6JPt7ABo7b5poCTpAsE',\n    symbol: 'MOODENG',\n    name: 'Moo Deng',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/40327/standard/moodeng.jpg?1728033449',\n  },\n  {\n    address: '0x894f85323110a0a8883b22b18f26864882c3c63e',\n    symbol: 'ONDO',\n    name: 'Ondo',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/26580/small/ONDO.png?1696525656',\n  },\n  {\n    address: '0x9D5025B327E6B863E5050141C987d988c07fd8B2',\n    symbol: 'PEPE',\n    name: 'Pepecoin',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/29850/small/pepe-token.jpeg?1682922725',\n  },\n  {\n    address: '0x263dcd3e749b1f00c3998b5a0f14e3255658803b',\n    symbol: 'SHIB',\n    name: 'Shiba Inu',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/11939/small/shiba.png?1622619446',\n  },\n  {\n    address: 'DPsUYCziRFjW8dcvitvtrJJfxbPUb1X7Ty8ybn3hRwM1',\n    symbol: 'SOL',\n    name: 'Solana',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/4128/small/solana.png?1640133422',\n  },\n  {\n    address: '0x9D5025B327E6B863E5050141C987d988c07fd8B2',\n    symbol: 'TRUMP',\n    name: 'OFFICIAL TRUMP',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/43379/standard/photo_2025-01-18_05-25-12.jpg?1737159150',\n  },\n  {\n    address: '0x396b24e9137befef326af9fdba92d95dd124d5d4',\n    symbol: 'UNI',\n    name: 'Uniswap',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/12504/small/uni.jpg?1687143398',\n  },\n  {\n    address: '0xd71a079cb64480334ffb400f017a0dde94f553dd',\n    symbol: 'USDC',\n    name: 'USD Coin',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/6319/small/usdc.png?1547042389',\n  },\n  {\n    address: '0x9D5025B327E6B863E5050141C987d988c07fd8B2',\n    symbol: 'VIRTUAL',\n    name: 'Virtuals Protocol',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/41486/standard/virtual.png?1728529786',\n  },\n  {\n    address: '0x9D5025B327E6B863E5050141C987d988c07fd8B2',\n    symbol: 'WLFI',\n    name: 'World Liberty Financial',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/42721/standard/WLFI_Token.png?1732760729',\n  },\n  {\n    address: 'GB4SJVA7KAFDZJFVTSEV2YWZZA3VEANHHK3WSJRHO2XS2GDYJCGWKDB5',\n    symbol: 'XLM',\n    name: 'Stellar',\n    memo: '1380611530',\n    logoUrl: 'https://assets.coingecko.com/coins/images/100/small/Stellar_symbol_black_RGB.png?1552356157',\n  },\n  {\n    address: 'tz1P4FJEdVTEEG5TRREFavjQthzsJuESiCRV',\n    symbol: 'XTZ',\n    name: 'Tezos',\n    memo: null,\n    logoUrl: 'https://assets.coingecko.com/coins/images/976/small/Tezos-logo.png?1547034862',\n  }\n]"
+  }
+}

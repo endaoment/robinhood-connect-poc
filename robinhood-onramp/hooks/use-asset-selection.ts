@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { AssetMetadata } from "@/types/robinhood";
-import { getAssetConfig } from "@/lib/robinhood-asset-config";
+import {
+  getAssetConfig,
+  type RobinhoodAssetConfig,
+} from "@/lib/robinhood";
 
 export interface AssetSelection {
   /** Selected asset metadata */
-  asset: AssetMetadata;
+  asset: RobinhoodAssetConfig;
   /** Wallet address for this asset */
   walletAddress: string;
 }
@@ -20,7 +22,7 @@ export function useAssetSelection() {
   /**
    * Select an asset
    */
-  const selectAsset = useCallback((asset: AssetMetadata) => {
+  const selectAsset = useCallback((asset: RobinhoodAssetConfig) => {
     const config = getAssetConfig(asset.symbol);
 
     if (!config) {
@@ -30,7 +32,7 @@ export function useAssetSelection() {
 
     setSelection({
       asset,
-      walletAddress: config.walletAddress,
+      walletAddress: config.depositAddress.address,
     });
   }, []);
 

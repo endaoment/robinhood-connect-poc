@@ -2,49 +2,51 @@
 
 ## How to Transfer Crypto from Robinhood
 
-### Step 1: Start Transfer
+### Step 1: Select Your Cryptocurrency
 
-1. Visit the dashboard at [your-domain.com/dashboard](http://localhost:3002/dashboard)
-2. Click **"Start Transfer"** button on the main card
-3. The offramp modal will open with transfer options
+1. Visit the dashboard at [your-domain.com/dashboard](http://localhost:3030/dashboard)
+2. **Search** for your desired cryptocurrency using the search box
+   - Type the asset symbol (e.g., "ETH", "SOL", "USDC")
+   - Or type the full name (e.g., "Ethereum", "Solana")
+3. **Browse** the list of ~120 supported cryptocurrencies
+4. **Click** on the cryptocurrency you want to transfer
 
-### Step 2: Configure Your Transfer
+### Step 2: Review Wallet Address
 
-1. **Select Network**: Choose the blockchain network (Ethereum, Polygon, Solana, etc.)
-2. **Select Asset**: Choose the cryptocurrency you want to transfer (ETH, USDC, BTC, etc.)
-3. **Enter Amount**: Input the amount you want to transfer
-   - Toggle between crypto amount and fiat amount
-   - View estimated value and processing fees
-4. Click **"Open Robinhood"** to continue
+1. After selecting an asset, you'll see:
+   - Asset name and icon
+   - Network badge showing which blockchain network
+   - Wallet address where funds will be sent
+   - Network type (e.g., EVM, Solana, Bitcoin)
+2. **Verify** the wallet address is correct
+3. **Note**: If the network requires a memo or destination tag, it will be displayed
 
-### Step 3: Complete in Robinhood
+### Step 3: Initiate Transfer
 
-1. A new tab/window will open with the Robinhood app or website
-2. **On Mobile**: The Robinhood app will open automatically
-3. **On Desktop**: You'll be directed to Robinhood's web interface
-4. Review your transfer details in Robinhood:
-   - Asset type and amount
-   - Network selection
-   - Estimated fees
-5. Confirm and authorize the transfer in Robinhood
+1. Click the **"Initiate Transfer with Robinhood"** button
+2. Your browser will redirect to Robinhood
+3. **On Mobile**: The Robinhood app will open automatically
+4. **On Desktop**: Robinhood's web interface will open
 
-### Step 4: Receive Deposit Address
+### Step 4: Complete in Robinhood
 
-1. After completing the flow in Robinhood, you'll be redirected back automatically
-2. Your unique deposit address will be displayed
-3. **Important**: Copy the deposit address carefully
-4. If the network requires an address tag/memo, copy that as well
-5. Complete the transfer by sending crypto to this address from Robinhood
+1. **Authenticate** in the Robinhood app/website
+2. The cryptocurrency you selected will be **pre-selected** in Robinhood
+3. **Enter the amount** you want to transfer
+4. **Review** the transfer details:
+   - Cryptocurrency and amount
+   - Network fee (if applicable)
+   - Destination wallet address
+5. **Confirm** and authorize the transfer
 
-### Step 5: Track Your Transfer
+### Step 5: Confirmation
 
-1. Your transfer will appear in **"Recent Activity"** on the dashboard
-2. Click **"View Transaction History"** to see all transfers
-3. Click on any transfer to view detailed status:
-   - **In Progress**: Transfer is being processed
-   - **Completed**: Transfer successful, blockchain transaction ID available
-   - **Failed**: Transfer failed, contact support if needed
-4. For completed transfers, click the blockchain explorer link to verify on-chain
+1. After completing the transfer in Robinhood, you'll be redirected back
+2. You'll see a **success message** with transfer details:
+   - Asset transferred
+   - Network used
+   - Order ID from Robinhood
+3. Return to the dashboard to see a **success notification** with full details
 
 ## Supported Assets & Networks
 
@@ -88,24 +90,29 @@ For a complete list of supported assets, visit [Robinhood's currency pairs page]
 
 ### Transfer Not Working?
 
+**Issue**: Can't find the asset I want
+
+- Use the search box to search by symbol or name
+- Check if the asset is supported (see Supported Assets section)
+- Try scrolling through the full asset list
+
 **Issue**: Robinhood app doesn't open
 
 - Ensure you have the Robinhood app installed on mobile
 - On desktop, the web interface should open automatically
 - Check that popup blockers are disabled
 
-**Issue**: Deposit address not showing
+**Issue**: Asset not pre-selected in Robinhood
 
-- Ensure you completed the flow in Robinhood
-- Check that you were redirected back to our callback URL
-- Try refreshing the page
+- This may happen if the URL generation failed
+- Try selecting the asset again and re-initiating the transfer
+- Check your internet connection
 
-**Issue**: Transfer stuck "In Progress"
+**Issue**: Not redirected back after transfer
 
-- Blockchain transfers can take time depending on network congestion
-- Ethereum: 1-15 minutes typically
-- Bitcoin: 10-60 minutes typically
-- Check the blockchain explorer for transaction status
+- Ensure you completed the transfer in Robinhood
+- Check your browser didn't block the redirect
+- Try manually navigating back to the dashboard
 
 ### Invalid Transfer Amount
 
@@ -171,30 +178,39 @@ Transfer times depend on the blockchain network:
 - **Solana**: < 1 minute
 - **Bitcoin**: 10-60 minutes
 
+The transfer is complete once Robinhood broadcasts it to the blockchain.
+
 ### Can I cancel a transfer?
 
-Once a transfer is confirmed in Robinhood and submitted to the blockchain, it cannot be cancelled. Always verify details before confirming.
+Once a transfer is confirmed in Robinhood and submitted to the blockchain, it cannot be cancelled. Always verify the asset and wallet address before confirming in Robinhood.
 
-### What happens if I send to the wrong address?
+### What if I select the wrong cryptocurrency?
 
-Blockchain transactions are irreversible. Always verify the deposit address before sending. We cannot recover funds sent to incorrect addresses.
+Before clicking "Initiate Transfer", carefully review:
+- The cryptocurrency name and symbol
+- The network it will use
+- The wallet address shown
+
+You can change your selection by clicking a different asset.
+
+### What happens if the wallet address is wrong?
+
+The wallet addresses are pre-configured for each network. If you have concerns about an address, contact support before initiating a transfer. Blockchain transactions are irreversible.
 
 ### Are there minimum amounts?
 
-Yes, minimum transfer amounts vary by asset and network. Robinhood will show minimum amounts in the transfer interface.
+Yes, minimum transfer amounts vary by asset and network. Robinhood will show minimum amounts when you enter the amount in their interface.
 
-### How do I view my transaction history?
+### Which cryptocurrencies are supported?
 
-Click **"View Transaction History"** on the dashboard to see all your transfers, including their status and blockchain transaction IDs.
+We support ~120 cryptocurrencies across 19 blockchain networks. Use the search function on the dashboard to find specific assets, or browse the complete list.
 
-### What if my transfer fails?
+### What if my transfer doesn't appear?
 
-If a transfer fails:
-
-1. Check the error message in transaction history
-2. Verify you had sufficient balance in Robinhood
-3. Ensure the amount met minimum requirements
-4. Contact support with your reference ID if needed
+After completing the transfer in Robinhood:
+1. You should be redirected back with a success message
+2. Return to the dashboard to see a success notification
+3. If you don't see a confirmation, check your Robinhood account for the transfer status
 
 ## Contact & Support
 

@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
-import { getAssetDepositAddress } from '@/lib/robinhood-asset-addresses'
+import { createPledgeFromCallback, validatePledgeInput } from '@/lib/backend-integration'
+import { getDepositAddress, getDepositMemo } from '@/lib/robinhood'
 import type { CallbackParams, DepositAddressResponse } from '@/types/robinhood'
 import { AlertCircle, ArrowLeft, CheckCircle, Copy, ExternalLink } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -95,11 +96,16 @@ function CallbackPageContent() {
   const getDepositAddressForAsset = (callbackParams: CallbackParams): DepositAddressResponse => {
     try {
       // Get asset-specific address (not network-based)
-      const assetInfo = getAssetDepositAddress(callbackParams.assetCode)
+      const address = getDepositAddress(callbackParams.assetCode)
+      const memo = getDepositMemo(callbackParams.assetCode)
+
+      if (!address) {
+        throw new Error(`Deposit address not configured for asset: ${callbackParams.assetCode}`)
+      }
 
       return {
-        address: assetInfo.address,
-        addressTag: assetInfo.memo,
+        address,
+        addressTag: memo,
         assetCode: callbackParams.assetCode,
         assetAmount: callbackParams.assetAmount,
         networkCode: callbackParams.network,
@@ -169,13 +175,13 @@ function CallbackPageContent() {
           // These were encoded in the redirectUrl when generating the Robinhood link
           const urlAsset = searchParams.get('asset')
           const urlNetwork = searchParams.get('network')
-          const urlReferenceId = searchParams.get('referenceId')
+          const urlConnectId = searchParams.get('connectId')
           const urlTimestamp = searchParams.get('timestamp')
 
           console.log('🔗 [CALLBACK] Transfer data from URL:', {
             asset: urlAsset,
             network: urlNetwork,
-            referenceId: urlReferenceId,
+            connectId: urlConnectId,
             timestamp: urlTimestamp,
           })
 
@@ -210,6 +216,10 @@ function CallbackPageContent() {
           // For onramp, we get all the data we need from the callback URL and localStorage
           // The presence of orderId indicates the transfer was initiated successfully
 
+          // IMPORTANT: Robinhood onramp callbacks DO NOT include the transfer amount
+          // The amount is only known from what the user entered in the Robinhood app
+          // We can try to get it from localStorage (if user entered it in our UI),
+          // but it won't be in the callback URL parameters
           const orderAmount = storedAmount || 'Unknown'
           const orderStatus = orderId ? 'COMPLETED' : 'UNKNOWN'
 
@@ -222,11 +232,54 @@ function CallbackPageContent() {
             status: orderStatus,
           })
 
+          // Map to backend pledge format (only if we have a valid amount)
+          let pledgeMappingResult = null
+
+          if (orderAmount && orderAmount !== 'Unknown' && orderAmount !== '') {
+            console.log('🔄 [CALLBACK] Mapping to backend pledge format...')
+            pledgeMappingResult = createPledgeFromCallback(
+              orderId || '',
+              finalAsset,
+              orderAmount,
+              finalNetwork,
+              'fund', // TODO: Get from donation context
+              '00000000-0000-0000-0000-000000000000', // TODO: Get actual fund UUID
+              undefined, // TODO: Get donor name if authenticated
+            )
+
+            console.log('📊 [CALLBACK] Pledge Mapping Result:', {
+              success: pledgeMappingResult.success,
+              hasData: !!pledgeMappingResult.data,
+              errors: pledgeMappingResult.errors,
+              warnings: pledgeMappingResult.warnings,
+            })
+
+            if (pledgeMappingResult.success && pledgeMappingResult.data) {
+              console.log(
+                '✅ [CALLBACK] Backend Pledge Data (CryptoPledgeInput):',
+                JSON.stringify(pledgeMappingResult.data, null, 2),
+              )
+
+              // Validate the pledge input
+              const validation = validatePledgeInput(pledgeMappingResult.data)
+              console.log('🔍 [CALLBACK] Pledge Validation:', {
+                valid: validation.valid,
+                errors: validation.errors,
+                warnings: validation.warnings,
+              })
+            } else {
+              console.error('❌ [CALLBACK] Pledge mapping failed:', pledgeMappingResult.errors)
+            }
+          } else {
+            console.warn('⚠️ [CALLBACK] Skipping pledge mapping - amount not available from callback')
+            console.warn('   This is expected for Robinhood onramp (amount comes from user input, not callback)')
+          }
+
           // Store complete order details for dashboard to display
           const orderDetails = {
             // IDs from Robinhood callback
             orderId: orderId || '',
-            connectId: connectId || storedConnectId || '',
+            connectId: urlConnectId || connectId || storedConnectId || '',
             depositQuoteId: depositQuoteId || '',
 
             // Transaction details (URL params → API → localStorage priority)
@@ -238,6 +291,21 @@ function CallbackPageContent() {
             // Timestamps
             initiatedAt: finalTimestamp ? new Date(parseInt(finalTimestamp)).toISOString() : '',
             completedAt: new Date().toISOString(),
+
+            // Backend pledge data (if mapping was attempted)
+            backendPledge: pledgeMappingResult
+              ? pledgeMappingResult.success
+                ? {
+                    data: pledgeMappingResult.data,
+                    warnings: pledgeMappingResult.warnings,
+                  }
+                : {
+                    errors: pledgeMappingResult.errors,
+                  }
+              : {
+                  skipped: true,
+                  reason: 'Amount not available from callback',
+                },
           }
 
           console.log('✅ [CALLBACK] Complete order details:', orderDetails)
@@ -270,7 +338,7 @@ function CallbackPageContent() {
           depositAddress,
         }))
 
-        // Clean up localStorage (referenceId no longer needed after callback)
+        // Clean up localStorage (connectId no longer needed after callback)
         localStorage.removeItem('robinhood_reference_id')
         localStorage.removeItem('robinhood_selected_asset')
         localStorage.removeItem('robinhood_selected_network')

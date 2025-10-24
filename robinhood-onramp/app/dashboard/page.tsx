@@ -1,23 +1,18 @@
 'use client'
 
 import { AssetIcon } from '@/components/asset-icon'
-import { TransactionHistory } from '@/components/transaction-history'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { showAssetRegistryToast } from '@/components/asset-registry-toast'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useAssetSelection } from '@/hooks/use-asset-selection'
 import { useToast } from '@/hooks/use-toast'
-import { FEATURE_FLAGS } from '@/lib/feature-flags'
-import { getSupportedAssets, getSupportedNetworks } from '@/lib/robinhood-asset-addresses'
-import { getAssetMetadata, getEnabledAssets, searchAssets } from '@/lib/robinhood-asset-metadata'
-import { AssetMetadata } from '@/types/robinhood'
-import { ChevronDown, ExternalLink, History, Info, Loader2, Search, TrendingUp, X } from 'lucide-react'
+import { getAssetConfig, getEnabledAssets, searchAssets, type RobinhoodAssetConfig } from '@/lib/robinhood'
+import { ChevronDown, ExternalLink, Loader2, Search, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 export default function Dashboard() {
   const { toast } = useToast()
-  const [showHistory, setShowHistory] = useState(false)
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null)
 
   // Asset selection state
@@ -30,24 +25,37 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
-
-  // Old flow state
-  const [loading, setLoading] = useState(false)
-
-  // Get all supported assets and networks
-  const supportedAssets = getSupportedAssets()
-  const supportedNetworks = getSupportedNetworks()
-
-  // Missing assets (hardcoded for now since export isn't working)
-  const missingAssets = ['MEW', 'PENGU', 'PNUT', 'POPCAT', 'WIF', 'TON']
+  
+  // Fetch assets from API (server has the correct filtered list)
+  const [apiAssets, setApiAssets] = useState<RobinhoodAssetConfig[]>([])
+  
+  useEffect(() => {
+    fetch('/api/robinhood/assets')
+      .then(res => res.json())
+      .then(data => {
+        if (data.assets) {
+          setApiAssets(data.assets)
+        }
+      })
+      .catch(console.error)
+  }, [])
 
   // Filtered assets based on search
   const filteredAssets = useMemo(() => {
+    const assetsToSearch = apiAssets.length > 0 ? apiAssets : getEnabledAssets()
+    
     if (!searchQuery.trim()) {
-      return getEnabledAssets()
+      return assetsToSearch
     }
-    return searchAssets(searchQuery)
-  }, [searchQuery])
+    
+    // Search through the assets
+    const lowerQuery = searchQuery.toLowerCase()
+    return assetsToSearch.filter(
+      (asset) =>
+        asset.symbol.toLowerCase().includes(lowerQuery) ||
+        asset.name.toLowerCase().includes(lowerQuery)
+    )
+  }, [searchQuery, apiAssets])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -86,7 +94,7 @@ export default function Dashboard() {
             : null
 
         // Get asset metadata for icon and details
-        const assetInfo = orderDetails.asset ? getAssetMetadata(orderDetails.asset) : null
+        const assetInfo = orderDetails.asset ? getAssetConfig(orderDetails.asset) : null
 
         // Show dismissible toast with rich order details
         toast({
@@ -97,7 +105,14 @@ export default function Dashboard() {
               {(orderDetails.asset || orderDetails.network) && (
                 <div className="border-l-4 border-emerald-500 bg-emerald-50 p-3 rounded">
                   <div className="flex items-center gap-3 mb-2">
-                    {assetInfo && <AssetIcon symbol={assetInfo.symbol} icon={assetInfo.icon} size={32} />}
+                    {assetInfo && (
+                      <AssetIcon
+                        symbol={assetInfo.symbol}
+                        icon={assetInfo.icon}
+                        logoUrl={assetInfo.logoUrl}
+                        size={32}
+                      />
+                    )}
                     <div className="flex-1">
                       <div className="text-sm font-semibold text-emerald-900">Transaction Summary</div>
                       {assetInfo && <div className="text-xs text-emerald-700">{assetInfo.name}</div>}
@@ -155,6 +170,107 @@ export default function Dashboard() {
                 </div>
               )}
 
+              {/* Backend Pledge Data */}
+              {orderDetails.backendPledge && (
+                <div className="border-t border-zinc-300 pt-3 mt-3">
+                  <div className="text-sm font-semibold text-blue-900 mb-2">
+                    📊 Backend Pledge Data (CryptoPledgeInput)
+                  </div>
+
+                  {orderDetails.backendPledge.skipped ? (
+                    <div className="bg-amber-50 p-2 rounded border border-amber-200">
+                      <div className="text-xs font-semibold text-amber-900 mb-1">⚠️ Pledge Mapping Skipped</div>
+                      <div className="text-xs text-amber-800">
+                        {orderDetails.backendPledge.reason || 'Amount not available from callback'}
+                      </div>
+                      <div className="text-[10px] text-amber-600 italic mt-1">
+                        Note: Robinhood onramp callbacks don't include the transfer amount. You'll need to provide the
+                        amount separately for backend pledge creation.
+                      </div>
+                    </div>
+                  ) : orderDetails.backendPledge.data ? (
+                    <div className="space-y-2">
+                      {/* Crypto Given */}
+                      <div className="bg-blue-50 p-2 rounded border border-blue-200">
+                        <div className="text-xs font-semibold text-blue-900 mb-1">Crypto Given:</div>
+                        <div className="text-xs font-mono text-blue-800 space-y-0.5">
+                          <div>
+                            <strong>Token ID:</strong> {orderDetails.backendPledge.data.cryptoGiven.tokenId}
+                          </div>
+                          <div>
+                            <strong>Input Amount:</strong> {orderDetails.backendPledge.data.cryptoGiven.inputAmount}
+                          </div>
+                          <div className="text-[10px] text-blue-600 italic">(smallest unit - e.g., wei for ETH)</div>
+                        </div>
+                      </div>
+
+                      {/* Transaction Hash */}
+                      <div className="bg-purple-50 p-2 rounded border border-purple-200">
+                        <div className="text-xs font-semibold text-purple-900 mb-1">Transaction Hash:</div>
+                        <div className="text-xs font-mono text-purple-800 break-all">
+                          {orderDetails.backendPledge.data.otcDonationTransactionHash}
+                        </div>
+                        <div className="text-[10px] text-purple-600 italic mt-0.5">
+                          (Robinhood orderId used as transaction identifier)
+                        </div>
+                      </div>
+
+                      {/* Receiving Entity */}
+                      <div className="bg-green-50 p-2 rounded border border-green-200">
+                        <div className="text-xs font-semibold text-green-900 mb-1">Receiving Entity:</div>
+                        <div className="text-xs font-mono text-green-800 space-y-0.5">
+                          <div>
+                            <strong>Type:</strong> {orderDetails.backendPledge.data.receivingEntityType}
+                          </div>
+                          <div>
+                            <strong>ID:</strong> {orderDetails.backendPledge.data.receivingEntityId}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Donor Info (if present) */}
+                      {orderDetails.backendPledge.data.donorName && (
+                        <div className="bg-amber-50 p-2 rounded border border-amber-200">
+                          <div className="text-xs font-semibold text-amber-900 mb-1">Donor:</div>
+                          <div className="text-xs text-amber-800">{orderDetails.backendPledge.data.donorName}</div>
+                        </div>
+                      )}
+
+                      {/* Warnings */}
+                      {orderDetails.backendPledge.warnings && orderDetails.backendPledge.warnings.length > 0 && (
+                        <div className="bg-yellow-50 p-2 rounded border border-yellow-300">
+                          <div className="text-xs font-semibold text-yellow-900 mb-1">⚠️ Warnings:</div>
+                          {orderDetails.backendPledge.warnings.map((warning: string, idx: number) => (
+                            <div key={idx} className="text-xs text-yellow-800">
+                              • {warning}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Full JSON (collapsed) */}
+                      <details className="text-xs">
+                        <summary className="cursor-pointer text-blue-700 hover:text-blue-900 font-medium">
+                          View Full JSON →
+                        </summary>
+                        <pre className="mt-2 p-2 bg-zinc-900 text-green-400 rounded text-[10px] overflow-x-auto max-h-60">
+                          {JSON.stringify(orderDetails.backendPledge.data, null, 2)}
+                        </pre>
+                      </details>
+                    </div>
+                  ) : orderDetails.backendPledge.errors ? (
+                    <div className="bg-red-50 p-2 rounded border border-red-200">
+                      <div className="text-xs font-semibold text-red-900 mb-1">❌ Mapping Errors:</div>
+                      {orderDetails.backendPledge.errors.map((error: string, idx: number) => (
+                        <div key={idx} className="text-xs text-red-800">
+                          • {error}
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              )}
+
               {/* Success message */}
               <div className="text-xs text-zinc-600 mt-2 pt-2 border-t border-zinc-200">
                 ✅ Your crypto will arrive at Coinbase Prime within minutes. Click anywhere to dismiss.
@@ -195,7 +311,7 @@ export default function Dashboard() {
   /**
    * Handle asset selection - NEW FLOW
    */
-  const handleAssetSelect = (asset: AssetMetadata) => {
+  const handleAssetSelect = (asset: RobinhoodAssetConfig) => {
     selectAsset(asset)
     setShowDropdown(false)
     setSearchQuery('')
@@ -242,16 +358,15 @@ export default function Dashboard() {
         network: selection.asset.network,
       })
 
-      // TODO: Call URL generation API (Sub-Plan 4)
-      // For now, use the old multi-network approach as fallback
+      // Generate Robinhood onramp URL for the selected asset
       const response = await fetch('/api/robinhood/generate-onramp-url', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          supportedNetworks,
-          // In Sub-Plan 4, we'll change this to pass selected asset
+          // Only send the specific network for this asset (not all networks)
+          supportedNetworks: [selection.asset.network],
           selectedAsset: selection.asset.symbol,
           selectedNetwork: selection.asset.network,
         }),
@@ -301,166 +416,6 @@ export default function Dashboard() {
     } finally {
       setIsLoading(false)
     }
-  }
-
-  /**
-   * OLD FLOW - Handle Give with Robinhood button
-   */
-  const handleGiveWithRobinhood = async () => {
-    const startTime = Date.now()
-    console.log('\n' + '='.repeat(80))
-    console.log('🎯 [CLIENT] User clicked "Give with Robinhood"')
-    console.log('='.repeat(80))
-
-    setLoading(true)
-    try {
-      console.log('📊 [CLIENT] Preparing request:')
-      console.log(`   Networks: ${supportedNetworks.join(', ')}`)
-      console.log(`   Networks count: ${supportedNetworks.length}`)
-
-      // Call server-side API to generate offramp URL
-      console.log('\n📤 [CLIENT] Calling API: /api/robinhood/generate-onramp-url')
-      const apiStartTime = Date.now()
-
-      const response = await fetch('/api/robinhood/generate-onramp-url', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          supportedNetworks,
-        }),
-      })
-
-      const apiDuration = Date.now() - apiStartTime
-      console.log(`📥 [CLIENT] API response received in ${apiDuration}ms`)
-      console.log(`   Status: ${response.status} ${response.statusText}`)
-
-      const result = await response.json()
-      console.log('   Response body:', JSON.stringify(result, null, 2))
-
-      if (!response.ok || !result.success) {
-        console.error('❌ [CLIENT] API call failed')
-        throw new Error(result.error || 'Failed to generate onramp URL')
-      }
-
-      console.log('✅ [CLIENT] URL generated successfully')
-      console.log(`   📋 Reference ID: ${result.data.referenceId}`)
-      console.log(`   🔗 URL: ${result.data.url.substring(0, 100)}...`)
-
-      // Open Robinhood Connect URL
-      console.log('\n🌐 [CLIENT] Opening Robinhood Connect in new tab...')
-      window.open(result.data.url, '_blank')
-
-      const totalDuration = Date.now() - startTime
-      console.log(`\n✅ [CLIENT] Flow completed successfully in ${totalDuration}ms`)
-      console.log('='.repeat(80) + '\n')
-
-      toast({
-        title: 'Opening Robinhood...',
-        description: 'Choose any crypto from your Robinhood account. We support all major networks!',
-      })
-    } catch (error: any) {
-      const totalDuration = Date.now() - startTime
-      console.error('\n❌ [CLIENT] Transfer failed')
-      console.error(`   Error: ${error.message}`)
-      console.error(`   Duration: ${totalDuration}ms`)
-      console.log('='.repeat(80) + '\n')
-
-      toast({
-        title: 'Transfer failed',
-        description: error.message || 'Failed to start transfer. Please try again.',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // OLD FLOW (for feature flag fallback)
-  if (!FEATURE_FLAGS.assetPreselection) {
-    return (
-      <div className="flex min-h-screen flex-col bg-zinc-50 p-4 sm:p-8">
-        <div className="container mx-auto max-w-6xl">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-zinc-900">Give Crypto with Robinhood</h1>
-            <p className="text-zinc-600 mt-2">
-              Transfer crypto from your Robinhood account to support causes you care about
-            </p>
-          </div>
-
-          {/* Main Actions Grid */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-            {/* Transfer from Robinhood Card */}
-            <Card className="md:col-span-2 lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="text-2xl">One-Click Crypto Giving</CardTitle>
-                <CardDescription>
-                  We support all major blockchain networks. Choose any crypto in your Robinhood account!
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Give with Robinhood Button - Primary CTA */}
-                <Button
-                  onClick={handleGiveWithRobinhood}
-                  disabled={loading}
-                  size="lg"
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-lg py-6"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Opening Robinhood...
-                    </>
-                  ) : (
-                    <>
-                      <ExternalLink className="mr-2 h-5 w-5" />
-                      Give with Robinhood
-                    </>
-                  )}
-                </Button>
-
-                {/* Rest of old dashboard content... */}
-                <Alert>
-                  <Info className="h-4 w-4" />
-                  <AlertDescription>
-                    <strong>Classic Flow:</strong> Feature flag is OFF. Using multi-network approach.
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
-
-            {/* Quick Stats Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="h-5 w-5 text-blue-600" />
-                  <span>Your Impact</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="text-2xl font-bold text-zinc-900">$0.00</div>
-                  <div className="text-sm text-zinc-500">Total donated</div>
-                </div>
-                <div>
-                  <div className="text-lg font-semibold text-zinc-700">0</div>
-                  <div className="text-sm text-zinc-500">Transfers completed</div>
-                </div>
-                <Button variant="outline" size="sm" className="w-full" onClick={() => setShowHistory(true)}>
-                  <History className="mr-2 h-4 w-4" />
-                  View History
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Transaction History Modal */}
-          <TransactionHistory isOpen={showHistory} onClose={() => setShowHistory(false)} />
-        </div>
-      </div>
-    )
   }
 
   // NEW FLOW (with asset pre-selection)
@@ -525,7 +480,7 @@ export default function Dashboard() {
                           onClick={() => handleAssetSelect(asset)}
                           className="w-full p-4 flex items-center gap-4 hover:bg-zinc-50 transition-colors border-b border-zinc-100 last:border-0 text-left"
                         >
-                          <AssetIcon symbol={asset.symbol} icon={asset.icon} size={40} />
+                          <AssetIcon symbol={asset.symbol} icon={asset.icon} logoUrl={asset.logoUrl} size={40} />
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold text-zinc-900">{asset.name}</div>
                             <div className="text-sm text-zinc-500">
@@ -537,11 +492,25 @@ export default function Dashboard() {
                     </div>
                   )}
 
-                  {/* Results count */}
+                  {/* Results count - clickable to show registry toast */}
                   {filteredAssets.length > 0 && (
-                    <div className="p-3 bg-zinc-50 border-t border-zinc-200 text-center text-sm text-zinc-600">
-                      {filteredAssets.length} asset{filteredAssets.length !== 1 ? 's' : ''} available
-                    </div>
+                    <button
+                      onClick={() => {
+                        // Trigger the asset registry toast
+                        fetch('/api/robinhood/health')
+                          .then((res) => res.json())
+                          .then((data) => {
+                            if (data.registry?.initialized) {
+                              // Show detailed registry status
+                              showAssetRegistryToast(data)
+                            }
+                          })
+                          .catch(console.error)
+                      }}
+                      className="w-full p-3 bg-zinc-50 border-t border-zinc-200 text-center text-sm text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-colors cursor-pointer"
+                    >
+                      {filteredAssets.length} asset{filteredAssets.length !== 1 ? 's' : ''} available →
+                    </button>
                   )}
                 </CardContent>
               </Card>
@@ -552,7 +521,12 @@ export default function Dashboard() {
           <Card className="shadow-2xl border-2 border-emerald-500">
             <CardContent className="p-6">
               <div className="flex items-center gap-4 h-14">
-                <AssetIcon symbol={selection.asset.symbol} icon={selection.asset.icon} size={56} />
+                <AssetIcon
+                  symbol={selection.asset.symbol}
+                  icon={selection.asset.icon}
+                  logoUrl={selection.asset.logoUrl}
+                  size={56}
+                />
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-bold text-zinc-900 truncate">{selection.asset.name}</h3>
                   <p className="text-sm text-zinc-600 truncate">
@@ -605,9 +579,6 @@ export default function Dashboard() {
           </div>
         )}
       </div>
-
-      {/* Transaction History Modal */}
-      <TransactionHistory isOpen={showHistory} onClose={() => setShowHistory(false)} />
     </div>
   )
 }

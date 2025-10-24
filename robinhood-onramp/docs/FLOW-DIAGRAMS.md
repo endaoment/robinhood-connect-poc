@@ -1,94 +1,96 @@
 # Robinhood Connect - Flow Diagrams
 
-This document contains visual representations of the Robinhood Connect onramp transfer flow.
+This document contains visual representations of the Robinhood Connect asset pre-selection onramp flow.
 
 ---
 
-## 1. High-Level User Flow
+## 1. High-Level User Flow (Asset Pre-Selection)
 
 ```mermaid
 flowchart TD
-    Start([User Visits Dashboard]) --> Click[User Clicks 'Start Transfer']
-    Click --> Modal[Modal Opens<br/>Shows 19 Supported Networks]
-    Modal --> OpenRH[User Clicks 'Open Robinhood'<br/>No Form Input Required!]
-    OpenRH --> Generate[Generate UUID referenceId<br/>Client-Side]
-    Generate --> BuildURL[Build Robinhood Connect URL<br/>with All 19 Networks]
-    BuildURL --> Store[Store referenceId in localStorage]
-    Store --> Redirect[Redirect to Robinhood App/Web]
-
+    Start([User Visits Dashboard]) --> Search[User Searches/Browses Assets]
+    Search --> Select[User Selects Cryptocurrency<br/>e.g., ETH, SOL, USDC]
+    Select --> ShowAddress[System Shows Wallet Address<br/>for Asset's Network]
+    ShowAddress --> InitiateBtn[User Clicks 'Initiate Transfer']
+    
+    InitiateBtn --> CallAPI[Frontend Calls<br/>/api/robinhood/generate-onramp-url]
+    CallAPI --> GetConnectId[Backend Calls Robinhood<br/>POST /catpay/v1/connect_id/]
+    GetConnectId --> BuildURL[Backend Builds URL<br/>with Pre-Selected Asset]
+    BuildURL --> ReturnURL[Backend Returns URL<br/>to Frontend]
+    
+    ReturnURL --> Redirect[Redirect to Robinhood<br/>Asset Pre-Selected]
     Redirect --> RHAuth[User Authenticates in Robinhood]
-    RHAuth --> ViewBalance[User Views Real Balances]
-    ViewBalance --> SelectCrypto[User Selects Crypto & Amount]
-    SelectCrypto --> Confirm[User Confirms Transfer]
+    RHAuth --> RHAmount[User Enters Amount<br/>for Pre-Selected Asset]
+    RHAmount --> RHConfirm[User Confirms Transfer]
 
-    Confirm --> Callback[Robinhood Redirects to /callback<br/>with assetCode, assetAmount, network]
-    Callback --> GetAddress[Retrieve Pre-Configured Address<br/>Instant - No API Call!]
-    GetAddress --> Display[Display Deposit Address<br/>with Copy Button]
-    Display --> Track[Track Order Status<br/>Auto-Refresh]
-    Track --> Complete([Transfer Complete])
+    RHConfirm --> Callback[Robinhood Redirects to /callback<br/>with asset, network, amount, orderId]
+    Callback --> ShowSuccess[Display Success Message<br/>with Transfer Details]
+    ShowSuccess --> Dashboard[User Returns to Dashboard]
+    Dashboard --> Toast[Success Toast Displays<br/>with Full Transfer Info]
+    Toast --> Complete([Transfer Complete])
 
     style Start fill:#e1f5e1
     style Complete fill:#e1f5e1
-    style Modal fill:#fff3cd
-    style GetAddress fill:#d4edda
-    style OpenRH fill:#cfe2ff
+    style Select fill:#cfe2ff
+    style GetConnectId fill:#fff3cd
+    style Redirect fill:#d4edda
 ```
 
 ---
 
-## 2. Detailed Sequence Diagram
+## 2. Detailed Sequence Diagram (Asset Pre-Selection)
 
 ```mermaid
 sequenceDiagram
     actor User
     participant Dashboard as Next.js Dashboard
-    participant Modal as Offramp Modal
-    participant LocalStorage
+    participant AssetSearch as Asset Search/Selector
+    participant APIRoute as /api/robinhood/generate-onramp-url
+    participant RobinhoodAPI as Robinhood Connect ID API
     participant RobinhoodApp as Robinhood App/Web
     participant Callback as Callback Page
-    participant NetworkConfig as network-addresses.ts
-    participant StatusAPI as Order Status API
-    participant RobinhoodAPI as Robinhood Backend
+    participant LocalStorage
 
     User->>Dashboard: Visits /dashboard
-    Dashboard->>User: Shows "Start Transfer" button
+    Dashboard->>User: Shows asset search and list
 
-    User->>Dashboard: Clicks "Start Transfer"
-    Dashboard->>Modal: Opens modal
-    Modal->>User: Displays 19 supported networks (informational)
+    User->>AssetSearch: Searches for asset (e.g., "ETH")
+    AssetSearch->>User: Shows filtered results
 
-    User->>Modal: Clicks "Open Robinhood"
-    Modal->>Modal: Generate UUID v4 (referenceId)
-    Modal->>Modal: Build URL with all 19 networks
-    Modal->>LocalStorage: Store referenceId
-    Modal->>RobinhoodApp: Redirect to universal link
+    User->>AssetSearch: Clicks on asset to select
+    AssetSearch->>Dashboard: Update selected asset
+    Dashboard->>User: Shows wallet address for asset's network
+
+    User->>Dashboard: Clicks "Initiate Transfer"
+    Dashboard->>APIRoute: POST {selectedAsset, selectedNetwork}
+
+    APIRoute->>APIRoute: Validate asset & network
+    APIRoute->>RobinhoodAPI: POST /catpay/v1/connect_id/ {}
+    RobinhoodAPI-->>APIRoute: Return {connectId}
+    
+    APIRoute->>APIRoute: Get wallet address for network
+    APIRoute->>APIRoute: Build URL with buildDaffyStyleOnrampUrl()
+    APIRoute-->>Dashboard: Return {url, connectId}
+
+    Dashboard->>RobinhoodApp: Redirect to Robinhood URL
 
     RobinhoodApp->>User: Show authentication
     User->>RobinhoodApp: Authenticate
-    RobinhoodApp->>User: Display real balances
-    User->>RobinhoodApp: Select crypto & amount
+    RobinhoodApp->>User: Show pre-selected asset
+    User->>RobinhoodApp: Enter amount
     User->>RobinhoodApp: Confirm transfer
 
-    RobinhoodApp->>Callback: Redirect with query params<br/>(assetCode, assetAmount, network, referenceId)
-    Callback->>LocalStorage: Verify referenceId matches
-    Callback->>NetworkConfig: Lookup address for network
-    NetworkConfig-->>Callback: Return pre-configured address (instant!)
+    RobinhoodApp->>Callback: Redirect with params<br/>(asset, network, amount, orderId, connectId)
+    
+    Callback->>Callback: Parse URL parameters
+    Callback->>LocalStorage: Store order details
+    Callback->>User: Display success message
 
-    Callback->>User: Display deposit address + copy button
+    User->>Dashboard: Navigate back to dashboard
+    Dashboard->>LocalStorage: Check for order success
+    Dashboard->>User: Show success toast with transfer details
 
-    loop Auto-refresh every 5 seconds
-        Callback->>StatusAPI: GET /api/robinhood/order-status?referenceId=xxx
-        StatusAPI->>RobinhoodAPI: Check order status
-        RobinhoodAPI-->>StatusAPI: Return status (pending/complete)
-        StatusAPI-->>Callback: Return status
-        Callback->>User: Update status UI
-    end
-
-    RobinhoodAPI-->>StatusAPI: Status: completed
-    StatusAPI-->>Callback: Transfer complete
-    Callback->>User: Show success message
-
-    Note over Modal,NetworkConfig: Zero-Click Flow:<br/>No form fields, no API call for address!
+    Note over APIRoute,RobinhoodAPI: Critical: connectId must<br/>come from Robinhood API
 ```
 
 ---
@@ -366,31 +368,38 @@ flowchart TD
 
 ---
 
-## Key Innovations Highlighted in Diagrams
+## Key Features Highlighted in Diagrams
 
-### 🎯 Zero-Click User Experience
+### 🎯 Asset Pre-Selection
 
-- No form fields to fill out
-- User sees real balances in Robinhood before deciding
-- Single "Open Robinhood" button
+- User selects cryptocurrency before initiating transfer
+- Asset is pre-selected in Robinhood (no confusion)
+- Clear wallet address shown before transfer begins
+- Proven to work reliably with external wallet transfers
 
-### ⚡ Instant Address Retrieval
+### 🔑 Connect ID from Robinhood API
 
-- Pre-configured addresses in `network-addresses.ts`
-- 0ms response time (vs 200-500ms API call)
-- No dependency on Robinhood API for addresses
+- Backend calls `/catpay/v1/connect_id/` to get valid connectId
+- No random UUIDs in production
+- Required for Robinhood Connect to work properly
 
-### 🔄 Stateless Architecture
+### 📋 Pre-Configured Wallet Addresses
 
-- No session storage on backend
-- `referenceId` stored in client localStorage
-- Can scale horizontally without session management
+- Centralized address management in configuration files
+- Addresses organized by network
+- Instant address lookup (no API call needed)
+
+### 🔄 Simple State Management
+
+- Order details stored in localStorage
+- Success toast displayed on dashboard return
+- Minimal backend state required
 
 ### 🌐 19 Network Support
 
 - 95% coverage of Robinhood networks
 - EVM, Bitcoin-like, Layer 1s, and memo-required networks
-- All addresses pre-configured and tested
+- ~120 supported assets across all networks
 
 ---
 

@@ -1,24 +1,52 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { AssetMetadata, AssetCategory } from "@/types/robinhood";
 import {
   getEnabledAssets,
-  getPopularAssets,
+  getFeaturedAssets,
   searchAssets,
   getAssetsByCategory,
-  CATEGORY_INFO,
-} from "@/lib/robinhood-asset-metadata";
+  type RobinhoodAssetConfig,
+  type AssetCategory,
+} from "@/lib/robinhood";
 import { AssetCard, AssetCardCompact } from "./asset-card";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
+// Category display information
+const CATEGORY_INFO: Record<AssetCategory, { name: string; description: string }> = {
+  layer1: {
+    name: "Layer 1 Blockchains",
+    description: "Original blockchain networks",
+  },
+  layer2: {
+    name: "Layer 2 Solutions",
+    description: "Scaling solutions for existing blockchains",
+  },
+  stablecoin: {
+    name: "Stablecoins",
+    description: "Cryptocurrencies pegged to stable assets",
+  },
+  defi: {
+    name: "DeFi Tokens",
+    description: "Decentralized finance protocols",
+  },
+  meme: {
+    name: "Meme Coins",
+    description: "Community-driven cryptocurrencies",
+  },
+  other: {
+    name: "Other Assets",
+    description: "Additional supported cryptocurrencies",
+  },
+};
+
 interface AssetSelectorProps {
   /** Currently selected asset symbol */
   selectedAsset?: string;
   /** Callback when asset is selected */
-  onSelect: (asset: AssetMetadata) => void;
+  onSelect: (asset: RobinhoodAssetConfig) => void;
   /** Display mode */
   variant?: "grid" | "list" | "compact";
   /** Show search bar */
@@ -54,7 +82,7 @@ export function AssetSelector({
 
     // Then category filter
     if (activeCategory === "popular") {
-      return getPopularAssets();
+      return getFeaturedAssets();
     } else if (activeCategory === "all") {
       return getEnabledAssets();
     } else {
