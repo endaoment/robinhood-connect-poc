@@ -14,12 +14,14 @@
 Review these files to understand the feature flag system and old flow:
 
 **Key Implementation Logs**:
+
 - `.cursor/plans/robinhood-asset-preselection/implementation-logs/20251022-2025-SP4-COMPLETE.md` (lines 1-378)
   - Documents completion of asset pre-selection feature
   - Shows feature flag was used during testing phase
   - Confirms new flow is working and stable
 
 **Current Code**:
+
 - `robinhood-onramp/lib/feature-flags.ts` - Feature flag configuration
 - `robinhood-onramp/app/dashboard/page.tsx` (lines 1-614)
   - Lines 1-380: NEW working asset selector flow (KEEP)
@@ -47,6 +49,7 @@ Review these files to understand the feature flag system and old flow:
 **Purpose**: Understand complete scope before deletion
 
 **Commands**:
+
 ```bash
 cd /Users/rheeger/Code/endaoment/robinhood-connect-poc/robinhood-onramp
 
@@ -58,14 +61,18 @@ grep -r "feature-flags" --include="*.ts" --include="*.tsx" . | grep -v node_modu
 
 # List what's in feature-flags.ts
 cat lib/feature-flags.ts
+
 ```
 
 **Expected Results**:
+
 - Should find `FEATURE_FLAGS` primarily in dashboard
+
 - Should find `assetPreselection` flag
 - May find other feature flags (if so, we only remove assetPreselection)
 
 **Document**:
+
 - List ALL feature flags found
 - List ALL files that import feature-flags
 - Note any flags other than assetPreselection
@@ -83,6 +90,7 @@ cat lib/feature-flags.ts
 ```
 
 **Likely Contents**:
+
 ```typescript
 export const FEATURE_FLAGS = {
   assetPreselection: true,
@@ -91,10 +99,12 @@ export const FEATURE_FLAGS = {
 ```
 
 **Decision Point**:
+
 - **If ONLY assetPreselection flag exists**: Delete entire file (proceed to Step 3A)
 - **If other flags exist**: Keep file, remove only assetPreselection (proceed to Step 3B)
 
 **Document Your Decision**:
+
 ```
 Decision: [ ] Delete entire file  OR  [ ] Keep file, remove assetPreselection only
 Reason: _______________________
@@ -116,6 +126,7 @@ rm lib/feature-flags.ts
 ```
 
 **Validation**:
+
 ```bash
 # Verify file is gone
 ls lib/feature-flags.ts 2>&1
@@ -135,6 +146,7 @@ ls lib/feature-flags.ts 2>&1
 **Action**: Edit the file to remove assetPreselection
 
 **Before**:
+
 ```typescript
 export const FEATURE_FLAGS = {
   assetPreselection: true,
@@ -144,20 +156,24 @@ export const FEATURE_FLAGS = {
 ```
 
 **After**:
+
 ```typescript
 export const FEATURE_FLAGS = {
   someOtherFlag: false,
+
   anotherFlag: true,
 };
 ```
 
 **Steps**:
+
 1. Open `lib/feature-flags.ts`
 2. Remove the `assetPreselection: true,` line
 3. Keep all other flags
 4. Save the file
 
 **Validation**:
+
 ```bash
 # Verify assetPreselection is gone
 grep "assetPreselection" lib/feature-flags.ts
@@ -177,6 +193,7 @@ grep "assetPreselection" lib/feature-flags.ts
 **Action**: Examine the file structure
 
 ```bash
+
 cd /Users/rheeger/Code/endaoment/robinhood-connect-poc/robinhood-onramp
 
 # View file with line numbers
@@ -190,6 +207,7 @@ grep -n "assetPreselection" app/dashboard/page.tsx
 ```
 
 **Expected Pattern**:
+
 ```typescript
 // Around line 380-450
 {FEATURE_FLAGS.assetPreselection ? (
@@ -204,10 +222,11 @@ grep -n "assetPreselection" app/dashboard/page.tsx
 ```
 
 **Document**:
-- Line number where feature flag check starts: _____
-- Line number where new flow starts: _____
-- Line number where old flow starts: _____
-- Line number where conditional ends: _____
+
+- Line number where feature flag check starts: **\_**
+- Line number where new flow starts: **\_**
+- Line number where old flow starts: **\_**
+- Line number where conditional ends: **\_**
 
 ---
 
@@ -218,6 +237,7 @@ grep -n "assetPreselection" app/dashboard/page.tsx
 **Purpose**: Remove conditional and old flow code, keep only new flow
 
 **Pattern to Find**:
+
 ```typescript
 {FEATURE_FLAGS.assetPreselection ? (
   // NEW FLOW CODE
@@ -227,8 +247,11 @@ grep -n "assetPreselection" app/dashboard/page.tsx
 ```
 
 **Replace With**:
+
 ```typescript
-{/* NEW FLOW CODE (no conditional) */}
+{
+  /* NEW FLOW CODE (no conditional) */
+}
 ```
 
 **Detailed Steps**:
@@ -238,11 +261,13 @@ grep -n "assetPreselection" app/dashboard/page.tsx
 2. Find the feature flag conditional (likely around line 380)
 
 3. Identify the three sections:
+
    - The conditional check: `FEATURE_FLAGS.assetPreselection ? (`
    - The new flow (asset selector): `<AssetSelector ... />` and related code
    - The old flow (alternative): `<Button ... />` and related code
 
 4. Delete:
+
    - The ternary conditional wrapper
    - The entire old flow (else/false branch)
    - The feature flag import at top of file
@@ -254,21 +279,20 @@ grep -n "assetPreselection" app/dashboard/page.tsx
 **Example Transformation**:
 
 **Before** (lines 380-450):
+
 ```typescript
-import { FEATURE_FLAGS } from '@/lib/feature-flags';
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 
 // ... other code ...
 
 <div className="dashboard-content">
   {FEATURE_FLAGS.assetPreselection ? (
     <div className="asset-selection">
-      <AssetSelector 
+      <AssetSelector
         onAssetSelect={handleAssetSelect}
         selectedAsset={selectedAsset}
       />
-      <Button onClick={handleTransfer}>
-        Initiate Transfer
-      </Button>
+      <Button onClick={handleTransfer}>Initiate Transfer</Button>
     </div>
   ) : (
     <div className="old-flow">
@@ -278,10 +302,11 @@ import { FEATURE_FLAGS } from '@/lib/feature-flags';
       </Button>
     </div>
   )}
-</div>
+</div>;
 ```
 
 **After** (lines 380-420):
+
 ```typescript
 // import { FEATURE_FLAGS } from '@/lib/feature-flags'; // REMOVED
 
@@ -289,13 +314,11 @@ import { FEATURE_FLAGS } from '@/lib/feature-flags';
 
 <div className="dashboard-content">
   <div className="asset-selection">
-    <AssetSelector 
+    <AssetSelector
       onAssetSelect={handleAssetSelect}
       selectedAsset={selectedAsset}
     />
-    <Button onClick={handleTransfer}>
-      Initiate Transfer
-    </Button>
+    <Button onClick={handleTransfer}>Initiate Transfer</Button>
   </div>
 </div>
 ```
@@ -303,10 +326,12 @@ import { FEATURE_FLAGS } from '@/lib/feature-flags';
 6. Save the file
 
 **Validation**:
+
 ```bash
 # Verify no more FEATURE_FLAGS references in dashboard
 grep "FEATURE_FLAGS" app/dashboard/page.tsx
 # Should return ZERO results
+
 
 # Verify no more assetPreselection references
 grep "assetPreselection" app/dashboard/page.tsx
@@ -327,8 +352,9 @@ npx tsc --noEmit
 **Action**: Remove import statement
 
 **Find** (likely near top of file):
+
 ```typescript
-import { FEATURE_FLAGS } from '@/lib/feature-flags';
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 ```
 
 **Delete**: The entire import line
@@ -338,6 +364,7 @@ import { FEATURE_FLAGS } from '@/lib/feature-flags';
 **If you kept feature-flags.ts in Step 3B**: Linter will warn about unused import
 
 **Validation**:
+
 ```bash
 # Verify import is gone
 grep -n "feature-flags" app/dashboard/page.tsx
@@ -356,8 +383,10 @@ npx tsc --noEmit
 **Purpose**: Delete functions that were only used by old flow
 
 **Likely Functions to Remove** (search for these):
+
 - `handleOldFlowTransfer()`
 - `handleDirectTransfer()`
+
 - `handleNoSelectionFlow()`
 - Any function only called from deleted old flow code
 
@@ -369,11 +398,14 @@ grep -n "handleOldFlow\|handleDirectTransfer\|handleNoSelection" app/dashboard/p
 ```
 
 **For Each Found**:
+
 1. Verify it's ONLY used in the old flow (which we just deleted)
 2. Delete the entire function definition
+
 3. Remove from any dependency arrays
 
 **Example - Delete This**:
+
 ```typescript
 const handleOldFlowTransfer = () => {
   // old flow logic...
@@ -381,6 +413,7 @@ const handleOldFlowTransfer = () => {
 ```
 
 **Validation**:
+
 ```bash
 npx tsc --noEmit
 # Should compile - no "unused variable" warnings for these functions
@@ -395,6 +428,7 @@ npx tsc --noEmit
 **Purpose**: Remove backup from before feature implementation
 
 **Pre-Check**:
+
 ```bash
 # Verify file exists
 ls -la app/dashboard/page-old-backup.tsx
@@ -411,14 +445,17 @@ rm app/dashboard/page-old-backup.tsx
 ```
 
 **Validation**:
+
 ```bash
 # Verify file is gone
 ls app/dashboard/page-old-backup.tsx 2>&1
+
 # Should output: "No such file or directory"
 
 # Verify no imports reference it
 grep -r "page-old-backup" --include="*.ts" --include="*.tsx" . | grep -v node_modules
 # Should return ZERO results
+
 ```
 
 ---
@@ -434,21 +471,26 @@ grep -r "page-old-backup" --include="*.ts" --include="*.tsx" . | grep -v node_mo
 ```bash
 # Find useState declarations
 grep -n "useState" app/dashboard/page.tsx
+
 ```
 
 **Likely State to Remove** (if present):
+
 - `const [useOldFlow, setUseOldFlow] = useState(false);`
 - `const [skipAssetSelection, setSkipAssetSelection] = useState(false);`
 - Any state only used for old flow logic
 
 **Steps**:
+
 1. Identify state variables from deleted old flow code
 2. Delete each unused state declaration
 3. Remove from any useEffect dependencies
 
 **Validation**:
+
 ```bash
 npm run lint 2>/dev/null || echo "Linter not configured"
+
 # Linter should catch unused state variables
 
 npx tsc --noEmit
@@ -462,6 +504,7 @@ npx tsc --noEmit
 **Purpose**: Ensure no lingering references
 
 **Commands**:
+
 ```bash
 cd /Users/rheeger/Code/endaoment/robinhood-connect-poc/robinhood-onramp
 
@@ -476,10 +519,12 @@ grep -r "feature-flags" --include="*.ts" --include="*.tsx" . | grep -v node_modu
 ```
 
 **Expected Results**:
+
 - **If you deleted feature-flags.ts**: ZERO results for all searches
 - **If you kept feature-flags.ts**: Results only in feature-flags.ts itself (for other flags)
 
 **If Unexpected Results Found**:
+
 1. Review each occurrence
 2. Determine if it's a missed cleanup
 3. Remove or update as needed
@@ -496,6 +541,7 @@ After completing all steps, verify:
 - [ ] Old flow code removed from dashboard (lines ~380-450)
 - [ ] New flow code kept (asset selector)
 - [ ] Feature flag import removed from dashboard
+
 - [ ] Old flow handler functions deleted
 - [ ] `app/dashboard/page-old-backup.tsx` deleted
 - [ ] Unused state variables removed
@@ -520,6 +566,7 @@ grep -r "assetPreselection" --include="*.ts" --include="*.tsx" . | grep -v node_
 ```
 
 **Success Criteria**:
+
 - ZERO results (if feature-flags.ts was deleted)
 - Results only in feature-flags.ts for OTHER flags (if file was kept)
 
@@ -530,6 +577,7 @@ npx tsc --noEmit
 ```
 
 **Success Criteria**:
+
 - Zero errors about missing feature-flags module
 - Zero errors about undefined FEATURE_FLAGS
 - Clean compilation
@@ -558,11 +606,12 @@ ls app/dashboard/
 
 ## Backward Compatibility Checkpoint
 
-**Purpose**: Verify asset selector flow still works after feature flag removal
+**Purpose**: Verify sset selector flow still works after feature flag removal
 
-### Manual Testing Steps:
+### Manual Testing Steps
 
 1. **Start Development Server**:
+
    ```bash
    cd /Users/rheeger/Code/endaoment/robinhood-connect-poc/robinhood-onramp
    npm run dev
@@ -571,21 +620,25 @@ ls app/dashboard/
 2. **Navigate to Dashboard**: `http://localhost:3000/dashboard`
 
 3. **Verify Asset Selector Renders**:
+
    - Should see asset selection UI immediately
    - Should NOT see any "old flow" buttons
    - No conditional rendering or feature flag checks visible
 
 4. **Test Asset Selection**:
+
    - Select different assets (ETH, USDC, etc.)
    - Verify selection updates state
    - Verify network selection works
 
 5. **Test Transfer Initiation**:
+
    - Click "Initiate Transfer" button
    - Should generate URL successfully
    - Should redirect to Robinhood
 
 6. **Check Console**:
+
    - Should be ZERO errors
    - Should be ZERO warnings about feature flags
    - Should be ZERO warnings about unused variables
@@ -594,29 +647,34 @@ ls app/dashboard/
    - POST to `/api/robinhood/generate-onramp-url` should succeed
    - Should return 200 OK with valid URL
 
-### Success Criteria:
+### Success Criteria
 
 - ✅ Dashboard renders asset selector
 - ✅ No old flow UI elements visible
 - ✅ Asset selection works correctly
+
 - ✅ Transfer initiation works correctly
 - ✅ No console errors or warnings
 - ✅ No feature flag conditionals visible in rendered HTML
 - ✅ Single, clean code path
 
-### If Checkpoint Fails:
+### If Checkpoint Fails
 
 1. **Dashboard Doesn't Render**:
+
    - Check browser console for errors
    - Likely: Syntax error from cleanup
    - Review Step 5: Verify conditional was removed properly
 
 2. **Error: "FEATURE_FLAGS is not defined"**:
+
    - Review Step 6: Feature flag import not removed
+
    - Remove the import statement
    - If feature-flags.ts was deleted, this will cause error
 
 3. **Asset Selector Not Working**:
+
    - Likely: Accidentally deleted new flow code instead of old flow
    - Review Step 5: Make sure you kept the RIGHT branch of conditional
    - Restore from git if needed
@@ -636,9 +694,11 @@ ls app/dashboard/
 **Cause**: Missed import removal in some file
 
 **Solution**:
+
 ```bash
 # Find all imports
 grep -r "feature-flags" --include="*.ts" --include="*.tsx" . | grep -v node_modules
+
 
 # Remove each import found
 ```
@@ -650,6 +710,7 @@ grep -r "feature-flags" --include="*.ts" --include="*.tsx" . | grep -v node_modu
 **Cause**: Accidentally deleted new flow code
 
 **Solution**:
+
 ```bash
 # Check git diff
 git diff app/dashboard/page.tsx
@@ -668,16 +729,18 @@ git checkout app/dashboard/page.tsx
 **Cause**: Didn't remove old flow code, only feature flag check
 
 **Solution**:
+
 - Review Step 5: Must delete entire false/else branch
 - Only keep the true branch (asset selector)
 
-### Issue 4: TypeScript errors after feature flag removal
+### Issue 4: TypeScript rrors after feature flag removal
 
 **Symptom**: Multiple TypeScript errors
 
 **Cause**: Variables/functions used by old flow are still defined
 
 **Solution**:
+
 1. Review each error
 2. If it's an unused variable from old flow, delete it
 3. If it's a missing import, restore it (needed by new flow)
@@ -686,13 +749,13 @@ git checkout app/dashboard/page.tsx
 
 ## Integration Points
 
-### Provides to Next Sub-Plans:
+### Provides to Next Sub-Plans
 
 - **Sub-Plan 5**: Cleaner docs (no feature flag explanations needed)
 - **Sub-Plan 7**: Simpler code (single path, easier to name consistently)
-- **Sub-Plan 8**: Easier testing (only one flow to test)
+- **Sub-Plan 8**:Easier testing (only one flow to test)
 
-### Dependencies from Previous Sub-Plans:
+### Dependencies from Previous Sub-Plans
 
 - **Sub-Plan 1**: Offramp removed (less code complexity)
 - **Sub-Plan 2**: Deprecated builders removed (simpler URL generation)
@@ -711,32 +774,33 @@ After completing this sub-plan:
 
 ## Notes for Implementers
 
-### Critical Checkpoints:
+### Critical Checkpoints
 
 - **Step 4**: Identify EXACTLY which code is new flow vs old flow before deleting
 - **Step 5**: Keep the NEW flow (asset selector), delete the OLD flow
 - **After Step 5**: Immediately test dashboard renders correctly
 
-### Common Pitfalls:
+### Common Pitfalls
 
 - ❌ Deleting the wrong branch of the conditional (keeping old flow, deleting new)
 - ❌ Forgetting to remove the conditional wrapper itself
 - ❌ Leaving unused handler functions that cause linter warnings
 - ❌ Not testing dashboard after changes
 
-### Time-Saving Tips:
+### Time-Saving Tips
 
 - **Before Step 5**: Take a screenshot of working dashboard for reference
 - **During Step 5**: Use git diff frequently to verify correct code is being deleted
 - **After Step 5**: Test immediately before proceeding to other steps
 - Keep dev server running in background to catch errors quickly
 
-### Key Decisions:
+### Key Decisions
 
 **Keep This**: Asset selector code (the working new flow)
 **Delete This**: Old flow code (direct transfer without selection)
 
 If you're ever unsure which is which:
+
 - New flow = Uses `AssetSelector` component
 - Old flow = Direct transfer button without asset selection
 
@@ -746,4 +810,3 @@ If you're ever unsure which is which:
 **Estimated Duration**: 2-3 hours  
 **Complexity**: Medium  
 **Risk Level**: 🟡 Medium (must verify feature flag only used for asset preselection)
-

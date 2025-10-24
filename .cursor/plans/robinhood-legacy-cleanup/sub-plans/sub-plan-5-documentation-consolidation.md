@@ -12,12 +12,14 @@
 ### Understanding the Documentation Problem
 
 Currently, documentation is scattered across multiple files with:
+
 - Outdated information about failed approaches
 - Contradictory instructions
 - Duplicate information across files
 - References to removed code (offramp, deprecated builders, feature flags)
 
 **Current Documentation Files**:
+
 ```
 robinhood-onramp/
 ├── README.md                          # Main readme - needs updating
@@ -35,6 +37,7 @@ robinhood-onramp/
 ### The Goal
 
 Create a clean, consolidated documentation structure that:
+
 1. Reflects the current working implementation only
 2. Has no contradictory information
 3. Is easy for new developers to understand
@@ -76,9 +79,11 @@ cat API-TESTING.md
 cat CALLBACK-TESTING.md
 cat docs/DEVELOPER_GUIDE.md
 cat docs/USER_GUIDE.md
+
 ```
 
 **Document**:
+
 - Note sections that are outdated
 - Note duplicate information
 - Note anything referencing removed code
@@ -92,14 +97,17 @@ cat docs/USER_GUIDE.md
 **Purpose**: This was a temporary document explaining why order status was removed
 
 **Pre-Check**:
+
 ```bash
 # Read the file to extract any important insights
 cat CHANGES-ORDER-STATUS-REMOVAL.md
+
 
 # Note: Save any important explanations to include in ARCHITECTURE.md
 ```
 
 **Important Content to Preserve**:
+
 - Why order status polling was removed
 - Why offramp code doesn't work for onramp
 - Lessons learned from Robinhood team call
@@ -111,6 +119,7 @@ rm CHANGES-ORDER-STATUS-REMOVAL.md
 ```
 
 **Validation**:
+
 ```bash
 ls CHANGES-ORDER-STATUS-REMOVAL.md 2>&1
 # Should output: "No such file or directory"
@@ -136,6 +145,7 @@ This document describes the current implementation of the Robinhood Connect onra
 This integration allows users to transfer cryptocurrency from Robinhood to external wallets using the Robinhood Connect API.
 
 **Key Points**:
+
 - **Onramp Only**: This integration handles onramp (deposits to external wallets) only
 - **Asset Pre-Selection**: Users must select asset and network before initiating transfer
 - **Daffy-Style Flow**: Uses the proven Daffy-style URL generation approach
@@ -146,6 +156,7 @@ This integration allows users to transfer cryptocurrency from Robinhood to exter
 ### 1. Frontend Components
 
 #### Dashboard (`app/dashboard/page.tsx`)
+
 - Displays asset selector
 - User selects cryptocurrency and network
 - Initiates transfer with selected asset
@@ -153,6 +164,7 @@ This integration allows users to transfer cryptocurrency from Robinhood to exter
 **Key Component**: `AssetSelector` - Handles asset and network selection
 
 #### Callback (`app/callback/page.tsx`)
+
 - Receives redirect from Robinhood after transfer completion
 - Displays transfer success/failure
 - Shows transaction details
@@ -160,17 +172,20 @@ This integration allows users to transfer cryptocurrency from Robinhood to exter
 ### 2. API Routes
 
 #### Generate Onramp URL (`app/api/robinhood/generate-onramp-url/route.ts`)
+
 - Calls Robinhood Connect ID API
 - Generates Robinhood Connect URL with pre-selected asset
 - Returns URL and connectId to frontend
 
 **Flow**:
+
 1. Receives `selectedAsset` and `selectedNetwork` from frontend
 2. Calls `POST /catpay/v1/connect_id/` to get valid connectId
 3. Builds URL using `buildDaffyStyleOnrampUrl()`
 4. Returns URL and connectId
 
 #### Redeem Deposit Address (`app/api/robinhood/redeem-deposit-address/route.ts`)
+
 - Retrieves wallet address for an asset
 - Used for displaying deposit information
 
@@ -179,6 +194,7 @@ This integration allows users to transfer cryptocurrency from Robinhood to exter
 **Function**: `buildDaffyStyleOnrampUrl(connectId, selectedAsset, selectedNetwork)`
 
 Builds the Robinhood Connect URL with these key parameters:
+
 - `applicationId`: Your Robinhood app ID
 - `connectId`: Valid ID from Robinhood API (NOT a random UUID)
 - `paymentMethod=crypto_balance`: Required for onramp
@@ -193,11 +209,13 @@ Builds the Robinhood Connect URL with these key parameters:
 ### 4. Configuration
 
 #### Asset Configuration (`lib/robinhood-asset-config.ts`)
+
 - Maps Robinhood assets to wallet addresses
 - Defines supported networks for each asset
 - Provides metadata (names, icons, etc.)
 
 #### Network Addresses (`lib/network-addresses.ts`)
+
 - Wallet addresses for each network
 - Organized by asset and network
 
@@ -206,11 +224,13 @@ Builds the Robinhood Connect URL with these key parameters:
 ### Complete Transfer Flow
 
 1. **User Selection**:
+
    - User visits dashboard
    - Selects asset (e.g., ETH) and network (e.g., ETHEREUM)
    - Clicks "Initiate Transfer"
 
 2. **URL Generation**:
+
    - Frontend calls `/api/robinhood/generate-onramp-url`
    - Backend calls Robinhood: `POST /catpay/v1/connect_id/`
    - Backend receives valid `connectId`
@@ -218,6 +238,7 @@ Builds the Robinhood Connect URL with these key parameters:
    - Backend returns URL to frontend
 
 3. **Robinhood Transfer**:
+
    - Frontend redirects to Robinhood Connect URL
    - User completes authentication in Robinhood
    - User selects amount and confirms transfer
@@ -238,6 +259,7 @@ Builds the Robinhood Connect URL with these key parameters:
 ### Why Asset Pre-Selection?
 
 Through testing 31 URL variations and a call with Robinhood's team (Oct 23, 2025), we learned:
+
 - Balance-first approach doesn't work for external wallet transfers
 - Asset must be pre-selected for onramp to work correctly
 - This is a Robinhood API requirement, not a choice
@@ -245,6 +267,7 @@ Through testing 31 URL variations and a call with Robinhood's team (Oct 23, 2025
 ### Why No Order Status Polling?
 
 The Order Status API is for offramp only. For onramp:
+
 - All transfer data is available in the callback URL parameters
 - No additional API calls needed after transfer
 - Polling was removed Oct 23, 2025
@@ -252,6 +275,7 @@ The Order Status API is for offramp only. For onramp:
 ### Why Only Daffy-Style URL Builder?
 
 Extensive testing showed:
+
 - `buildOnrampUrl()` used wrong base URL - failed
 - `buildMultiNetworkOnrampUrl()` balance-first approach - didn't work
 - `buildDaffyStyleOnrampUrl()` with Connect ID API - works perfectly
@@ -261,6 +285,7 @@ Only the working approach was kept.
 ### Why No Offramp?
 
 Offramp (withdrawals from external wallets to Robinhood) uses a completely different API:
+
 - Different endpoints
 - Different parameters
 - Different flow
@@ -272,6 +297,7 @@ Mixing onramp and offramp code created confusion. We removed all offramp code to
 ### ConnectId vs ReferenceId
 
 These terms refer to the same identifier:
+
 - **connectId**: Official Robinhood API term (preferred)
 - **referenceId**: Legacy term in some old code (being phased out)
 
@@ -287,6 +313,7 @@ The correct base URL is critical for the flow to work.
 ### Required Parameters
 
 These parameters are REQUIRED for onramp to work:
+
 - `paymentMethod=crypto_balance`
 - `flow=transfer`
 - Valid `connectId` from API (not random UUID)
@@ -325,6 +352,7 @@ See `TESTING_GUIDE.md` for comprehensive testing instructions.
 ## Historical Context
 
 For historical context on implementation evolution, see:
+
 - `.cursor/plans/robinhood-asset-preselection/` - Asset pre-selection feature planning
 - `.cursor/plans/robinhood-legacy-cleanup/` - Code cleanup planning
 
@@ -337,6 +365,7 @@ For historical context on implementation evolution, see:
 **Action**: Create this file with the content above, customized based on actual implementation
 
 **Validation**:
+
 ```bash
 ls ARCHITECTURE.md
 # Should exist
@@ -352,7 +381,7 @@ ls ARCHITECTURE.md
 
 **Content Template**:
 
-```markdown
+````markdown
 # Robinhood Connect Testing Guide
 
 This guide covers how to test the Robinhood Connect integration end-to-end.
@@ -368,17 +397,22 @@ This guide covers how to test the Robinhood Connect integration end-to-end.
 ### Local Development
 
 1. Start the development server:
+
 ```bash
+
 npm run dev
 ```
+````
 
 2. Navigate to: `http://localhost:3000/dashboard`
 
 ### With ngrok (for testing callbacks)
 
 1. Start ngrok:
+
 ```bash
 ./scripts/start-with-ngrok.sh
+
 ```
 
 2. Update `NEXT_PUBLIC_BASE_URL` in `.env.local` with ngrok URL
@@ -388,6 +422,7 @@ npm run dev
 ### Test 1: Complete Transfer Flow
 
 **Steps**:
+
 1. Navigate to dashboard: `http://localhost:3000/dashboard`
 2. Select asset (e.g., "Ethereum")
 3. Select network (e.g., "Ethereum")
@@ -395,9 +430,11 @@ npm run dev
 5. Verify redirect to Robinhood
 6. Complete transfer in Robinhood (sandbox)
 7. Verify redirect back to `/callback`
+
 8. Verify success message displays
 
 **Expected Results**:
+
 - ✅ Asset selector renders
 - ✅ URL generated without errors
 - ✅ Robinhood URL includes correct parameters
@@ -405,6 +442,7 @@ npm run dev
 - ✅ Success toast displays
 
 **Common Issues**:
+
 - Redirect doesn't happen: Check console for errors
 - Robinhood shows error: Verify connectId is valid (not random UUID)
 - No callback parameters: Verify URL includes `flow=transfer`
@@ -420,9 +458,11 @@ curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
     "selectedAsset": "ETH",
     "selectedNetwork": "ETHEREUM"
   }'
+
 ```
 
 **Expected Response**:
+
 ```json
 {
   "url": "https://robinhood.com/connect/amount?applicationId=...&connectId=...",
@@ -432,7 +472,9 @@ curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
 ```
 
 **Verify**:
+
 - Response status: 200
+
 - URL starts with `https://robinhood.com/connect/amount`
 - connectId is present and looks valid (UUID format)
 - referenceId equals connectId
@@ -442,17 +484,20 @@ curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
 **Simulate Callback**:
 
 Navigate to (replace with actual values):
+
 ```
 http://localhost:3000/callback?asset=ETH&network=ETHEREUM&connectId=abc123&timestamp=2025-10-24T12:00:00Z&orderId=ORDER123
 ```
 
 **Expected Results**:
+
 - Success message displays
 - Asset name shown correctly
 - Network name shown correctly
 - Transfer details visible
 
 **Verify**:
+
 - No console errors
 - Page renders success state
 - Parameters extracted correctly
@@ -470,6 +515,7 @@ http://localhost:3000/callback?asset=ETH&network=ETHEREUM&connectId=abc123&times
 7. Verify "Initiate Transfer" button enables
 
 **Expected Behavior**:
+
 - Asset list shows all configured assets
 - Network list filters based on selected asset
 - Button disabled until both asset and network selected
@@ -479,23 +525,21 @@ http://localhost:3000/callback?asset=ETH&network=ETHEREUM&connectId=abc123&times
 **Manual Test**:
 
 ```typescript
-import { buildDaffyStyleOnrampUrl } from '@/lib/robinhood-url-builder';
+import { buildDaffyStyleOnrampUrl } from "@/lib/robinhood-url-builder";
 
-const url = buildDaffyStyleOnrampUrl(
-  'test-connect-id-123',
-  'ETH',
-  'ETHEREUM'
-);
+const url = buildDaffyStyleOnrampUrl("test-connect-id-123", "ETH", "ETHEREUM");
 
 console.log(url);
 ```
 
 **Expected URL Structure**:
+
 ```
 https://robinhood.com/connect/amount?
   applicationId=YOUR_APP_ID&
   connectId=test-connect-id-123&
   paymentMethod=crypto_balance&
+
   supportedAssets=ETH&
   supportedNetworks=ETHEREUM&
   walletAddress=0x...&
@@ -505,6 +549,7 @@ https://robinhood.com/connect/amount?
 ```
 
 **Verify**:
+
 - Correct base URL
 - All required parameters present
 - Parameter values are correct
@@ -515,10 +560,12 @@ https://robinhood.com/connect/amount?
 ### Test Invalid Asset
 
 **API Call**:
+
 ```bash
 curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
   -H "Content-Type: application/json" \
   -d '{
+
     "selectedAsset": "INVALID_ASSET",
     "selectedNetwork": "ETHEREUM"
   }'
@@ -529,6 +576,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
 ### Test Missing Parameters
 
 **API Call**:
+
 ```bash
 curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
   -H "Content-Type: application/json" \
@@ -540,6 +588,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
 ### Test Network Mismatch
 
 **API Call**:
+
 ```bash
 curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
   -H "Content-Type: application/json" \
@@ -547,6 +596,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
     "selectedAsset": "ETH",
     "selectedNetwork": "POLYGON"
   }'
+
 ```
 
 **Expected Response**: 400 error (ETH not supported on Polygon in this config)
@@ -562,6 +612,7 @@ Before deploying to production:
 - [ ] Error handling works correctly
 - [ ] Success states display properly
 - [ ] No console errors in production build
+
 - [ ] TypeScript compilation succeeds
 - [ ] Linter passes
 
@@ -570,6 +621,7 @@ Before deploying to production:
 ### Enable Detailed Logging
 
 In your `.env.local`:
+
 ```
 DEBUG=true
 LOG_LEVEL=debug
@@ -578,6 +630,7 @@ LOG_LEVEL=debug
 ### Check Network Tab
 
 Open DevTools Network tab and verify:
+
 - API calls return 200 status
 - Response bodies contain expected data
 - No 404s or 500s
@@ -585,6 +638,7 @@ Open DevTools Network tab and verify:
 ### Check Console
 
 Look for:
+
 - API response data
 - URL generation logs
 - Any error messages
@@ -611,12 +665,14 @@ Look for:
 
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture
 - [docs/DEVELOPER_GUIDE.md](./docs/DEVELOPER_GUIDE.md) - Development setup
+
 - [docs/FLOW-DIAGRAMS.md](./docs/FLOW-DIAGRAMS.md) - Visual flow diagrams
 
 ---
 
 **Last Updated**: October 24, 2025
-```
+
+````
 
 **Action**: Create this file, merging relevant content from API-TESTING.md and CALLBACK-TESTING.md
 
@@ -624,24 +680,27 @@ Look for:
 ```bash
 ls TESTING_GUIDE.md
 # Should exist
-```
+````
 
 ---
 
 ### Step 5: Delete Old Testing Guides
 
-**Files**: 
+**Files**:
+
 - `robinhood-onramp/API-TESTING.md`
 - `robinhood-onramp/CALLBACK-TESTING.md`
 
 **Purpose**: These are now consolidated into TESTING_GUIDE.md
 
 **Pre-Check**:
+
 ```bash
 # Verify TESTING_GUIDE.md was created successfully
 cat TESTING_GUIDE.md | head -20
 
 # Ensure important content was migrated
+
 ```
 
 **Action**: Delete the old files
@@ -650,14 +709,17 @@ cat TESTING_GUIDE.md | head -20
 cd /Users/rheeger/Code/endaoment/robinhood-connect-poc/robinhood-onramp
 
 rm API-TESTING.md
+
 rm CALLBACK-TESTING.md
 ```
 
 **Validation**:
+
 ```bash
 ls API-TESTING.md 2>&1
 ls CALLBACK-TESTING.md 2>&1
 # Both should output: "No such file or directory"
+
 ```
 
 ---
@@ -671,6 +733,7 @@ ls CALLBACK-TESTING.md 2>&1
 **Action**: Read current README and update
 
 **Sections to Update**:
+
 1. Remove references to offramp
 2. Remove references to deprecated URL builders
 3. Remove references to feature flags or old flow
@@ -679,6 +742,7 @@ ls CALLBACK-TESTING.md 2>&1
 6. Update links to point to new documentation
 
 **Key Changes**:
+
 - Update "How It Works" to describe current flow only
 - Link to ARCHITECTURE.md for detailed explanation
 - Link to TESTING_GUIDE.md instead of separate testing files
@@ -688,6 +752,7 @@ ls CALLBACK-TESTING.md 2>&1
 **Example Section Update**:
 
 **Before** (outdated):
+
 ```markdown
 ## How It Works
 
@@ -696,12 +761,14 @@ This integration supports both onramp and offramp flows...
 ### URL Generation
 
 We provide multiple URL builders:
+
 - `buildOnrampUrl()` - deprecated
 - `buildMultiNetworkOnrampUrl()` - experimental
 - `buildDaffyStyleOnrampUrl()` - recommended
 ```
 
 **After** (current):
+
 ```markdown
 ## How It Works
 
@@ -717,6 +784,7 @@ We use `buildDaffyStyleOnrampUrl()` which generates Robinhood Connect URLs with 
 ```
 
 **Validation**:
+
 ```bash
 # Verify no offramp references
 grep -i "offramp" README.md
@@ -736,6 +804,7 @@ grep "buildOnrampUrl\|buildMultiNetworkOnrampUrl" README.md
 **Purpose**: Remove non-working approaches, focus on current implementation
 
 **Sections to Update**:
+
 1. Remove instructions for deprecated URL builders
 2. Remove offramp development instructions
 3. Remove feature flag development instructions
@@ -744,12 +813,14 @@ grep "buildOnrampUrl\|buildMultiNetworkOnrampUrl" README.md
 6. Remove references to removed files
 
 **Key Updates**:
+
 - Setup section should be current and accurate
 - Component list should match actual components (no OrderStatusComponent)
 - API documentation should describe current endpoints only
 - Link to ARCHITECTURE.md and TESTING_GUIDE.md
 
 **Validation**:
+
 ```bash
 # Check for outdated references
 grep -i "offramp\|deprecated\|feature.flag\|OrderStatusComponent" docs/DEVELOPER_GUIDE.md
@@ -765,12 +836,14 @@ grep -i "offramp\|deprecated\|feature.flag\|OrderStatusComponent" docs/DEVELOPER
 **Purpose**: Describe current user flow only
 
 **Sections to Update**:
+
 1. Remove any mention of multiple flows or feature flags
 2. Update step-by-step instructions to match current UI
 3. Update screenshots if any (or note they need updating)
 4. Remove troubleshooting for removed features
 
 **Expected Content**:
+
 - Clear description of asset selection
 - Step-by-step transfer process
 - What to expect in Robinhood
@@ -778,6 +851,7 @@ grep -i "offramp\|deprecated\|feature.flag\|OrderStatusComponent" docs/DEVELOPER
 - Common questions
 
 **Validation**:
+
 ```bash
 # Verify user-facing only
 grep -i "API\|deprecated\|feature.flag" docs/USER_GUIDE.md
@@ -793,6 +867,7 @@ grep -i "API\|deprecated\|feature.flag" docs/USER_GUIDE.md
 **Purpose**: Update diagrams to show current architecture only
 
 **Sections to Update**:
+
 1. Remove diagrams of deprecated flows
 2. Update main flow diagram to show asset pre-selection
 3. Remove offramp diagrams
@@ -806,6 +881,7 @@ User Flow:
 1. User visits Dashboard
 2. User selects Asset & Network
 3. User clicks "Initiate Transfer"
+
    ↓
 4. Frontend calls /api/robinhood/generate-onramp-url
    ↓
@@ -842,12 +918,14 @@ grep -r "\[.*\](.*\.md)" *.md docs/*.md
 ```
 
 **Common Links to Update**:
+
 - Change `API-TESTING.md` → `TESTING_GUIDE.md`
 - Change `CALLBACK-TESTING.md` → `TESTING_GUIDE.md`
 - Add links to new `ARCHITECTURE.md`
 - Remove links to `CHANGES-ORDER-STATUS-REMOVAL.md`
 
 **Validation**:
+
 ```bash
 # Verify no links to deleted files
 grep -r "API-TESTING.md\|CALLBACK-TESTING.md\|CHANGES-ORDER-STATUS-REMOVAL.md" *.md docs/*.md
@@ -888,7 +966,7 @@ grep -ri "offramp" *.md docs/*.md
 # Should return minimal results (only "onramp only, no offramp" explanations)
 
 # Search for deprecated functions
-grep -r "buildOnrampUrl\|buildMultiNetworkOnrampUrl" *.md docs/*.md
+grep -r "buildOnrapUrl\|buildMultiNetworkOnrampUrl" *.md docs/*.md
 # Should return ZERO results
 
 # Search for feature flags
@@ -920,6 +998,7 @@ grep -rh "\[.*\](.*\.md)" *.md docs/*.md | grep -o "(.*\.md)" | tr -d '()'
 ### Validation 4: Consistency Check
 
 **Manual Review**:
+
 1. Read ARCHITECTURE.md - should describe current system accurately
 2. Read TESTING_GUIDE.md - should provide clear testing instructions
 3. Read README.md - should be high-level overview matching ARCHITECTURE.md
@@ -932,18 +1011,21 @@ grep -rh "\[.*\](.*\.md)" *.md docs/*.md | grep -o "(.*\.md)" | tr -d '()'
 
 **Purpose**: Verify documentation accurately reflects working code
 
-### Manual Testing:
+### Manual Testing
 
 1. **Follow README Instructions**:
+
    - Set up project following README
    - Verify all steps work
 
 2. **Follow DEVELOPER_GUIDE**:
+
    - Go through developer setup
    - Verify all mentioned files exist
    - Verify all commands work
 
 3. **Follow TESTING_GUIDE**:
+
    - Run each test scenario
    - Verify tests match actual behavior
 
@@ -951,7 +1033,7 @@ grep -rh "\[.*\](.*\.md)" *.md docs/*.md | grep -o "(.*\.md)" | tr -d '()'
    - Go through user flow
    - Verify UI matches described steps
 
-### Success Criteria:
+### Success Criteria
 
 - ✅ All documentation instructions work
 - ✅ No references to non-existent files
@@ -959,7 +1041,7 @@ grep -rh "\[.*\](.*\.md)" *.md docs/*.md | grep -o "(.*\.md)" | tr -d '()'
 - ✅ Documentation matches actual code
 - ✅ Easy for new developer to understand
 
-### If Checkpoint Fails:
+### If Checkpoint Fails
 
 1. **Instruction doesn't work**: Update documentation to match actual behavior
 2. **Reference to deleted file**: Update to reference correct file
@@ -984,7 +1066,7 @@ grep -rh "\[.*\](.*\.md)" *.md docs/*.md | grep -o "(.*\.md)" | tr -d '()'
 
 ### Issue 3: Outdated screenshots or diagrams
 
-**Symptom**: Images don't match current UI
+**Symptom**: Images on't match current UI
 
 **Solution**: Update images or add note "[Screenshot needs updating]"
 
@@ -992,13 +1074,11 @@ grep -rh "\[.*\](.*\.md)" *.md docs/*.md | grep -o "(.*\.md)" | tr -d '()'
 
 ## Integration Points
 
-### Provides to Next Sub-Plans:
+### Provides to Next Sub-Plans
 
 - **Sub-Plan 6**: Knows which files are documentation vs test scripts
 - **Sub-Plan 7**: Clear documentation makes naming standards obvious
 - **Sub-Plan 8**: Testing guide helps with final validation
-
-### Dependencies from Previous Sub-Plans:
 
 - **Sub-Plans 1-4**: Code is clean, easier to document accurately
 
@@ -1016,20 +1096,20 @@ After completing this sub-plan:
 
 ## Notes for Implementers
 
-### Critical Checkpoints:
+### Critical Checkpoints
 
 - **Before deleting files**: Extract important information first
 - **After creating new docs**: Verify they're comprehensive
 - **After updating docs**: Have someone else review for clarity
 
-### Common Pitfalls:
+### Common Pitfalls
 
 - ❌ Deleting files before extracting important content
 - ❌ Creating docs that don't match actual code
 - ❌ Leaving broken links
 - ❌ Forgetting to update all related docs
 
-### Time-Saving Tips:
+### Time-Saving Tips
 
 - Use existing content as starting point
 - Don't rewrite everything - update and consolidate
@@ -1042,4 +1122,3 @@ After completing this sub-plan:
 **Estimated Duration**: 2-3 hours  
 **Complexity**: Medium  
 **Risk Level**: 🟢 Low (documentation only, no code changes)
-

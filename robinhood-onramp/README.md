@@ -1,10 +1,10 @@
 # Robinhood Connect - Onramp Application
 
-**Status**: ✅ **PRODUCTION READY**  
+**Status**: ✅ **WORKING IMPLEMENTATION**  
 **Network Coverage**: 19 of 20 networks (95%)  
-**User Experience**: One-page app - single "Give with Robinhood" button!
+**Flow**: Asset Pre-Selection with Search
 
-Complete Next.js application for transferring cryptocurrency from Robinhood to Endaoment with the **simplest possible user experience** and support for **19 blockchain networks**.
+Complete Next.js application for transferring cryptocurrency from Robinhood to external wallets using the Robinhood Connect API. Users select their desired cryptocurrency, then complete the transfer in Robinhood.
 
 ---
 
@@ -127,30 +127,32 @@ robinhood-onramp/
 
 ## 🎯 Key Features
 
-### Zero-Click User Experience ⭐
+### Asset Pre-Selection Flow
 
-**The Simplest Possible Flow**:
+**How It Works**:
 
-1. User clicks "Start Transfer" button
-2. Modal shows 19 supported networks (informational only)
-3. User clicks "Open Robinhood" button (no form!)
-4. Robinhood opens → User sees actual balances → Chooses crypto
-5. Returns automatically → Deposit address shown instantly
-6. Tracks status until complete
+1. User visits dashboard and searches/browses supported cryptocurrencies
+2. User selects desired asset (e.g., ETH, SOL, USDC)
+3. System displays wallet address for that asset's network
+4. User clicks "Initiate Transfer with Robinhood"
+5. Robinhood opens with pre-selected asset
+6. User confirms amount and completes transfer in Robinhood
+7. Returns to callback page with success message
+8. Dashboard shows transfer confirmation
 
 **Benefits**:
 
-- ✅ No form fields to fill
-- ✅ No guessing amounts
-- ✅ See actual balances before deciding
-- ✅ Perfect mobile experience
-- ✅ Can't make form errors
+- ✅ Asset search with filtering
+- ✅ Clear asset selection with icons and network badges  
+- ✅ Pre-selected asset in Robinhood (no confusion)
+- ✅ Wallet addresses from centralized configuration
+- ✅ Support for 19 blockchain networks
 
 ### Backend API
 
-- **URL Generation**: Creates Robinhood Connect links with all 19 networks
-- **Pre-Configured Addresses**: Instant address lookup (no API call needed!)
-- **Order Status**: Monitors transfer completion with auto-refresh
+- **URL Generation**: Creates Robinhood Connect links with connectId from Robinhood API
+- **Pre-Configured Addresses**: Wallet addresses organized by network
+- **Asset Metadata**: Complete asset information with icons and network mapping
 
 ### Security
 
@@ -205,38 +207,33 @@ Content-Type: application/json
 
 ## 🏗️ Architecture
 
-### Stateless Flow (Sub-Plan 9)
+### Asset Pre-Selection Flow
 
-This integration uses Robinhood's stateless redirect flow with **pre-configured addresses**:
+This integration uses asset pre-selection to ensure reliable transfers:
 
-1. User clicks "Start Transfer" on dashboard
-2. Modal opens showing all 19 supported networks
-3. User clicks "Open Robinhood" (no form interaction!)
-4. Generate `referenceId` (UUID v4) client-side
-5. Build Robinhood Connect URL with all 19 networks
-6. Store `referenceId` in localStorage
-7. Open Robinhood app/web with universal link
-8. User sees their balances and chooses what to transfer
-9. Robinhood redirects back to `/callback?assetCode=X&assetAmount=Y&network=Z`
-10. Retrieve pre-configured address for the selected network (instant!)
-11. Display address to user with copy functionality
-12. Track order status until completion
+1. User visits dashboard and searches/selects cryptocurrency
+2. System determines the network for selected asset
+3. System displays wallet address for that network
+4. User clicks "Initiate Transfer with Robinhood"
+5. Backend calls Robinhood API to get valid connectId
+6. Backend builds URL with pre-selected asset and network
+7. User redirected to Robinhood with asset pre-selected
+8. User confirms amount and completes transfer in Robinhood
+9. Robinhood redirects to callback with transfer details
+10. Success message displayed with order information
 
-### Key Innovation: Pre-Configured Addresses
+**Why Asset Pre-Selection?**
 
-Instead of calling Robinhood's redemption API, we use pre-configured addresses:
+Through extensive testing, we learned that:
+- Asset must be pre-selected for external wallet transfers to work reliably
+- This is a Robinhood API requirement
+- Provides clearer user experience with no ambiguity
 
-**Benefits**:
+**No Authentication Required**
 
-- ✅ Instant address retrieval (0ms vs 200-500ms API call)
-- ✅ One fewer network request per transaction
-- ✅ Centralized address management
-- ✅ Works even if Robinhood API has issues
-- ✅ Simpler architecture
+This flow requires no user authentication on our side. Users authenticate directly in the Robinhood app.
 
-### No Authentication Required
-
-Unlike OAuth integrations, this flow requires no user authentication on our side. Users authenticate directly in the Robinhood app.
+For detailed architecture information, see [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
 
 ---
 
@@ -346,23 +343,20 @@ See `../SECURITY-AUDIT.md` for complete audit.
 
 ## 📚 Documentation
 
-### For Users
+### Core Documentation
 
-- **[USER_GUIDE.md](docs/USER_GUIDE.md)** - How to transfer crypto with zero-click flow
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture and design decisions
+- **[TESTING_GUIDE.md](docs/TESTING_GUIDE.md)** - Comprehensive testing guide
 
 ### For Developers
 
 - **[DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)** - Complete technical reference
-- **[FLOW-DIAGRAMS.md](docs/FLOW-DIAGRAMS.md)** - Visual flow diagrams & architecture ⭐ NEW
+- **[FLOW-DIAGRAMS.md](docs/FLOW-DIAGRAMS.md)** - Visual flow diagrams
+- **[LOGGING-GUIDE.md](docs/LOGGING-GUIDE.md)** - Logging best practices
 
-### For Testing
+### For Users
 
-- **[TESTING-CHECKLIST.md](../TESTING-CHECKLIST.md)** - 100+ test items
-
-### For Production
-
-- **[READY-FOR-PRODUCTION.md](../READY-FOR-PRODUCTION.md)** - Deployment checklist
-- **[NETWORK-ADDRESSES-STATUS.md](../NETWORK-ADDRESSES-STATUS.md)** - Network reference
+- **[USER_GUIDE.md](docs/USER_GUIDE.md)** - How to transfer crypto from Robinhood
 
 ---
 

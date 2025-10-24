@@ -1,13 +1,10 @@
 # Robinhood Connect - Developer Guide
 
-> ⚠️ **NOTE**: This document contains legacy documentation with offramp references.
-> Offramp has been removed from this codebase. This integration **only supports onramp** (deposits to external wallets).
->
-> Onramp and offramp are separate Robinhood APIs. This codebase focuses exclusively on onramp.
-
 ## Architecture Overview
 
-This integration uses Robinhood's **onramp API** (Connect SDK) to enable crypto transfers from Robinhood accounts to external wallet addresses. The system uses a redirect-based flow with connectId tracking from the Robinhood API.
+This integration uses Robinhood's **Connect API** to enable cryptocurrency transfers from Robinhood accounts to external wallet addresses. The system uses an asset pre-selection flow with connectId tracking from the Robinhood API.
+
+**Important**: This integration handles **onramp only** (deposits to external wallets). Offramp (withdrawals from external wallets to Robinhood) is a separate API and is not supported by this codebase.
 
 ### Technology Stack
 
@@ -23,89 +20,95 @@ This integration uses Robinhood's **onramp API** (Connect SDK) to enable crypto 
 
 ### 1. URL Generation (`lib/robinhood-url-builder.ts`)
 
-Generates Robinhood Connect URLs for initiating offramp flows.
+Generates Robinhood Connect URLs for initiating onramp transfers with asset pre-selection.
 
 **Key Functions**:
 
-- `generateReferenceId()` - Creates UUID v4 for order tracking
-- `buildOfframpUrl()` - Constructs complete Robinhood Connect URL
-- `storeReferenceId()` - Saves referenceId to localStorage
+- `buildDaffyStyleOnrampUrl()` - Constructs Robinhood Connect URL with pre-selected asset
+- `generateConnectId()` - Creates UUID v4 (for testing only - production should use Robinhood API)
 - `getAssetsForNetwork()` - Returns compatible assets for a network
+- `getNetworksForAsset()` - Returns compatible networks for an asset  
 - `isAssetNetworkCompatible()` - Validates asset/network combinations
+- `isValidWalletAddress()` - Validates wallet address format per network
 
 **Usage**:
 
 ```typescript
-import { buildOfframpUrl } from '@/lib/robinhood-url-builder'
+import { buildDaffyStyleOnrampUrl } from '@/lib/robinhood-url-builder'
 
-const result = buildOfframpUrl({
-  supportedNetworks: ['ETHEREUM'],
-  assetCode: 'ETH',
-  assetAmount: '0.1',
+const result = buildDaffyStyleOnrampUrl({
+  connectId: 'abc-123-from-robinhood-api', // Must come from Robinhood /connect_id/ API
+  asset: 'ETH',
+  network: 'ETHEREUM',
+  walletAddress: '0x...',
 })
 
-// Opens Robinhood app/web
-window.open(result.url, '_blank')
+// Redirect to Robinhood
+window.location.href = result.url
 ```
 
 ### 2. API Routes (`app/api/robinhood/`)
 
 Backend API endpoints for Robinhood integration.
 
-#### Generate Offramp URL (`/api/robinhood/generate-offramp-url`)
+#### Generate Onramp URL (`/api/robinhood/generate-onramp-url`)
 
 - **Method**: POST
-- **Purpose**: Server-side URL generation
-- **Input**: `{ supportedNetworks, assetCode?, assetAmount?, fiatAmount? }`
-- **Output**: `{ success, data: { url, referenceId, params } }`
+- **Purpose**: Generate Robinhood Connect URL with valid connectId
+- **Input**: `{ selectedAsset, selectedNetwork }`
+- **Output**: `{ success, url, connectId, referenceId }`
 
-#### Redeem Deposit Address (`/api/robinhood/redeem-deposit-address`)
+**Process**:
+1. Validates asset and network
+2. Calls Robinhood `/catpay/v1/connect_id/` API to get valid connectId
+3. Retrieves wallet address for selected network
+4. Builds URL using `buildDaffyStyleOnrampUrl()`
+5. Returns URL and connectId to frontend
 
-- **Method**: POST
-- **Purpose**: Get deposit address using referenceId
-- **Input**: `{ referenceId }`
-- **Output**: `{ success, data: { address, assetCode, assetAmount, networkCode } }`
+**Note**: connectId must come from Robinhood API, not generated locally.
 
-#### Order Status (`/api/robinhood/order-status`)
+### 3. UI Components
 
-- **Method**: GET
-- **Purpose**: Check order status and completion
-- **Query**: `?referenceId=<uuid>`
-- **Output**: `{ success, data: { status, assetCode, blockchainTransactionId, ... } }`
+#### Dashboard (`app/dashboard/page.tsx`)
 
-### 3. UI Components (`components/`)
+- Asset search and selection interface
+- Displays ~120 supported assets across 20 networks
+- Shows wallet address for selected asset's network
+- Initiates transfer with Robinhood
 
-#### Offramp Modal (`offramp-modal.tsx`)
+**Key Features**:
+- Real-time search and filtering
+- Asset icons and network badges
+- Pre-configured wallet addresses
+- Transfer success toast notifications
 
-- Transfer initiation interface
-- Network and asset selection
-- Amount input (crypto or fiat)
-- Price quote display
-- Opens Robinhood URL
+#### Callback (`app/callback/page.tsx`)
 
-#### Order Status (`order-status.tsx`)
+- Receives redirect from Robinhood after transfer
+- Displays transfer confirmation
+- Shows asset, network, amount, and orderId
+- Stores order details in localStorage for dashboard display
 
-- Real-time status tracking
-- Auto-refresh with exponential backoff
-- Transaction details display
-- Blockchain explorer integration
+### 4. Configuration Libraries
 
-### 4. Robinhood API Client (`lib/robinhood-api.ts`)
+#### Asset Metadata (`lib/robinhood-asset-metadata.ts`)
 
-Backend functions for Robinhood API calls.
+- Complete asset metadata for ~120 supported assets
+- Asset icons, names, symbols, networks
+- Search and filtering functionality
+- Enable/disable flags per asset
 
-**Functions**:
+#### Network Addresses (`lib/network-addresses.ts`)
 
-```typescript
-// Redeem deposit address
-async function redeemDepositAddress(referenceId: string): Promise<DepositAddressResponse>
+- Pre-configured wallet addresses for 19 networks
+- Organized by network type (EVM, Bitcoin-like, memo-required)
+- Includes memos/destination tags where needed
 
-// Get order status
-async function getOrderStatus(referenceId: string): Promise<OrderStatusResponse>
+#### Asset Addresses (`lib/robinhood-asset-addresses.ts`)
 
-// Get price quote (ready for implementation)
-async function getPriceQuote(assetCode: string, amount: string): Promise<PriceQuoteResponse>
-```
+- Maps assets to their network-specific wallet addresses
+- Helper functions for address retrieval
+- Asset/network compatibility validation
 
 ### 5. Utility Libraries
 
@@ -153,43 +156,49 @@ NEXTAUTH_URL=http://localhost:3030  # or your production domain
 
 ## User Flow
 
-### Complete Offramp Flow
+### Complete Asset Pre-Selection Flow
 
 ```
 1. Dashboard
-   ↓ User clicks "Start Transfer"
+   ↓ User searches or browses assets
+   ↓ User selects cryptocurrency (e.g., ETH, SOL, USDC)
+   ↓ System shows wallet address for asset's network
 
-2. Offramp Modal
-   ↓ User selects network, asset, amount
-   ↓ Click "Open Robinhood"
+2. Transfer Initiation
+   ↓ User clicks "Initiate Transfer with Robinhood"
+   ↓ Frontend calls /api/robinhood/generate-onramp-url
 
-3. URL Generation
-   ↓ Generate referenceId (UUID v4)
-   ↓ Store in localStorage
-   ↓ Build Robinhood Connect URL
-   ↓ Open in new tab/window
+3. URL Generation (Backend)
+   ↓ Backend calls Robinhood API: POST /catpay/v1/connect_id/
+   ↓ Backend receives valid connectId
+   ↓ Backend retrieves wallet address for network
+   ↓ Backend builds URL with buildDaffyStyleOnrampUrl()
+   ↓ Backend returns URL and connectId
 
-4. Robinhood App/Web
-   ↓ User authenticates (in Robinhood)
-   ↓ User confirms transfer details
-   ↓ User authorizes transfer
+4. Redirect to Robinhood
+   ↓ Frontend redirects to Robinhood Connect URL
+   ↓ Asset is pre-selected in Robinhood
 
-5. Redirect to Callback
-   ↓ Parse URL parameters (assetCode, assetAmount, network)
-   ↓ Retrieve referenceId from localStorage
+5. Robinhood App/Web
+   ↓ User authenticates in Robinhood
+   ↓ User sees pre-selected asset
+   ↓ User enters amount and confirms transfer
 
-6. Redeem Deposit Address
-   ↓ Call /api/robinhood/redeem-deposit-address
-   ↓ Display deposit address to user
+6. Redirect to Callback
+   ↓ Robinhood redirects with parameters (asset, network, amount, orderId, connectId)
+   ↓ Callback page displays success message
+   ↓ Order details stored in localStorage
 
-7. User Completes Transfer
-   ↓ Send crypto to deposit address in Robinhood
-
-8. Order Status Tracking
-   ↓ Poll /api/robinhood/order-status
-   ↓ Update UI with status changes
-   ↓ Show blockchain transaction ID when complete
+7. Dashboard
+   ↓ User returns to dashboard
+   ↓ Success toast displays with transfer details
 ```
+
+**Key Differences from Balance-First Approach**:
+- Asset is pre-selected before Robinhood opens
+- No balance browsing in our UI
+- Clearer user experience with less confusion
+- Proven to work reliably with external wallet transfers
 
 ## API Integration Details
 
@@ -197,10 +206,10 @@ NEXTAUTH_URL=http://localhost:3030  # or your production domain
 
 **Base URL**: `https://api.robinhood.com/catpay/v1`
 
-#### 1. Redeem Deposit Address
+#### Connect ID API (Required for Onramp)
 
 ```typescript
-POST https://api.robinhood.com/catpay/v1/redeem_deposit_address/
+POST https://api.robinhood.com/catpay/v1/connect_id/
 
 Headers:
   x-api-key: <ROBINHOOD_API_KEY>
@@ -208,52 +217,43 @@ Headers:
   Content-Type: application/json
 
 Body:
-  { "referenceId": "f2056f4c-93c7-422b-bd59-fbfb5b05b6ad" }
+  {} // Empty object
 
 Response:
   {
-    "address": "0x8d12A197cB00D4747a1fe03395095ce2A5BC6819",
-    "addressTag": "memo-if-required",
-    "networkCode": "ETHEREUM",
-    "assetCode": "ETH",
-    "assetAmount": "0.05"
+    "connectId": "abc-123-def-456-uuid-format"
   }
 ```
 
-#### 2. Get Order Status
+**Critical**: The connectId must be obtained from this API before building the Robinhood Connect URL. Do not use randomly generated UUIDs in production.
 
-```typescript
-GET https://api.robinhood.com/catpay/v1/external/order/?referenceId=<uuid>
-
-Headers:
-  x-api-key: <ROBINHOOD_API_KEY>
-  application-id: <ROBINHOOD_APP_ID>
-
-Response:
-  {
-    "status": "ORDER_STATUS_SUCCEEDED",
-    "assetCode": "ETH",
-    "cryptoAmount": "0.05",
-    "networkCode": "ETHEREUM",
-    "fiatAmount": "150.00",
-    "blockchainTransactionId": "0x...",
-    "destinationAddress": "0x8d12A197cB00D4747a1fe03395095ce2A5BC6819",
-    "referenceID": "f2056f4c-93c7-422b-bd59-fbfb5b05b6ad"
-  }
-```
-
-#### 3. Offramp URL Format
+#### Robinhood Connect URL Format (Onramp)
 
 ```
-https://applink.robinhood.com/u/connect
-  ?offRamp=true
-  &applicationId=<ROBINHOOD_APP_ID>
-  &referenceId=<UUID_V4>
-  &supportedNetworks=ETHEREUM,POLYGON
-  &redirectUrl=<ENCODED_CALLBACK_URL>
+https://robinhood.com/connect/amount
+  ?applicationId=<ROBINHOOD_APP_ID>
+  &connectId=<FROM_CONNECT_ID_API>
+  &paymentMethod=crypto_balance
+  &supportedAssets=ETH
+  &supportedNetworks=ETHEREUM
+  &walletAddress=0x...
   &assetCode=ETH
-  &assetAmount=0.1
+  &flow=transfer
+  &redirectUrl=<ENCODED_CALLBACK_URL>
 ```
+
+**Required Parameters**:
+- `applicationId` - Your Robinhood app ID
+- `connectId` - From `/connect_id/` API (not random UUID)
+- `paymentMethod` - Must be `crypto_balance` for onramp
+- `supportedAssets` - Single asset code
+- `supportedNetworks` - Single network
+- `walletAddress` - Destination wallet address
+- `assetCode` - Asset being transferred
+- `flow` - Must be `transfer` for callback parameters
+- `redirectUrl` - URL-encoded callback URL
+
+**Base URL Note**: Use `https://robinhood.com/connect/amount` (NOT `/applink/connect`)
 
 ## TypeScript Type Definitions
 
@@ -297,41 +297,43 @@ export interface OrderStatusResponse {
 
 ## Testing
 
-### Manual Testing
+For comprehensive testing documentation, see [TESTING_GUIDE.md](./TESTING_GUIDE.md).
 
-See `sub-plan-7-testing-polish.md` for comprehensive manual testing checklist.
+### Quick API Test
 
-### API Testing
-
-Test API endpoints with curl:
+Test the URL generation endpoint:
 
 ```bash
-# Generate offramp URL
-curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
+# Generate onramp URL
+curl -X POST http://localhost:3030/api/robinhood/generate-onramp-url \
   -H "Content-Type: application/json" \
-  -d '{"supportedNetworks":["ETHEREUM"],"assetCode":"ETH","assetAmount":"0.1"}'
-
-# Redeem deposit address
-curl -X POST http://localhost:3030/api/robinhood/redeem-deposit-address \
-  -H "Content-Type: application/json" \
-  -d '{"referenceId":"f2056f4c-93c7-422b-bd59-fbfb5b05b6ad"}'
-
-# Get order status
-curl "http://localhost:3030/api/robinhood/order-status?referenceId=f2056f4c-93c7-422b-bd59-fbfb5b05b6ad"
+  -d '{"selectedAsset":"ETH","selectedNetwork":"ETHEREUM"}'
 ```
 
 ### Build & Type Check
 
 ```bash
 # Type check
-npm run build
-
-# TypeScript check without build
 npx tsc --noEmit
+
+# Build for production
+npm run build
 
 # Start development server
 npm run dev
 ```
+
+### Manual Testing
+
+1. Start dev server: `npm run dev`
+2. Visit `http://localhost:3030/dashboard`
+3. Search for an asset (e.g., "ETH")
+4. Select the asset
+5. Verify wallet address displays
+6. Click "Initiate Transfer with Robinhood"
+7. Complete flow in Robinhood (if using real credentials)
+
+See [TESTING_GUIDE.md](./TESTING_GUIDE.md) for detailed test scenarios.
 
 ## Deployment
 
