@@ -13,10 +13,10 @@
 | [SP2](./sub-plans/sub-plan-2-dtos-and-validation.md)          | DTOs and Type Definitions   | ✅ Complete | Critical | SP1          | 3-4 hours  |
 | [SP3](./sub-plans/sub-plan-3-mock-backend-services.md)        | Mock Backend Services       | ✅ Complete | High     | SP2          | 4-5 hours  |
 | [SP4](./sub-plans/sub-plan-4-robinhood-client-service.md)     | Robinhood Client Service    | ✅ Complete | Critical | SP1          | 3-4 hours  |
-| [SP5](./sub-plans/sub-plan-5-asset-registry-service.md)       | Asset Registry Service      | 🔵 Ready    | Critical | SP4          | 5-6 hours  |
-| [SP6](./sub-plans/sub-plan-6-url-builder-service.md)          | URL Builder Service         | ⚪ Pending  | High     | SP5          | 2-3 hours  |
-| [SP7](./sub-plans/sub-plan-7-mock-pledge-service.md)          | Mock Pledge Service         | ⚪ Pending  | Critical | SP6, SP3     | 4-5 hours  |
-| [SP8](./sub-plans/sub-plan-8-test-infrastructure.md)          | Test Infrastructure Setup   | ⚪ Pending  | High     | SP4-SP7      | 4-5 hours  |
+| [SP5](./sub-plans/sub-plan-5-asset-registry-service.md)       | Asset Registry Service      | ✅ Complete | Critical | SP4          | 5-6 hours  |
+| [SP6](./sub-plans/sub-plan-6-url-builder-service.md)          | URL Builder Service         | ✅ Complete | High     | SP5          | 2-3 hours  |
+| [SP7](./sub-plans/sub-plan-7-mock-pledge-service.md)          | Mock Pledge Service         | ✅ Complete | Critical | SP6, SP3     | 4-5 hours  |
+| [SP8](./sub-plans/sub-plan-8-test-infrastructure.md)          | Test Infrastructure Setup   | 🔵 Ready    | High     | SP4-SP7      | 4-5 hours  |
 | [SP9](./sub-plans/sub-plan-9-comprehensive-test-suite.md)     | Comprehensive Test Suite    | ⚪ Pending  | High     | SP8          | 8-10 hours |
 | [SP10](./sub-plans/sub-plan-10-backend-integration-demo.md)   | Backend Integration Demo    | ⚪ Pending  | Medium   | SP7, SP9     | 3-4 hours  |
 | [SP11](./sub-plans/sub-plan-11-api-route-refactoring.md)      | API Route Refactoring       | ⚪ Pending  | High     | SP10         | 2-3 hours  |
@@ -114,21 +114,21 @@ Some sub-plans can be worked on simultaneously by different agents/people:
 
 ### Phase 1: Foundation (SP1-3)
 
-- [ ] Service directory structure created
-- [ ] All DTOs have class-validator decorators
-- [ ] Mock backend services working
-- [ ] Toast logger demonstrates API calls
-- [ ] Object parameter pattern established
+- [x] Service directory structure created
+- [x] All DTOs have class-validator decorators
+- [x] Mock backend services working
+- [x] Toast logger demonstrates API calls
+- [x] Object parameter pattern established
 
 ### Phase 2: Core Services (SP4-7)
 
-- [ ] RobinhoodClientService extracte d
-- [ ] AssetRegistryService extracted
-- [ ] UrlBuilderService extracted
-- [ ] MockPledgeService created
-- [ ] All services use object params for 3+ args
-- [ ] Comprehensive JSDoc on all services
-- [ ] Proper error handling throughout
+- [x] RobinhoodClientService extracted
+- [x] AssetRegistryService extracted
+- [x] UrlBuilderService extracted
+- [x] PledgeService created (integrates MockPledgeService)
+- [x] All services use object params for 3+ args
+- [x] Comprehensive JSDoc on all services
+- [x] Proper error handling throughout
 
 ### Phase 3: Testing (SP8-9)
 
@@ -393,10 +393,12 @@ Some sub-plans can be worked on simultaneously by different agents/people:
 **Repository**: robinhood-connect-poc
 **Location**: `.cursor/plans/robinhood-backend-alignment/`
 **Created**: 2025-10-24
-**Status**: Planning Complete, Ready for Implementation
-**Current Phase**: Foundation (SP1-3)
+**Status**: Phase 2 Complete (SP0-SP7)
+**Current Phase**: Testing (SP8-9)
+**Last Updated**: 2025-10-24
+
+**Progress**: 8 of 14 sub-plans complete (57%)
 
 ---
 
-**Ready to begin?** Start with [Sub-Plan 1: Service Layer Restructuring](./sub-plans/sub-plan-1-service-layer-restructuring.md)
-
+**Next Steps**: Proceed to [Sub-Plan 8: Test Infrastructure Setup](./sub-plans/sub-plan-8-test-infrastructure.md)
