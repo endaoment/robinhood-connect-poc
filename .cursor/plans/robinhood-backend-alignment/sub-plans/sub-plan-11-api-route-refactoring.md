@@ -1,0 +1,88 @@
+# Sub-Plan 11: API Route Refactoring
+
+**Status**: Pending
+**Priority**: High
+**Dependencies**: Sub-Plan 10 (Backend Integration Demo)
+**Estimated Time**: 2-3 hours
+
+## Context Required
+
+**Files to Refactor**:
+
+- `app/api/robinhood/health/route.ts`
+- `app/api/robinhood/assets/route.ts`
+- `app/api/robinhood/generate-onramp-url/route.ts`
+
+## Objectives
+
+1. Refactor health endpoint to use AssetRegistryService
+2. Refactor assets endpoint to use AssetRegistryService
+3. Refactor URL generation to use services
+4. Add DTO validation
+5. Improve error handling
+6. Add proper logging
+
+## Implementation
+
+### Health Route Example
+
+```typescript
+import { NextResponse } from "next/server";
+import { getAssetRegistry } from "@/lib/robinhood/services";
+
+export async function GET() {
+  try {
+    const registry = getAssetRegistry();
+    const health = registry.getHealthStatus();
+
+    return NextResponse.json({
+      status: "healthy",
+      registry: health,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { status: "unhealthy", error: error.message },
+      { status: 500 }
+    );
+  }
+}
+```
+
+### URL Generation Route Example
+
+```typescript
+import { NextResponse } from "next/server";
+import { validateDtoOrThrow } from "@/lib/robinhood/dtos/validation-helper";
+import { GenerateUrlDto } from "@/lib/robinhood/dtos";
+import { urlBuilderService } from "@/lib/robinhood/services";
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const dto = await validateDtoOrThrow(GenerateUrlDto, body);
+
+    const url = urlBuilderService.generateOnrampUrl(dto);
+
+    return NextResponse.json({ success: true, url });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 400 }
+    );
+  }
+}
+```
+
+## Deliverables
+
+- [ ] Health route refactored
+- [ ] Assets route refactored
+- [ ] URL generation route refactored
+- [ ] DTO validation added
+- [ ] Error responses standardized
+- [ ] All routes tested
+
+## Next Steps
+
+**Proceed to** [Sub-Plan 12: Migration Guide](./sub-plan-12-migration-guide.md)
