@@ -8,7 +8,7 @@
  * - Error handling
  * - Configuration
  */
-import { RobinhoodClientService } from '@/lib/robinhood/services/robinhood-client.service'
+import { RobinhoodClientService } from '@/libs/robinhood/lib/services/robinhood-client.service'
 import {
   mockConnectIdSuccess,
   mockConnectIdFailure,
@@ -20,7 +20,7 @@ import {
   createMockAsset,
   cleanAll,
   isDone,
-} from './mocks/robinhood-nock-api'
+} from '../mocks/robinhood-nock-api'
 
 describe('RobinhoodClientService', () => {
   const testConfig = {

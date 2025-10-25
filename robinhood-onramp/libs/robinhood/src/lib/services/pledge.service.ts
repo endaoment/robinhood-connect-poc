@@ -1,8 +1,8 @@
 import { ServiceLogger, createConsoleLogger } from './types'
 import { CreatePledgeDto, PledgeStatus, CentralizedExchangeStatus } from '../dtos'
-import { mockTokenService } from '../../backend-mock/mock-token.service'
-import { mockPledgeService } from '../../backend-mock/mock-pledge.service'
-import { convertToSmallestUnit } from '../../backend-integration/amount-converter'
+import { mockTokenService } from '@/libs/shared/lib/backend-mock/mock-token.service'
+import { mockPledgeService } from '@/libs/shared/lib/backend-mock/mock-pledge.service'
+import { convertToSmallestUnit } from '../backend-integration/amount-converter'
 
 /**
  * Parameters for creating pledge from Robinhood callback

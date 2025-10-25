@@ -1,6 +1,6 @@
-import { getDiscoveryStats } from '@/lib/robinhood/assets/discovery'
-import { getPrimeAddressStats, isPrimeAddressCacheReady } from '@/lib/robinhood/assets/prime-addresses'
-import { getAssetRegistry, isRegistryReady, validateAssetRegistry } from '@/lib/robinhood/assets/registry'
+import { getDiscoveryStats } from '@/libs/robinhood/lib/assets/discovery'
+import { getPrimeAddressStats, isPrimeAddressCacheReady } from '@/libs/robinhood/lib/assets/prime-addresses'
+import { getAssetRegistry, isRegistryReady, validateAssetRegistry } from '@/libs/robinhood/lib/assets/registry'
 import { NextResponse } from 'next/server'
 
 export async function GET() {

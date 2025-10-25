@@ -9,7 +9,7 @@
  * - Configuration handling
  * - Edge cases
  */
-import { UrlBuilderService } from '@/lib/robinhood/services/url-builder.service'
+import { UrlBuilderService } from '@/libs/robinhood/lib/services/url-builder.service'
 
 describe('UrlBuilderService', () => {
   // Save original env vars

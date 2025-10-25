@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useAssetSelection } from '@/hooks/use-asset-selection'
 import { useToast } from '@/hooks/use-toast'
-import { getAssetConfig, getEnabledAssets, searchAssets, type RobinhoodAssetConfig } from '@/lib/robinhood'
+import { getAssetConfig, getEnabledAssets, searchAssets, type RobinhoodAssetConfig } from '@/libs/robinhood/lib'
 import { ChevronDown, ExternalLink, Loader2, Search, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 

@@ -14,8 +14,8 @@ import {
   buildDaffyStyleOnrampUrl,
   isValidAssetCode,
   type RobinhoodNetwork,
-} from "@/lib/robinhood";
-import { ROBINHOOD_CONNECT_SUPPORTED_NETWORKS } from "@/lib/robinhood";
+} from "@/libs/robinhood/lib";
+import { ROBINHOOD_CONNECT_SUPPORTED_NETWORKS } from "@/libs/robinhood/lib";
 import { NextResponse } from "next/server";
 
 // Helper function for network validation

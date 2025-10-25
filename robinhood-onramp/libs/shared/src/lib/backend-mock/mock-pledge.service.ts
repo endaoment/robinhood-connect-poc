@@ -4,7 +4,7 @@ import {
   CreatePledgeDto,
   PledgeStatus,
   CentralizedExchangeStatus,
-} from "@/lib/robinhood/dtos";
+} from "@/libs/robinhood/lib/dtos";
 import { BackendCryptoPledge } from "./types";
 import {
   showApiCallToast,

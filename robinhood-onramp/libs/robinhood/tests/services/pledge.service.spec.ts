@@ -10,14 +10,14 @@
  * - Error handling
  * - Backend integration flow
  */
-import { PledgeService } from '@/lib/robinhood/services/pledge.service'
-import { mockTokenService } from '@/lib/backend-mock/mock-token.service'
-import { mockPledgeService as mockBackendPledgeService } from '@/lib/backend-mock/mock-pledge.service'
-import { PledgeStatus, CentralizedExchangeStatus } from '@/lib/robinhood/dtos'
+import { PledgeService } from '@/libs/robinhood/lib/services/pledge.service'
+import { mockTokenService } from '@/libs/shared/lib/backend-mock/mock-token.service'
+import { mockPledgeService as mockBackendPledgeService } from '@/libs/shared/lib/backend-mock/mock-pledge.service'
+import { PledgeStatus, CentralizedExchangeStatus } from '@/libs/robinhood/lib/dtos'
 
 // Mock the backend services
-jest.mock('@/lib/backend-mock/mock-token.service')
-jest.mock('@/lib/backend-mock/mock-pledge.service')
+jest.mock('@/libs/shared/lib/backend-mock/mock-token.service')
+jest.mock('@/libs/shared/lib/backend-mock/mock-pledge.service')
 
 describe('PledgeService', () => {
   let service: PledgeService
@@ -854,7 +854,7 @@ describe('PledgeService', () => {
   describe('Singleton Export', () => {
     it('should export pledgeService singleton', () => {
       // Import the singleton
-      const { pledgeService } = require('@/lib/robinhood/services/pledge.service')
+      const { pledgeService } = require('@/libs/robinhood/lib/services/pledge.service')
 
       expect(pledgeService).toBeDefined()
       expect(pledgeService).toBeInstanceOf(PledgeService)

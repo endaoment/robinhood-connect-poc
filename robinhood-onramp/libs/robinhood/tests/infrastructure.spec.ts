@@ -4,7 +4,7 @@
  * Simple tests to verify Jest and Nock are working correctly
  */
 import { mockConnectIdSuccess, mockDiscoverySuccess, createMockAssets, cleanAll } from './mocks/robinhood-nock-api'
-import { RobinhoodClientService } from '@/lib/robinhood/services/robinhood-client.service'
+import { RobinhoodClientService } from '@/libs/robinhood/lib/services/robinhood-client.service'
 
 describe('Test Infrastructure', () => {
   describe('Jest Configuration', () => {

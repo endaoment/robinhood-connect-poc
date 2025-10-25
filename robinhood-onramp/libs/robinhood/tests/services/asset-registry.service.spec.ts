@@ -9,16 +9,16 @@
  * - Prime address integration
  * - Error handling
  */
-import { AssetRegistryService } from '@/lib/robinhood/services/asset-registry.service'
-import { mockDiscoverySuccess, createMockAssets, createMockAsset, cleanAll } from './mocks/robinhood-nock-api'
-import * as discoveryModule from '@/lib/robinhood/assets/discovery'
-import * as primeModule from '@/lib/robinhood/assets/prime-addresses'
-import * as registryBuilder from '@/lib/robinhood/assets/registry-builder'
+import { AssetRegistryService } from '@/libs/robinhood/lib/services/asset-registry.service'
+import { mockDiscoverySuccess, createMockAssets, createMockAsset, cleanAll } from '../mocks/robinhood-nock-api'
+import * as discoveryModule from '@/libs/robinhood/lib/assets/discovery'
+import * as primeModule from '@/libs/robinhood/lib/assets/prime-addresses'
+import * as registryBuilder from '@/libs/robinhood/lib/assets/registry-builder'
 
 // Mock the modules
-jest.mock('@/lib/robinhood/assets/discovery')
-jest.mock('@/lib/robinhood/assets/prime-addresses')
-jest.mock('@/lib/robinhood/assets/registry-builder')
+jest.mock('@/libs/robinhood/lib/assets/discovery')
+jest.mock('@/libs/robinhood/lib/assets/prime-addresses')
+jest.mock('@/libs/robinhood/lib/assets/registry-builder')
 
 describe('AssetRegistryService', () => {
   beforeEach(() => {
