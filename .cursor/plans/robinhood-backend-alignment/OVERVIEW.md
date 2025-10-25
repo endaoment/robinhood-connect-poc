@@ -718,6 +718,7 @@ robinhood-onramp/
 ```
 
 **Benefits for Future POCs**:
+
 - Clone structure for new integrations
 - Build frontend in `app/`, backend in `libs/`
 - When ready, copy `libs/` to endaoment-backend
@@ -867,5 +868,3 @@ Please:
 4. Test fix
 5. Re-run validation
 ```
-
-
