@@ -434,7 +434,7 @@ export async function GET() {
 npm run dev
 
 # Test the API endpoint
-curl -X POST http://localhost:3000/api/robinhood/redeem-deposit-address \
+curl -X POST http://localhost:3030/api/robinhood/redeem-deposit-address \
   -H "Content-Type: application/json" \
   -d '{"referenceId":"f2056f4c-93c7-422b-bd59-fbfb5b05b6ad"}'
 ```

@@ -126,7 +126,7 @@ npm run dev
 ```
 ````
 
-Visit `http://localhost:3000/dashboard` to see the asset selection interface.
+Visit `http://localhost:3030/dashboard` to see the asset selection interface.
 
 ## User Flow
 
@@ -431,7 +431,7 @@ npm run dev
 
 #### Step 1: Navigate to Dashboard
 
-1. Open browser to `http://localhost:3000/dashboard`
+1. Open browser to `http://localhost:3030/dashboard`
 2. Verify asset selector loads
 3. Verify all assets display correctly
 

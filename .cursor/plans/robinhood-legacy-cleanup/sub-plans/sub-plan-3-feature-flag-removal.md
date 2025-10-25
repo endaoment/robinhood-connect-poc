@@ -617,7 +617,7 @@ ls app/dashboard/
    npm run dev
    ```
 
-2. **Navigate to Dashboard**: `http://localhost:3000/dashboard`
+2. **Navigate to Dashboard**: `http://localhost:3030/dashboard`
 
 3. **Verify Asset Selector Renders**:
 

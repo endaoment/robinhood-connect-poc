@@ -27,7 +27,7 @@ This sub-plan implements the callback handling system that processes the redirec
 
 ### Callback URL Structure
 
-**Expected Callback URL**: `http://localhost:3000/callback?assetCode=ETH&assetAmount=0.05&network=ETHEREUM`
+**Expected Callback URL**: `http://localhost:3030/callback?assetCode=ETH&assetAmount=0.05&network=ETHEREUM`
 
 **Parameters**:
 
@@ -571,7 +571,7 @@ mkdir -p app/callback
 **Create test URL with callback parameters:**
 
 ```
-http://localhost:3000/callback?assetCode=ETH&assetAmount=0.05&network=ETHEREUM
+http://localhost:3030/callback?assetCode=ETH&assetAmount=0.05&network=ETHEREUM
 ```
 
 **Test scenarios:**

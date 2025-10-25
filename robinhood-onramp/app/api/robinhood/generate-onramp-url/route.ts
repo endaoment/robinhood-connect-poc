@@ -9,13 +9,11 @@
  * See: types/robinhood.d.ts for full ID system documentation
  */
 
-import {
-  getAssetConfig,
-  buildDaffyStyleOnrampUrl,
-  isValidAssetCode,
-  type RobinhoodNetwork,
-} from "@/lib/robinhood";
-import { ROBINHOOD_CONNECT_SUPPORTED_NETWORKS } from "@/lib/robinhood";
+import 'reflect-metadata';
+import { getAssetConfig } from "@/libs/robinhood/lib/assets/registry";
+import { buildDaffyStyleOnrampUrl } from "@/libs/robinhood/lib/url-builder/daffy-style";
+import { isValidAssetCode } from "@/libs/robinhood/lib/url-builder/validation";
+import { ROBINHOOD_CONNECT_SUPPORTED_NETWORKS, type RobinhoodNetwork } from "@/libs/robinhood/lib/constants";
 import { NextResponse } from "next/server";
 
 // Helper function for network validation
@@ -121,7 +119,7 @@ export async function POST(request: Request) {
     console.log('   ✨ Using Daffy-style URL builder (asset pre-selected)')
     console.log(`   Asset: ${body.selectedAsset}, Network: ${body.selectedNetwork}`)
 
-    let result: { url: string; connectId: string; params: any }
+    let result: { url: string; connectId: string; params: { asset: string; network: string; walletAddress: string } }
 
     try {
       // Get asset configuration including wallet address
@@ -172,7 +170,7 @@ export async function POST(request: Request) {
 
       console.log(`   ✅ Valid connectId received: ${validConnectId}`)
 
-      // Step 2: Encode transfer details + connectId into redirect URL
+      // Step 2: Encode transfer details + connectId + amount into redirect URL
       // This ensures data survives the Robinhood roundtrip
       const transferData = new URLSearchParams({
         asset: body.selectedAsset,
@@ -180,6 +178,12 @@ export async function POST(request: Request) {
         connectId: validConnectId, // Robinhood Connect ID for tracking
         timestamp: Date.now().toString(),
       })
+
+      // Add assetAmount if provided
+      if (body.assetAmount) {
+        transferData.set('assetAmount', body.assetAmount)
+        console.log(`   Including asset amount in redirect: ${body.assetAmount}`)
+      }
 
       const redirectUrl = `${baseRedirectUrl}?${transferData.toString()}`
       console.log(`   Full redirect URL with transfer data: ${redirectUrl}`)
@@ -191,6 +195,7 @@ export async function POST(request: Request) {
         walletAddress: assetConfig.depositAddress.address,
         redirectUrl: redirectUrl,
         connectId: validConnectId, // Use the real connectId from Robinhood
+        assetAmount: body.assetAmount, // Pass user's intended crypto amount
       })
 
       result = {
@@ -203,8 +208,9 @@ export async function POST(request: Request) {
       console.log(`   🆔 Connect ID: ${daffyResult.connectId}`)
       console.log(`   🔗 FULL URL:\n${daffyResult.url}`)
       console.log(`   ⚙️  Params: ${JSON.stringify(daffyResult.params)}`)
-    } catch (error: any) {
-      console.error(`❌ [BUILD-URL] Daffy-style URL generation failed: ${error.message}`)
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      console.error(`❌ [BUILD-URL] Daffy-style URL generation failed: ${errorMessage}`)
       throw error
     }
 
@@ -220,18 +226,22 @@ export async function POST(request: Request) {
         params: result.params,
       },
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     const duration = Date.now() - startTime
+    const errorMessage = error instanceof Error ? error.message : 'Failed to generate onramp URL'
+    const errorStack = error instanceof Error ? error.stack : undefined
     console.error('\n❌ [ERROR] Failed to generate onramp URL')
-    console.error(`   Message: ${error.message}`)
-    console.error(`   Stack: ${error.stack}`)
+    console.error(`   Message: ${errorMessage}`)
+    if (errorStack) {
+      console.error(`   Stack: ${errorStack}`)
+    }
     console.log(`⏱️  [TIMING] Request failed after ${duration}ms`)
     console.log('='.repeat(80) + '\n')
 
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Failed to generate onramp URL',
+        error: errorMessage,
       },
       { status: 500 },
     )

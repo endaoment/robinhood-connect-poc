@@ -60,7 +60,7 @@ ROBINHOOD_APP_ID=your-app-id-from-robinhood-team
 ROBINHOOD_API_KEY=your-api-key-from-robinhood-team
 
 # Application Configuration
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3030
 NEXTAUTH_SECRET=your-nextauth-secret
 
 # Note: NEXTAUTH variables will be removed in Sub-Plan 6
@@ -283,7 +283,7 @@ ROBINHOOD_APP_ID=your-app-id-from-robinhood-team
 ROBINHOOD_API_KEY=your-api-key-from-robinhood-team
 
 # Keep NextAuth variables temporarily
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3030
 NEXTAUTH_SECRET=your-nextauth-secret
 ```
 
@@ -295,7 +295,7 @@ ROBINHOOD_APP_ID=
 ROBINHOOD_API_KEY=
 
 # Application Configuration
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3030
 NEXTAUTH_SECRET=
 ```
 
@@ -530,7 +530,7 @@ git remote -v
 - [ ] `npm install` completes without errors (in robinhood-offramp directory)
 - [ ] `npm run build` succeeds
 - [ ] `npm run dev` starts development server
-- [ ] Application loads at http://localhost:3000
+- [ ] Application loads at http://localhost:3030
 - [ ] No TypeScript compilation errors
 
 ### Environment Configuration

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Dashboard Success Flow</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      margin-top: 0;
+    }
+    .button {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 10px 10px 10px 0;
+    }
+    .button:hover {
+      background: #059669;
+    }
+    .button.secondary {
+      background: #6366f1;
+    }
+    .button.secondary:hover {
+      background: #4f46e5;
+    }
+    .info {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 16px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .warning {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 16px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    pre {
+      background: #1e293b;
+      color: #10b981;
+      padding: 16px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+    .success {
+      color: #059669;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🧪 Test Dashboard Success Flow</h1>
+    
+    <div class="info">
+      <strong>📝 What this does:</strong>
+      <p>This page simulates a successful Robinhood callback by storing mock order data in localStorage, then redirecting to the dashboard. You'll see:</p>
+      <ul>
+        <li>✅ Success toast with transaction details</li>
+        <li>📊 Backend pledge data (from PledgeService)</li>
+        <li>🆔 Order ID, Connect ID, and other identifiers</li>
+        <li>⏱️ Transfer timing information</li>
+      </ul>
+    </div>
+
+    <h2>Select Test Scenario:</h2>
+
+    <button class="button" onclick="testSuccessfulPledge()">
+      ✅ Successful Pledge (SOL Transfer)
+    </button>
+
+    <button class="button" onclick="testSuccessfulPledgeBTC()">
+      ✅ Successful Pledge (BTC Transfer)
+    </button>
+
+    <button class="button secondary" onclick="testSkippedPledge()">
+      ⚠️ Skipped Pledge (No Amount)
+    </button>
+
+    <button class="button secondary" onclick="testErrorPledge()">
+      ❌ Failed Pledge (Error)
+    </button>
+
+    <div class="warning" style="margin-top: 30px;">
+      <strong>⚡ After clicking a button:</strong>
+      <p>You'll be redirected to /dashboard where you'll see a detailed toast with all the pledge information, including the backend integration data from PledgeService.</p>
+    </div>
+
+    <h2>What Gets Stored:</h2>
+    <pre id="mockData">Click a button above to see the mock data...</pre>
+  </div>
+
+  <script>
+    function testSuccessfulPledge() {
+      const now = Date.now();
+      const earlier = now - 15000; // 15 seconds ago
+
+      const orderDetails = {
+        // IDs from Robinhood callback
+        orderId: 'e4045e33-4130-4eb2-a229-5c174ddc9d8f',
+        connectId: '5b5386a7-764a-4f0f-b1a5-3c908e2b39d3',
+        depositQuoteId: '',
+
+        // Transaction details
+        asset: 'SOL',
+        network: 'SOLANA',
+        amount: '2.5',
+        status: 'COMPLETED',
+
+        // Timestamps
+        initiatedAt: new Date(earlier).toISOString(),
+        completedAt: new Date(now).toISOString(),
+
+        // Backend pledge data (successful creation via PledgeService)
+        backendPledge: {
+          pledgeId: 'pledge-uuid-' + Math.random().toString(36).substr(2, 9),
+          data: {
+            otcTransactionHash: 'robinhood:5b5386a7-764a-4f0f-b1a5-3c908e2b39d3',
+            inputToken: 'token-uuid-sol-12345',
+            inputAmount: '2500000000', // 2.5 SOL in lamports (9 decimals)
+            destinationOrgId: '00000000-0000-0000-0000-000000000000',
+            status: 'PendingLiquidation',
+            centralizedExchangeDonationStatus: 'Completed',
+            centralizedExchangeTransactionId: 'e4045e33-4130-4eb2-a229-5c174ddc9d8f',
+            asset: 'SOL',
+            network: 'SOLANA'
+          },
+          entity: {
+            id: 'pledge-uuid-' + Math.random().toString(36).substr(2, 9),
+            otcTransactionHash: 'robinhood:5b5386a7-764a-4f0f-b1a5-3c908e2b39d3',
+            inputToken: 'token-uuid-sol-12345',
+            inputAmount: '2500000000',
+            destinationOrgId: '00000000-0000-0000-0000-000000000000',
+            status: 'PendingLiquidation',
+            centralizedExchangeDonationStatus: 'Completed',
+            createdAt: new Date(now).toISOString(),
+            updatedAt: new Date(now).toISOString()
+          },
+          warnings: [
+            'No user ID provided - pledge will be anonymous'
+          ]
+        }
+      };
+
+      document.getElementById('mockData').textContent = JSON.stringify(orderDetails, null, 2);
+      
+      // Store in localStorage
+      localStorage.setItem('robinhood_order_success', JSON.stringify(orderDetails));
+      
+      // Show success message
+      alert('✅ Mock data stored! Redirecting to dashboard...');
+      
+      // Redirect to dashboard
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 500);
+    }
+
+    function testSuccessfulPledgeBTC() {
+      const now = Date.now();
+      const earlier = now - 8000; // 8 seconds ago
+
+      const orderDetails = {
+        orderId: 'btc-order-' + Math.random().toString(36).substr(2, 9),
+        connectId: 'btc-connect-' + Math.random().toString(36).substr(2, 9),
+        depositQuoteId: '',
+
+        asset: 'BTC',
+        network: 'BITCOIN',
+        amount: '0.05',
+        status: 'COMPLETED',
+
+        initiatedAt: new Date(earlier).toISOString(),
+        completedAt: new Date(now).toISOString(),
+
+        backendPledge: {
+          pledgeId: 'pledge-uuid-btc-' + Math.random().toString(36).substr(2, 9),
+          data: {
+            otcTransactionHash: 'robinhood:btc-connect-xyz789',
+            inputToken: 'token-uuid-btc-67890',
+            inputAmount: '5000000', // 0.05 BTC in satoshis (8 decimals)
+            destinationOrgId: '00000000-0000-0000-0000-000000000000',
+            status: 'PendingLiquidation',
+            centralizedExchangeDonationStatus: 'Completed',
+            centralizedExchangeTransactionId: 'btc-order-xyz789',
+            asset: 'BTC',
+            network: 'BITCOIN'
+          },
+          entity: {
+            id: 'pledge-uuid-btc-' + Math.random().toString(36).substr(2, 9),
+            status: 'PendingLiquidation',
+            createdAt: new Date(now).toISOString()
+          },
+          warnings: []
+        }
+      };
+
+      document.getElementById('mockData').textContent = JSON.stringify(orderDetails, null, 2);
+      localStorage.setItem('robinhood_order_success', JSON.stringify(orderDetails));
+      alert('✅ BTC pledge data stored! Redirecting to dashboard...');
+      setTimeout(() => window.location.href = '/dashboard', 500);
+    }
+
+    function testSkippedPledge() {
+      const now = Date.now();
+
+      const orderDetails = {
+        orderId: 'order-' + Math.random().toString(36).substr(2, 9),
+        connectId: 'connect-' + Math.random().toString(36).substr(2, 9),
+        depositQuoteId: 'quote-' + Math.random().toString(36).substr(2, 9),
+
+        asset: 'ETH',
+        network: 'ETHEREUM',
+        amount: 'Unknown', // Amount not available from callback
+        status: 'COMPLETED',
+
+        initiatedAt: new Date(now - 5000).toISOString(),
+        completedAt: new Date(now).toISOString(),
+
+        backendPledge: {
+          skipped: true,
+          reason: 'Amount not available from callback'
+        }
+      };
+
+      document.getElementById('mockData').textContent = JSON.stringify(orderDetails, null, 2);
+      localStorage.setItem('robinhood_order_success', JSON.stringify(orderDetails));
+      alert('⚠️ Skipped pledge data stored! Redirecting to dashboard...');
+      setTimeout(() => window.location.href = '/dashboard', 500);
+    }
+
+    function testErrorPledge() {
+      const now = Date.now();
+
+      const orderDetails = {
+        orderId: 'error-order-' + Math.random().toString(36).substr(2, 9),
+        connectId: 'error-connect-' + Math.random().toString(36).substr(2, 9),
+        depositQuoteId: '',
+
+        asset: 'DOGE',
+        network: 'DOGECOIN',
+        amount: '1000',
+        status: 'COMPLETED',
+
+        initiatedAt: new Date(now - 10000).toISOString(),
+        completedAt: new Date(now).toISOString(),
+
+        backendPledge: {
+          error: 'Token DOGE on network DOGECOIN not found in backend'
+        }
+      };
+
+      document.getElementById('mockData').textContent = JSON.stringify(orderDetails, null, 2);
+      localStorage.setItem('robinhood_order_success', JSON.stringify(orderDetails));
+      alert('❌ Error pledge data stored! Redirecting to dashboard...');
+      setTimeout(() => window.location.href = '/dashboard', 500);
+    }
+  </script>
+</body>
+</html>
+

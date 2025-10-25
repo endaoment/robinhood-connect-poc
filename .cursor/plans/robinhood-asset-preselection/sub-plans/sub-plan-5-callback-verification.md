@@ -280,7 +280,7 @@ ngrok http 3000
 
 2. **Navigate to Dashboard**
 
-   - Visit: http://localhost:3000/dashboard
+   - Visit: http://localhost:3030/dashboard
    - Verify: Asset selector loads
 
 3. **Select Asset**
@@ -636,7 +636,7 @@ npx tsx scripts/test-asset-callback.ts
 npm run dev
 
 # Make test callback request
-curl "http://localhost:3000/api/robinhood/redeem-deposit-address?depositQuoteId=test-123"
+curl "http://localhost:3030/api/robinhood/redeem-deposit-address?depositQuoteId=test-123"
 ```
 
 **Expected**: Returns wallet address or appropriate error
@@ -696,7 +696,7 @@ cd robinhood-offramp
 npm run dev
 
 # 2. Test callback endpoint directly
-curl http://localhost:3000/api/robinhood/redeem-deposit-address
+curl http://localhost:3030/api/robinhood/redeem-deposit-address
 
 # 3. Complete E2E flow with known working asset (ETH)
 ```

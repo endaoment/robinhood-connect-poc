@@ -12,6 +12,7 @@ When attempting to authenticate through Robinhood Connect, the 2FA verification 
 ## Analysis of the Problem
 
 ### What's Working ✅
+
 1. Your application URL generation is **correct**
 2. The redirect to Robinhood Connect is **successful**
 3. The login form is **displayed**
@@ -19,6 +20,7 @@ When attempting to authenticate through Robinhood Connect, the 2FA verification 
 5. Robinhood is **attempting** to initiate 2FA
 
 ### What's NOT Working ❌
+
 1. 2FA notification is **not being delivered** via push notification
 2. No fallback to SMS 2FA in the Connect flow
 3. The Robinhood app is **not prompting** for device verification
@@ -38,14 +40,15 @@ From your error log:
 
 ```json
 {
-    "verification_workflow": {
-        "id": "c587c9d9-23ab-41c7-9b69-638c7b21fca0",
-        "workflow_status": "workflow_status_internal_pending"
-    }
+  "verification_workflow": {
+    "id": "c587c9d9-23ab-41c7-9b69-638c7b21fca0",
+    "workflow_status": "workflow_status_internal_pending"
+  }
 }
 ```
 
 This means:
+
 - Robinhood's backend initiated a 2FA workflow
 - The workflow is waiting for user verification
 - The verification notification was never delivered/received
@@ -59,6 +62,7 @@ Login to robinhood.com and check:
 **Navigation**: Account → Security → Two-Factor Authentication
 
 **Check these settings**:
+
 - [ ] What 2FA methods are enabled?
   - SMS (phone number)
   - Authenticator app (TOTP)
@@ -72,16 +76,19 @@ Login to robinhood.com and check:
 If you have the Robinhood mobile app installed:
 
 **iOS Settings**:
+
 ```
 Settings → Robinhood → Notifications → Allow Notifications: ON
 ```
 
 **Android Settings**:
+
 ```
 Settings → Apps → Robinhood → Notifications → Allow: ON
 ```
 
 **In Robinhood App**:
+
 - Open the app
 - Go to Account → Settings → Security
 - Check "Device Authorization" settings
@@ -92,6 +99,7 @@ Settings → Apps → Robinhood → Notifications → Allow: ON
 Try each 2FA method on robinhood.com to see which one works:
 
 1. **Standard Login** (robinhood.com)
+
    - Which 2FA method is presented?
    - Does it auto-select or give you options?
 
@@ -104,11 +112,13 @@ Try each 2FA method on robinhood.com to see which one works:
 Try the Connect flow on different platforms:
 
 **Desktop Browsers**:
+
 - [ ] Chrome
 - [ ] Safari
 - [ ] Firefox
 
 **Mobile Browsers** (important!):
+
 - [ ] Safari (iOS)
 - [ ] Chrome (iOS)
 - [ ] Chrome (Android)
@@ -118,15 +128,18 @@ Try the Connect flow on different platforms:
 ### 5. Check Robinhood App Link Behavior
 
 The Connect URL uses a universal link:
+
 ```
 https://applink.robinhood.com/u/connect
 ```
 
 **Expected behavior**:
+
 - **If app installed**: Opens directly in Robinhood app (no web login needed!)
 - **If app NOT installed**: Opens web login page
 
 **Test this**:
+
 1. Install the Robinhood app on your mobile device
 2. Click the "Give with Robinhood" button from mobile
 3. The app should open directly (already logged in)
@@ -137,22 +150,25 @@ https://applink.robinhood.com/u/connect
 ### For You (Developer)
 
 1. **Test on mobile with Robinhood app installed**
+
    ```bash
    # Get the app's QR code or visit the dashboard on mobile
    # The app should handle authentication without web login
    ```
 
 2. **Add 2FA troubleshooting UI**
+
    - Show users which platform they're on
    - Suggest installing the app for easier authentication
    - Provide direct app store links
 
 3. **Add fallback instructions**
+
    ```typescript
    // In your dashboard page, add:
    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
    const hasRobinhoodApp = // Can't detect directly in web
-   
+
    // Show appropriate message:
    if (isMobile && !hasRobinhoodApp) {
      // "For easier authentication, install the Robinhood app"
@@ -168,6 +184,7 @@ Contact the Robinhood Connect team (william.mccormick@robinhood.com) with:
 2. **Specific Issue**: "2FA notifications not being delivered in Connect flow"
 
 3. **Questions to Ask**:
+
    - What 2FA methods are supported in the Connect authentication flow?
    - Can users with SMS-only 2FA use Connect?
    - Is there a way to force SMS 2FA instead of push notifications?
@@ -175,6 +192,7 @@ Contact the Robinhood Connect team (william.mccormick@robinhood.com) with:
    - Can you check the 2FA configuration for test user: rheeger@gmail.com?
 
 4. **Verification Workflow ID**: `c587c9d9-23ab-41c7-9b69-638c7b21fca0`
+
    - Ask them to look up why this workflow is stuck in "internal_pending"
    - Request logs showing whether notifications were sent
 
@@ -195,6 +213,7 @@ Contact the Robinhood Connect team (william.mccormick@robinhood.com) with:
 ### Option 2: Test with Different Account
 
 If you have access to another Robinhood account:
+
 1. One with different 2FA settings
 2. One with app push notifications enabled
 3. See if the issue persists
@@ -202,6 +221,7 @@ If you have access to another Robinhood account:
 ### Option 3: Wait for AWS Issues to Fully Resolve
 
 The Robinhood team mentioned "our services are currently impacted by the AWS outage". Even though the outage is "over", there may be:
+
 - Delayed notification queues
 - Service degradation
 - Cached errors
@@ -217,10 +237,10 @@ I've verified your implementation:
 ```typescript
 // URL generation is correct ✅
 const result = {
-  "url": "https://applink.robinhood.com/u/connect?applicationId=...",
-  "referenceId": "4d4ec974-5455-4ec5-b6ec-2d0d3a877f06",
+  url: "https://applink.robinhood.com/u/connect?applicationId=...",
+  referenceId: "4d4ec974-5455-4ec5-b6ec-2d0d3a877f06",
   // All params are properly formatted
-}
+};
 ```
 
 ### The OAuth Flow
@@ -240,9 +260,11 @@ What happens when a user clicks "Give with Robinhood":
 ### What Should Happen
 
 With app installed:
+
 1. Click button → App opens → Already logged in → Complete transfer
 
 Without app installed (web login):
+
 1. Click button → Web login → Enter credentials → **Receive SMS/Push** → Complete → Redirect back
 
 ## Testing Script
@@ -255,7 +277,7 @@ cd /Users/rheeger/Code/endaoment/robinhood-connect-poc/robinhood-offramp
 npm run dev
 
 # Visit in browser
-open http://localhost:3000
+open http://localhost:3030
 
 # Test sequence:
 # 1. Click "Give with Robinhood"
@@ -278,7 +300,7 @@ Watch for these in browser console:
 
 ```javascript
 // Good sign:
-"redirect_url": "http://localhost:3000/callback?assetCode=ETH&assetAmount=0.1&network=ETHEREUM"
+"redirect_url": "http://localhost:3030/callback?assetCode=ETH&assetAmount=0.1&network=ETHEREUM"
 
 // Bad sign:
 "workflow_status": "workflow_status_internal_pending"
@@ -342,4 +364,3 @@ Thank you!
 ---
 
 **Summary**: This is a Robinhood-side authentication configuration issue, not a problem with your application code. The best immediate solution is to use the mobile app, and work with Robinhood support to diagnose the web-based 2FA delivery problem.
-

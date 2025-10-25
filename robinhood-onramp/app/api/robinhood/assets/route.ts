@@ -1,4 +1,5 @@
-import { getAssetRegistry } from '@/lib/robinhood/assets/registry'
+import 'reflect-metadata';
+import { getAssetRegistry } from '@/libs/robinhood/lib/assets/registry'
 import { NextResponse } from 'next/server'
 
 export async function GET() {

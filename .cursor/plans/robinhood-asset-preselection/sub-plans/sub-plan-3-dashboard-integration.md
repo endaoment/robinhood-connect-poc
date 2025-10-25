@@ -638,7 +638,7 @@ npm run dev
 # In .env.local
 NEXT_PUBLIC_ENABLE_ASSET_PRESELECTION=false
 
-# Restart server and visit http://localhost:3000/dashboard
+# Restart server and visit http://localhost:3030/dashboard
 ```
 
 **Verify**:
@@ -653,7 +653,7 @@ NEXT_PUBLIC_ENABLE_ASSET_PRESELECTION=false
 # In .env.local
 NEXT_PUBLIC_ENABLE_ASSET_PRESELECTION=true
 
-# Restart server and visit http://localhost:3000/dashboard
+# Restart server and visit http://localhost:3030/dashboard
 ```
 
 **Verify**:
@@ -726,13 +726,13 @@ cd robinhood-offramp
 # 1. Feature flag OFF - test old flow
 NEXT_PUBLIC_ENABLE_ASSET_PRESELECTION=false npm run dev
 
-# Visit http://localhost:3000/dashboard
+# Visit http://localhost:3030/dashboard
 # Verify old flow works
 
 # 2. Feature flag ON - test new flow
 NEXT_PUBLIC_ENABLE_ASSET_PRESELECTION=true npm run dev
 
-# Visit http://localhost:3000/dashboard
+# Visit http://localhost:3030/dashboard
 # Verify new flow works
 
 # 3. TypeScript compilation

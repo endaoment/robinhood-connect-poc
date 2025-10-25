@@ -132,10 +132,10 @@ For a complete list of supported assets, visit [Robinhood's currency pairs page]
 
 If you encounter any issues:
 
-1. **Check Transaction History**: View your transfer status in the dashboard
-2. **Reference ID**: Each transfer has a unique reference ID for support inquiries
-3. **Contact Support**: Reach out with your reference ID for assistance
-4. **Blockchain Explorer**: Use the explorer link to verify on-chain status
+1. **Check Success Message**: After transfer, you'll see transfer details including Connect ID
+2. **Connect ID**: Each transfer has a unique Connect ID for tracking
+3. **Blockchain Explorer**: Use the explorer link for your network to verify on-chain status
+4. **Contact Support**: Reach out with your Connect ID for assistance
 
 ## Security & Best Practices
 
@@ -187,6 +187,7 @@ Once a transfer is confirmed in Robinhood and submitted to the blockchain, it ca
 ### What if I select the wrong cryptocurrency?
 
 Before clicking "Initiate Transfer", carefully review:
+
 - The cryptocurrency name and symbol
 - The network it will use
 - The wallet address shown
@@ -208,6 +209,7 @@ We support ~120 cryptocurrencies across 19 blockchain networks. Use the search f
 ### What if my transfer doesn't appear?
 
 After completing the transfer in Robinhood:
+
 1. You should be redirected back with a success message
 2. Return to the dashboard to see a success notification
 3. If you don't see a confirmation, check your Robinhood account for the transfer status
@@ -216,11 +218,22 @@ After completing the transfer in Robinhood:
 
 For assistance:
 
-- **Reference your Transfer ID**: Available in transaction history
-- **Check Status First**: Use transaction history and blockchain explorer
+- **Reference your Connect ID**: Available in success message after transfer
+- **Check Blockchain Explorer**: Use the explorer link for your network
 - **Contact Support**: [support email or link]
 
 ---
 
-**Last Updated**: October 15, 2025  
-**Version**: 1.0.0
+## Related Documentation
+
+For developers and technical documentation:
+
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture and design
+- [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) - Development setup and guidelines
+- [TESTING_GUIDE.md](./TESTING_GUIDE.md) - Testing procedures
+- [FLOW-DIAGRAMS.md](./FLOW-DIAGRAMS.md) - Visual flow diagrams
+
+---
+
+**Last Updated**: October 25, 2025  
+**Version**: v1.0.0 (Backend-Aligned)

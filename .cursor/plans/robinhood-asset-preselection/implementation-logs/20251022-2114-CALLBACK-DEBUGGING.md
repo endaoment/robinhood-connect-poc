@@ -162,7 +162,7 @@ The callback page now handles:
 
 **Test Steps:**
 
-1. Open dashboard: http://localhost:3000/dashboard
+1. Open dashboard: http://localhost:3030/dashboard
 2. Select an asset (e.g., ETH)
 3. Click "Continue to Robinhood"
 4. Complete transfer in Robinhood

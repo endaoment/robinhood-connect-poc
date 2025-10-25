@@ -69,7 +69,7 @@ npm run dev
 
 1. **Dashboard Load**:
 
-   - Navigate to: `http://localhost:3000/dashboard`
+   - Navigate to: `http://localhost:3030/dashboard`
    - ✅ Page loads without errors
    - ✅ Asset selector renders
    - ✅ No console errors

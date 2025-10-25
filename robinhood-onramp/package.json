@@ -8,7 +8,13 @@
     "dev:ngrok": "./scripts/start-with-ngrok.sh",
     "build": "next build",
     "start": "next start --port 3030",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest --config=jest.config.ts",
+    "test:watch": "jest --config=jest.config.ts --watch",
+    "test:coverage": "jest --config=jest.config.ts --coverage",
+    "test:robinhood": "jest --config=jest.config.ts libs/robinhood",
+    "test:coinbase": "jest --config=jest.config.ts libs/coinbase",
+    "test:shared": "jest --config=jest.config.ts libs/shared"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -42,6 +48,8 @@
     "@radix-ui/react-tooltip": "1.1.6",
     "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.4.20",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
@@ -65,12 +73,28 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.38.0",
+    "@nestjs/common": "^10.4.20",
+    "@nestjs/core": "^10.4.20",
+    "@types/jest": "^30.0.0",
+    "@types/nock": "^10.0.3",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
+    "eslint": "^9.38.0",
+    "eslint-config-next": "^16.0.0",
+    "jest": "^30.2.0",
+    "nock": "^14.0.10",
     "postcss": "^8",
     "prettier": "^3.5.3",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
     "tailwindcss": "^3.4.17",
+    "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "typescript": "^5"
   }

@@ -324,7 +324,7 @@ function getDefaultRedirectUrl(): string {
 
   // Fallback for server-side rendering
   return (
-    process.env.NEXT_PUBLIC_CALLBACK_URL || "http://localhost:3000/callback"
+    process.env.NEXT_PUBLIC_CALLBACK_URL || "http://localhost:3030/callback"
   );
 }
 
@@ -788,7 +788,7 @@ npx tsx scripts/test-url-generation.ts
 npm run dev
 
 # 4. Test dashboard flow
-# Visit http://localhost:3000/dashboard
+# Visit http://localhost:3030/dashboard
 # Select asset and verify URL generation
 ```
 

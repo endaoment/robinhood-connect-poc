@@ -1623,13 +1623,13 @@ import { OrderStatusComponent } from "@/components/order-status";
 
 ```bash
 # Valid UUID v4
-curl "http://localhost:3000/api/robinhood/order-status?referenceId=f2056f4c-93c7-422b-bd59-fbfb5b05b6ad"
+curl "http://localhost:3030/api/robinhood/order-status?referenceId=f2056f4c-93c7-422b-bd59-fbfb5b05b6ad"
 
 # Missing referenceId
-curl "http://localhost:3000/api/robinhood/order-status"
+curl "http://localhost:3030/api/robinhood/order-status"
 
 # Invalid UUID format
-curl "http://localhost:3000/api/robinhood/order-status?referenceId=invalid-uuid"
+curl "http://localhost:3030/api/robinhood/order-status?referenceId=invalid-uuid"
 ```
 
 ### Expected Responses

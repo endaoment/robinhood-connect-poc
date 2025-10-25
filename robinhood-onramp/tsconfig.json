@@ -13,13 +13,23 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@/app/*": ["./app/*"],
+      "@/libs/*": ["./libs/*"],
+      "@/libs/robinhood": ["./libs/robinhood/src"],
+      "@/libs/robinhood/*": ["./libs/robinhood/src/*"],
+      "@/libs/coinbase": ["./libs/coinbase/src"],
+      "@/libs/coinbase/*": ["./libs/coinbase/src/*"],
+      "@/libs/shared": ["./libs/shared/src"],
+      "@/libs/shared/*": ["./libs/shared/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

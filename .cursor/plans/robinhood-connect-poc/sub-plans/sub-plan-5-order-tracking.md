@@ -703,7 +703,7 @@ mkdir -p app/api/robinhood/order-status
 npm run dev
 
 # Test order status API with a test referenceId
-curl "http://localhost:3000/api/robinhood/order-status?referenceId=f2056f4c-93c7-422b-bd59-fbfb5b05b6ad"
+curl "http://localhost:3030/api/robinhood/order-status?referenceId=f2056f4c-93c7-422b-bd59-fbfb5b05b6ad"
 ```
 
 ### Step 5: Test Component Integration

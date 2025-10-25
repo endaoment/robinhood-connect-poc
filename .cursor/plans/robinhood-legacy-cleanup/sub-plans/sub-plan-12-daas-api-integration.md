@@ -43,7 +43,7 @@ console.log("✅ [CALLBACK] Backend Pledge Data:", pledgeMappingResult.data);
 
 ### Endaoment DAAS API
 
-**Base URL**: `https://api.endaoment.org` (production) or `http://localhost:3000` (local)
+**Base URL**: `https://api.endaoment.org` (production) or `http://localhost:3030` (local)
 
 **Endpoint**: `POST /v2/donation-pledges/crypto`
 
@@ -1562,7 +1562,7 @@ DAAS_ROBBIE_API_KEY=your-api-key
 # Backend API URL
 NEXT_PUBLIC_BACKEND_URL=https://api.endaoment.org
 # For local development:
-# NEXT_PUBLIC_BACKEND_URL=http://localhost:3000
+# NEXT_PUBLIC_BACKEND_URL=http://localhost:3030
 
 # Shloopy Doopy Charitable Fund (Robert's fund)
 # Server-side only (no NEXT_PUBLIC_ prefix)
@@ -1774,7 +1774,7 @@ NEXT_PUBLIC_BACKEND_URL=https://api.endaoment.org
 NEXT_PUBLIC_BACKEND_URL=https://staging-api.endaoment.org
 
 # Local Development
-NEXT_PUBLIC_BACKEND_URL=http://localhost:3000
+NEXT_PUBLIC_BACKEND_URL=http://localhost:3030
 
 # Optional: Default fund for anonymous donations
 NEXT_PUBLIC_DEFAULT_FUND_ID=fund-uuid-here
@@ -1851,7 +1851,7 @@ async function testApiClient() {
 
   // Submit to backend
   const config: ApiConfig = {
-    baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000',
+    baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3030',
     authToken: process.env.NEXT_PUBLIC_DAAS_API_TOKEN,
   }
 
@@ -1867,7 +1867,7 @@ Run:
 
 ```bash
 cd robinhood-onramp
-NEXT_PUBLIC_BACKEND_URL=http://localhost:3000 npx ts-node scripts/test-api-client.ts
+NEXT_PUBLIC_BACKEND_URL=http://localhost:3030 npx ts-node scripts/test-api-client.ts
 ```
 
 **Expected Output**: API client successfully submits pledge to backend

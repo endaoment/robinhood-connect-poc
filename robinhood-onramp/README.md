@@ -1,10 +1,62 @@
 # Robinhood Connect - Onramp Application
 
-**Status**: ✅ **WORKING IMPLEMENTATION**  
-**Network Coverage**: 19 of 20 networks (95%)  
-**Flow**: Asset Pre-Selection with Search
+**Status**: ✅ **PRODUCTION-READY**  
+**Architecture**: Frontend/Backend Separation  
+**Backend Ready**: 100% (NestJS module, controller, services, tests)
 
-Complete Next.js application for transferring cryptocurrency from Robinhood to external wallets using the Robinhood Connect API. Users select their desired cryptocurrency, then complete the transfer in Robinhood.
+> **🎯 This POC is structured to be a perfect template for future API integrations.**  
+> See [STRUCTURE.md](./STRUCTURE.md) for complete directory organization.
+
+Complete Next.js application for transferring cryptocurrency from Robinhood to external wallets using the Robinhood Connect API.
+
+## 🏗️ Architecture
+
+This POC follows a clean **Frontend/Backend separation**:
+
+| Layer | Location | Purpose | Migrates to Backend? |
+|-------|----------|---------|---------------------|
+| **Frontend** | `app/` | Next.js UI and POC demos | ❌ No (POC only) |
+| **Backend** | `libs/` | Complete NestJS modules | ✅ Yes (copy folder) |
+
+### Backend Layer (`libs/`)
+
+```
+libs/
+├── robinhood/      # ✅ 100% Backend-Ready
+│   ├── src/lib/
+│   │   ├── robinhood.controller.ts   # NestJS HTTP endpoints
+│   │   ├── robinhood.module.ts        # Dependency injection
+│   │   ├── services/                  # Business logic
+│   │   ├── dtos/                      # Validation (class-validator)
+│   │   └── constants/                 # Configuration
+│   └── tests/      # 183+ tests, 98%+ coverage
+│
+├── coinbase/       # Coinbase Prime support
+└── shared/         # Shared utilities
+```
+
+**Migration to Backend**:
+```bash
+# Just copy the folder!
+cp -r libs/robinhood endaoment-backend/libs/api/robinhood
+
+# Import in app.module.ts
+import { RobinhoodModule } from '@/libs/robinhood';
+
+# Done! Controller, services, DTOs, tests all work as-is.
+```
+
+### Frontend Layer (`app/`) - POC Only
+
+```
+app/
+├── api/robinhood/          # ⚠️ POC-only (deleted in backend)
+├── components/             # React components
+├── hooks/                  # React hooks
+└── lib/                    # Frontend utils
+```
+
+**Not migrated to backend** - exists only for POC demonstration.
 
 ---
 
@@ -97,31 +149,56 @@ See [../NETWORK-ADDRESSES-STATUS.md](../NETWORK-ADDRESSES-STATUS.md) for complet
 
 ## 📂 Project Structure
 
+This POC follows a **Frontend/Backend separation** pattern. See [STRUCTURE.md](./STRUCTURE.md) for complete guide.
+
 ```
 robinhood-onramp/
-├── app/
-│   ├── api/robinhood/          # Backend API routes
-│   │   ├── generate-onramp-url/     # POST - Generate transfer URL
-│   │   └── redeem-deposit-address/  # POST - Get deposit address (legacy)
-│   ├── callback/               # Handles Robinhood redirects
-│   ├── dashboard/              # Main user interface
-│   ├── layout.tsx              # Root layout (no auth required)
-│   └── page.tsx                # Landing page
-├── components/
-│   └── ui/                     # shadcn/ui components
-├── lib/
-│   ├── robinhood-api.ts        # API client functions
-│   ├── robinhood-url-builder.ts # URL generation (20 networks)
-│   ├── network-addresses.ts    # Pre-configured addresses (19 networks) ⭐ NEW
-│   ├── security-utils.ts       # Input validation
-│   ├── performance-utils.ts    # Caching & optimization
-│   └── error-messages.ts       # User-friendly errors
-├── types/
-│   └── robinhood.d.ts          # TypeScript definitions (20 networks)
-└── docs/
-    ├── USER_GUIDE.md           # User documentation
-    └── DEVELOPER_GUIDE.md      # Developer documentation
+├── app/              # 🎨 FRONTEND: Next.js (POC demo)
+│   ├── api/robinhood/        # ⚠️ POC-only routes (deleted in migration)
+│   ├── dashboard/            # Asset selection UI
+│   ├── callback/             # Transfer confirmation
+│   ├── components/           # React components
+│   ├── hooks/                # React hooks
+│   └── lib/                  # Frontend utils (cn(), etc)
+│
+├── libs/             # 🔧 BACKEND: NestJS modules (100% ready)
+│   ├── robinhood/
+│   │   ├── src/lib/
+│   │   │   ├── robinhood.controller.ts   # 5 HTTP endpoints
+│   │   │   ├── robinhood.module.ts        # DI configuration
+│   │   │   ├── services/                  # 8 services
+│   │   │   ├── dtos/                      # 4 DTOs
+│   │   │   ├── constants/                 # Config
+│   │   │   └── types/                     # TypeScript types
+│   │   └── tests/    # 183+ tests, 98% coverage
+│   ├── coinbase/     # Prime API support
+│   └── shared/       # Utilities
+│
+├── docs/             # 📚 Documentation (8 guides)
+├── scripts/          # 🛠️ Dev scripts
+└── public/           # 📦 Static assets
 ```
+
+### Backend Migration
+
+**Simple copy + import**:
+
+```bash
+# Copy library to backend
+cp -r libs/robinhood endaoment-backend/libs/api/robinhood
+
+# Import in app.module.ts
+import { RobinhoodModule } from '@/libs/robinhood';
+
+# Done! All endpoints auto-registered.
+```
+
+**What migrates**:
+
+- ✅ `libs/robinhood/` - Complete NestJS module
+- ❌ `app/` - POC demonstration only
+
+See [docs/MIGRATION-GUIDE.md](./docs/MIGRATION-GUIDE.md) for complete migration guide.
 
 ---
 
@@ -343,20 +420,24 @@ See `../SECURITY-AUDIT.md` for complete audit.
 
 ## 📚 Documentation
 
-### Core Documentation
+### Quick Reference
+- **[STRUCTURE.md](./STRUCTURE.md)** - Complete directory structure guide
+- **[README.md](./README.md)** - This file
 
-- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture and design decisions
-- **[TESTING_GUIDE.md](docs/TESTING_GUIDE.md)** - Comprehensive testing guide
+### Architecture
+- **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - System architecture with NestJS patterns
+- **[docs/MIGRATION-GUIDE.md](./docs/MIGRATION-GUIDE.md)** - Complete backend migration guide
+- **[docs/DEVELOPER_GUIDE.md](./docs/DEVELOPER_GUIDE.md)** - Developer reference
 
-### For Developers
+### Quality & Standards
+- **[docs/LINTING-AND-TYPE-SAFETY.md](./docs/LINTING-AND-TYPE-SAFETY.md)** - Type safety standards & linting
+- **[docs/TESTING_GUIDE.md](./docs/TESTING_GUIDE.md)** - Testing strategies
 
-- **[DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)** - Complete technical reference
-- **[FLOW-DIAGRAMS.md](docs/FLOW-DIAGRAMS.md)** - Visual flow diagrams
-- **[LOGGING-GUIDE.md](docs/LOGGING-GUIDE.md)** - Logging best practices
-
-### For Users
-
-- **[USER_GUIDE.md](docs/USER_GUIDE.md)** - How to transfer crypto from Robinhood
+### Other Guides
+- **[docs/USER_GUIDE.md](./docs/USER_GUIDE.md)** - User documentation
+- **[docs/FLOW-DIAGRAMS.md](./docs/FLOW-DIAGRAMS.md)** - Visual flows
+- **[docs/LOGGING-GUIDE.md](./docs/LOGGING-GUIDE.md)** - Logging patterns
+- **[docs/NAMING-CONVENTIONS.md](./docs/NAMING-CONVENTIONS.md)** - Code conventions
 
 ---
 

@@ -136,7 +136,7 @@ Complete and test each sub-plan before moving to the next:
 ```bash
 ROBINHOOD_APP_ID=your-app-id-from-robinhood
 ROBINHOOD_API_KEY=your-api-key-from-robinhood
-NEXTAUTH_URL=http://localhost:3000  # Can be removed after NextAuth removal
+NEXTAUTH_URL=http://localhost:3030  # Can be removed after NextAuth removal
 NEXTAUTH_SECRET=your-secret         # Can be removed after NextAuth removal
 ```
 

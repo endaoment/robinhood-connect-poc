@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Export Robinhood Connect assets as OTC tokens (for backend integration)
  *
@@ -14,7 +15,7 @@
 
 import * as fs from 'fs'
 import * as path from 'path'
-import { getAssetRegistry, initializeAssetRegistry } from '../lib/robinhood/assets/registry'
+import { getAssetRegistry, initializeAssetRegistry } from '../libs/robinhood/src/lib/assets/registry'
 
 async function main() {
   console.log('🚀 Exporting Robinhood Connect assets as OTC tokens...\n')

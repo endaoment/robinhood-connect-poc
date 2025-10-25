@@ -1649,7 +1649,7 @@ function getDefaultRedirectUrl(): string {
 
   // Fallback for server-side rendering
   return (
-    process.env.NEXT_PUBLIC_CALLBACK_URL || "http://localhost:3000/callback"
+    process.env.NEXT_PUBLIC_CALLBACK_URL || "http://localhost:3030/callback"
   );
 }
 

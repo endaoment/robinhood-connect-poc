@@ -34,7 +34,7 @@ npm run dev
 
 1. **Open Dashboard**
 
-   - Visit: http://localhost:3000/dashboard
+   - Visit: http://localhost:3030/dashboard
    - Select an asset (try ETH first)
 
 2. **Initiate Transfer**
@@ -116,10 +116,10 @@ console.log("ConnectId:", localStorage.getItem("robinhood_connect_id"));
 
 ```
 # Visit this URL to test callback with old-style params:
-http://localhost:3000/callback?assetCode=ETH&assetAmount=0.1&network=ETHEREUM
+http://localhost:3030/callback?assetCode=ETH&assetAmount=0.1&network=ETHEREUM
 
 # Or test with connectId:
-http://localhost:3000/callback?connectId=test-123
+http://localhost:3030/callback?connectId=test-123
 ```
 
 ---
