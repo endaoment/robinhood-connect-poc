@@ -422,7 +422,7 @@ export function validateAssetRegistry(): {
 async function syncBackendTokenMap(backendUrl: string): Promise<void> {
   try {
     // Dynamic import to avoid client-side bundling
-    const backendIntegration = await import('@/lib/backend-integration')
+    const backendIntegration = await import('@/libs/robinhood/lib/backend-integration')
     const { fetchBackendTokens, BACKEND_TOKEN_MAP } = backendIntegration
 
     console.log('[Registry Validation] Fetching backend token map...')

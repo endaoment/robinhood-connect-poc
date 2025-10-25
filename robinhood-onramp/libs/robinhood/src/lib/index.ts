@@ -20,3 +20,12 @@ export * from './constants'
 // Types
 export * from './types'
 
+// Assets (registry, discovery, helpers)
+export * from './assets'
+
+// URL Builder
+export * from './url-builder'
+
+// Backend Integration (mock/demo)
+export * from './backend-integration'
+

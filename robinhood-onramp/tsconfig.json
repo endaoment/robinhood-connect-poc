@@ -22,6 +22,7 @@
     ],
     "paths": {
       "@/*": ["./*"],
+      "@/app/*": ["./app/*"],
       "@/libs/*": ["./libs/*"],
       "@/libs/robinhood": ["./libs/robinhood/src"],
       "@/libs/robinhood/*": ["./libs/robinhood/src/*"],
