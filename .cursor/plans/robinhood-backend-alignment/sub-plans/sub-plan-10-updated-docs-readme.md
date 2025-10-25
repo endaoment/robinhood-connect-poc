@@ -11,16 +11,19 @@
 ### Files to Update
 
 **Root Level** (Repository documentation):
+
 - `README.md` (root)
 - `QUICK-START.md` (root)
 
 **Robinhood Onramp Level** (POC documentation):
+
 - `robinhood-onramp/README.md`
 - `robinhood-onramp/docs/ARCHITECTURE.md`
 - `robinhood-onramp/docs/BACKEND-INTEGRATION.md`
 - `robinhood-onramp/docs/DEVELOPER_GUIDE.md`
 
 **Current State** (after SP9.5 and SP9.6):
+
 ```
 robinhood-onramp/
 ├── app/                      # Frontend (Next.js)
@@ -74,27 +77,28 @@ robinhood-onramp/
 ## Architecture Overview
 
 This POC demonstrates a **clean Frontend/Backend separation** that makes backend migration trivial:
-
 ```
+
 robinhood-connect-poc/
 └── robinhood-onramp/
-    ├── app/              # 🎨 FRONTEND: Next.js demo application
-    │   ├── api/          # POC-only routes (deleted in migration)
-    │   ├── components/   # React UI components
-    │   └── ...           # Pages, hooks, styles
-    │
-    └── libs/             # 🔧 BACKEND: Complete NestJS modules
-        ├── robinhood/    # ✅ Copy to endaoment-backend/libs/api/
-        │   ├── src/lib/
-        │   │   ├── robinhood.controller.ts  # HTTP endpoints
-        │   │   ├── robinhood.module.ts       # DI config
-        │   │   ├── services/                 # Business logic
-        │   │   ├── dtos/                     # Validation
-        │   │   └── constants/                # Config
-        │   └── tests/                        # 183+ tests, 98% coverage
-        ├── coinbase/     # Prime API support
-        └── shared/       # Utilities
-```
+├── app/ # 🎨 FRONTEND: Next.js demo application
+│ ├── api/ # POC-only routes (deleted in migration)
+│ ├── components/ # React UI components
+│ └── ... # Pages, hooks, styles
+│
+└── libs/ # 🔧 BACKEND: Complete NestJS modules
+├── robinhood/ # ✅ Copy to endaoment-backend/libs/api/
+│ ├── src/lib/
+│ │ ├── robinhood.controller.ts # HTTP endpoints
+│ │ ├── robinhood.module.ts # DI config
+│ │ ├── services/ # Business logic
+│ │ ├── dtos/ # Validation
+│ │ └── constants/ # Config
+│ └── tests/ # 183+ tests, 98% coverage
+├── coinbase/ # Prime API support
+└── shared/ # Utilities
+
+````
 
 ### Migration to Backend
 
@@ -114,9 +118,10 @@ import { RobinhoodModule } from '@/libs/robinhood';
 export class AppModule {}
 
 # Done! Controller, services, DTOs, tests all work as-is.
-```
+````
 
 **What's included**:
+
 - ✅ NestJS controller with HTTP endpoints
 - ✅ NestJS module with DI configuration
 - ✅ Complete service layer
@@ -125,12 +130,14 @@ export class AppModule {}
 - ✅ All TypeScript types and constants
 
 **What's excluded**:
+
 - ❌ `app/` directory (Next.js frontend - POC demo only)
 - ❌ Frontend components, hooks, utilities
 - ❌ Next.js API routes (replaced by controller)
 
 ---
-```
+
+````
 
 **Add** new section after Quick Start:
 
@@ -145,15 +152,17 @@ This repository is designed to be **forked for future API integrations**:
    ```bash
    git clone https://github.com/endaoment/robinhood-connect-poc.git new-api-poc
    cd new-api-poc/robinhood-onramp
-   ```
+````
 
 2. **Rename the integration**:
+
    ```bash
    mv libs/robinhood libs/your-api
    mv libs/coinbase libs/support-api  # If needed
    ```
 
 3. **Update package.json**:
+
    ```json
    {
      "name": "your-api-onramp"
@@ -161,6 +170,7 @@ This repository is designed to be **forked for future API integrations**:
    ```
 
 4. **Build your integration** following the same structure:
+
    - Services in `libs/your-api/src/lib/services/`
    - DTOs in `libs/your-api/src/lib/dtos/`
    - Controller in `libs/your-api/src/lib/your-api.controller.ts`
@@ -168,11 +178,13 @@ This repository is designed to be **forked for future API integrations**:
    - Tests in `libs/your-api/tests/`
 
 5. **Build frontend demo** in `app/`:
+
    - Pages to demonstrate the integration
    - Components to showcase functionality
    - API routes to test services
 
 6. **When ready for production**:
+
    ```bash
    cp -r libs/your-api endaoment-backend/libs/api/your-api
    ```
@@ -186,7 +198,8 @@ This repository is designed to be **forked for future API integrations**:
 - ✅ **Portable**: Copy folder and it works
 
 ---
-```
+
+````
 
 **Update** the Documentation section:
 
@@ -210,7 +223,7 @@ This repository is designed to be **forked for future API integrations**:
 - **[.cursor/plans/robinhood-backend-alignment/](./.cursor/plans/robinhood-backend-alignment/)** - Complete planning and implementation logs
 
 ---
-```
+````
 
 ### Step 2: Update Root QUICK-START.md
 
@@ -218,7 +231,7 @@ This repository is designed to be **forked for future API integrations**:
 
 **Replace** the entire file:
 
-```markdown
+````markdown
 # Quick Start Guide
 
 **Status**: ✅ **READY TO RUN**
@@ -231,6 +244,7 @@ This repository is designed to be **forked for future API integrations**:
 cd robinhood-onramp
 npm install
 ```
+````
 
 ### 2. Configure Environment
 
@@ -239,6 +253,7 @@ cp .env.example .env.local
 ```
 
 Edit `.env.local`:
+
 ```bash
 # Required
 ROBINHOOD_APP_ID=your-app-id
@@ -256,7 +271,7 @@ NEXTAUTH_URL=http://localhost:3000
 npm run dev
 ```
 
-Visit: http://localhost:3000
+Visit: <http://localhost:3000>
 
 ### 4. Test the Integration
 
@@ -286,6 +301,7 @@ robinhood-onramp/
 ```
 
 **Key Points**:
+
 - `app/` is for POC demonstration only
 - `libs/` is production-ready and migrates to backend
 - Controller and module already included in `libs/`
@@ -323,6 +339,7 @@ npm test libs/api/robinhood
 ```
 
 **What's already done**:
+
 - ✅ NestJS controller (5 endpoints)
 - ✅ NestJS module (DI configured)
 - ✅ Services (business logic)
@@ -330,6 +347,7 @@ npm test libs/api/robinhood
 - ✅ Tests (183+ tests, 98% coverage)
 
 **What you add**:
+
 - 3 lines in module imports
 - 1 line in app.module.ts
 
@@ -358,6 +376,7 @@ cp -r libs/new-api endaoment-backend/libs/api/new-api
 ```
 
 **Template Benefits**:
+
 - ✅ Proven structure (used in production)
 - ✅ Complete NestJS module pattern
 - ✅ Testing infrastructure included
@@ -369,15 +388,18 @@ cp -r libs/new-api endaoment-backend/libs/api/new-api
 ## 📚 Documentation
 
 ### Core Documentation
+
 - **[README.md](./README.md)** - This file, repository overview
 - **[QUICK-START.md](./QUICK-START.md)** - 5-minute setup
 - **[robinhood-onramp/STRUCTURE.md](./robinhood-onramp/STRUCTURE.md)** - Complete structure guide
 
 ### POC Documentation
+
 - **[robinhood-onramp/README.md](./robinhood-onramp/README.md)** - POC-specific docs
 - **[robinhood-onramp/docs/](./robinhood-onramp/docs/)** - Technical documentation (8 guides)
 
 ### Planning Documentation
+
 - **[.cursor/plans/robinhood-backend-alignment/](./.cursor/plans/robinhood-backend-alignment/)** - Implementation plans and logs
 
 ---
@@ -385,6 +407,7 @@ cp -r libs/new-api endaoment-backend/libs/api/new-api
 ## 🎯 Key Features
 
 ### Backend-Ready Structure
+
 - ✅ Complete NestJS module with controller
 - ✅ Service layer with dependency injection
 - ✅ DTOs with class-validator decorators
@@ -392,12 +415,14 @@ cp -r libs/new-api endaoment-backend/libs/api/new-api
 - ✅ Comprehensive error handling
 
 ### POC Features
+
 - ✅ 19 blockchain networks supported
 - ✅ Coinbase Prime custody integration
 - ✅ Real-time transfer tracking
 - ✅ Clean UI with shadcn/ui components
 
 ### Migration Ready
+
 - ✅ Copy folder to backend
 - ✅ Import module in app
 - ✅ 3 lines of code to add
@@ -440,7 +465,8 @@ npm run build
 ---
 
 **Ready to use as template for future API integrations!** 🎯
-```
+
+````
 
 ### Step 3: Update Root QUICK-START.md
 
@@ -470,9 +496,9 @@ cp .env.example .env.local
 
 # Start development
 npm run dev
-```
+````
 
-Visit: http://localhost:3000
+Visit: <http://localhost:3000>
 
 ### Test the Integration
 
@@ -539,17 +565,17 @@ cp -r robinhood-onramp/libs/robinhood \
 Edit `endaoment-backend/libs/api/robinhood/src/lib/robinhood.module.ts`:
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';  // ADD
-import { CryptoDonationPledge } from '@/libs/data-access';  // ADD
-import { TokensModule } from '@/libs/tokens';  // ADD
-import { NotificationModule } from '@/libs/notification';  // ADD
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm"; // ADD
+import { CryptoDonationPledge } from "@/libs/data-access"; // ADD
+import { TokensModule } from "@/libs/tokens"; // ADD
+import { NotificationModule } from "@/libs/notification"; // ADD
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CryptoDonationPledge]),  // ADD THIS LINE
-    TokensModule,                                       // ADD THIS LINE
-    NotificationModule,                                 // ADD THIS LINE
+    TypeOrmModule.forFeature([CryptoDonationPledge]), // ADD THIS LINE
+    TokensModule, // ADD THIS LINE
+    NotificationModule, // ADD THIS LINE
   ],
   // ... rest stays the same
 })
@@ -561,12 +587,12 @@ export class RobinhoodModule {}
 Edit `endaoment-backend/apps/api/src/app.module.ts`:
 
 ```typescript
-import { RobinhoodModule } from '@/libs/robinhood';  // ADD
+import { RobinhoodModule } from "@/libs/robinhood"; // ADD
 
 @Module({
   imports: [
     // ... other modules
-    RobinhoodModule,  // ADD THIS LINE
+    RobinhoodModule, // ADD THIS LINE
   ],
 })
 export class AppModule {}
@@ -580,6 +606,7 @@ npm test libs/api/robinhood
 ```
 
 **Done!** All endpoints auto-registered:
+
 - `GET /robinhood/health`
 - `GET /robinhood/assets`
 - `POST /robinhood/url/generate`
@@ -617,6 +644,7 @@ vim package.json  # Change name to "stripe-onramp"
 ### Template Includes
 
 **Already configured**:
+
 - ✅ NestJS module structure
 - ✅ Service layer pattern
 - ✅ DTO validation setup
@@ -626,6 +654,7 @@ vim package.json  # Change name to "stripe-onramp"
 - ✅ Frontend/backend separation
 
 **Just add your integration**:
+
 - Your API client
 - Your business logic services
 - Your DTOs
@@ -638,11 +667,13 @@ vim package.json  # Change name to "stripe-onramp"
 ## 📖 Learn More
 
 ### Structure Documentation
+
 - **[robinhood-onramp/STRUCTURE.md](./robinhood-onramp/STRUCTURE.md)** - Complete directory guide
 - **[robinhood-onramp/docs/ARCHITECTURE.md](./robinhood-onramp/docs/ARCHITECTURE.md)** - Architecture details
 - **[robinhood-onramp/docs/BACKEND-INTEGRATION.md](./robinhood-onramp/docs/BACKEND-INTEGRATION.md)** - Migration guide
 
 ### Planning Methodology
+
 - **[.cursor/plans/robinhood-backend-alignment/README.md](./.cursor/plans/robinhood-backend-alignment/README.md)** - Planning overview
 - **[.cursor/plans/robinhood-backend-alignment/OVERVIEW.md](./.cursor/plans/robinhood-backend-alignment/OVERVIEW.md)** - Complete planning context
 
@@ -651,17 +682,20 @@ vim package.json  # Change name to "stripe-onramp"
 ## ✨ What Makes This Special
 
 ### For POC Development
+
 - Clean structure from day 1
 - Frontend demo separate from backend code
 - Easy to iterate and test
 
 ### For Backend Migration
+
 - Controller already written
 - Module already configured
 - Services already tested
 - Migration is copy + import
 
 ### For Future POCs
+
 - Perfect template to clone
 - Proven structure
 - Complete documentation
@@ -670,7 +704,8 @@ vim package.json  # Change name to "stripe-onramp"
 ---
 
 **This repository is your template for backend-ready API integration POCs!** 🎯
-```
+
+````
 
 ### Step 4: Update robinhood-onramp/README.md
 
@@ -683,33 +718,35 @@ vim package.json  # Change name to "stripe-onramp"
 
 This POC follows a **Frontend/Backend separation** pattern. See [STRUCTURE.md](./STRUCTURE.md) for complete guide.
 
-```
+````
+
 robinhood-onramp/
-├── app/                    # 🎨 FRONTEND: Next.js (POC demo)
-│   ├── api/robinhood/      # ⚠️ POC-only routes (deleted in migration)
-│   ├── dashboard/          # Asset selection UI
-│   ├── callback/           # Transfer confirmation
-│   ├── components/         # React components
-│   ├── hooks/              # React hooks
-│   └── lib/                # Frontend utils (cn(), etc)
+├── app/ # 🎨 FRONTEND: Next.js (POC demo)
+│ ├── api/robinhood/ # ⚠️ POC-only routes (deleted in migration)
+│ ├── dashboard/ # Asset selection UI
+│ ├── callback/ # Transfer confirmation
+│ ├── components/ # React components
+│ ├── hooks/ # React hooks
+│ └── lib/ # Frontend utils (cn(), etc)
 │
-├── libs/                   # 🔧 BACKEND: NestJS modules (100% ready)
-│   ├── robinhood/
-│   │   ├── src/lib/
-│   │   │   ├── robinhood.controller.ts    # 5 HTTP endpoints
-│   │   │   ├── robinhood.module.ts         # DI configuration
-│   │   │   ├── services/                   # 8 services
-│   │   │   ├── dtos/                       # 4 DTOs
-│   │   │   ├── constants/                  # Config
-│   │   │   └── types/                      # TypeScript types
-│   │   └── tests/          # 183+ tests, 98% coverage
-│   ├── coinbase/           # Prime API support
-│   └── shared/             # Utilities
+├── libs/ # 🔧 BACKEND: NestJS modules (100% ready)
+│ ├── robinhood/
+│ │ ├── src/lib/
+│ │ │ ├── robinhood.controller.ts # 5 HTTP endpoints
+│ │ │ ├── robinhood.module.ts # DI configuration
+│ │ │ ├── services/ # 8 services
+│ │ │ ├── dtos/ # 4 DTOs
+│ │ │ ├── constants/ # Config
+│ │ │ └── types/ # TypeScript types
+│ │ └── tests/ # 183+ tests, 98% coverage
+│ ├── coinbase/ # Prime API support
+│ └── shared/ # Utilities
 │
-├── docs/                   # 📚 Documentation (8 guides)
-├── scripts/                # 🛠️ Dev scripts
-└── public/                 # 📦 Static assets
-```
+├── docs/ # 📚 Documentation (8 guides)
+├── scripts/ # 🛠️ Dev scripts
+└── public/ # 📦 Static assets
+
+````
 
 ### Backend Migration
 
@@ -723,16 +760,18 @@ cp -r libs/robinhood endaoment-backend/libs/api/robinhood
 import { RobinhoodModule } from '@/libs/robinhood';
 
 # Done! All endpoints auto-registered.
-```
+````
 
 **What migrates**:
+
 - ✅ `libs/robinhood/` - Complete NestJS module
 - ❌ `app/` - POC demonstration only
 
 See [docs/BACKEND-INTEGRATION.md](./docs/BACKEND-INTEGRATION.md) for complete migration guide.
 
 ---
-```
+
+````
 
 **Update** the Documentation section (around line 344):
 
@@ -758,7 +797,7 @@ See [docs/BACKEND-INTEGRATION.md](./docs/BACKEND-INTEGRATION.md) for complete mi
 - **[docs/NAMING-CONVENTIONS.md](./docs/NAMING-CONVENTIONS.md)** - Code conventions
 
 ---
-```
+````
 
 ### Step 5: Update ARCHITECTURE.md
 
@@ -782,11 +821,13 @@ This integration uses a **dual-layer architecture**:
 ### Why Two Layers?
 
 **In POC**:
+
 - `app/api/robinhood/` demonstrates the integration with Next.js routes
 - `libs/robinhood/` contains the complete backend-ready code
 - Frontend calls `libs/` services directly
 
 **In Production** (endaoment-backend):
+
 - `app/api/robinhood/` is deleted (Next.js specific)
 - `libs/robinhood/` is copied to `endaoment-backend/libs/api/robinhood/`
 - NestJS controller handles HTTP endpoints
@@ -797,7 +838,7 @@ This integration uses a **dual-layer architecture**:
 
 **Update** the Architecture Components section:
 
-```markdown
+````markdown
 ## Architecture Components
 
 ### Backend Layer (`libs/robinhood/`)
@@ -814,32 +855,38 @@ This integration uses a **dual-layer architecture**:
     PledgeService,
     // ... asset processing services
   ],
-  exports: [
-    RobinhoodClientService,
-    AssetRegistryService,
-  ],
+  exports: [RobinhoodClientService, AssetRegistryService],
 })
 export class RobinhoodModule {}
 ```
+````
 
 **Purpose**: Configures dependency injection and exports services for other modules.
 
 #### NestJS Controller (`robinhood.controller.ts`) ✅ BACKEND-READY
 
 ```typescript
-@Controller('robinhood')
+@Controller("robinhood")
 export class RobinhoodController {
-  @Get('health')
-  async getHealth() { /* ... */ }
-  
-  @Get('assets')
-  async getAssets() { /* ... */ }
-  
-  @Post('url/generate')
-  async generateUrl(@Body() dto: GenerateUrlDto) { /* ... */ }
-  
-  @Post('callback')
-  async handleCallback(@Body() dto: RobinhoodCallbackDto) { /* ... */ }
+  @Get("health")
+  async getHealth() {
+    /* ... */
+  }
+
+  @Get("assets")
+  async getAssets() {
+    /* ... */
+  }
+
+  @Post("url/generate")
+  async generateUrl(@Body() dto: GenerateUrlDto) {
+    /* ... */
+  }
+
+  @Post("callback")
+  async handleCallback(@Body() dto: RobinhoodCallbackDto) {
+    /* ... */
+  }
 }
 ```
 
@@ -895,7 +942,8 @@ They exist only to demonstrate the integration in the POC.
 - **ui/** - shadcn/ui components
 
 ---
-```
+
+````
 
 ### Step 2: Update BACKEND-INTEGRATION.md
 
@@ -932,19 +980,19 @@ export class AppModule {}
 # GET  /robinhood/assets
 # POST /robinhood/url/generate
 # POST /robinhood/callback
-```
+````
 
 ### What Gets Migrated
 
-| Component | Migrates? | Notes |
-|-----------|-----------|-------|
-| `libs/robinhood/` | ✅ YES | Copy to `endaoment-backend/libs/api/robinhood/` |
-| `app/api/robinhood/` | ❌ NO | Delete - POC demonstration only |
-| `app/components/` | ❌ NO | Frontend - stays in POC |
-| Controller & Module | ✅ YES | Already included in `libs/robinhood/` |
-| Services | ✅ YES | Work as-is in backend |
-| DTOs | ✅ YES | Already have class-validator decorators |
-| Tests | ✅ YES | Portable to backend with minimal changes |
+| Component            | Migrates? | Notes                                           |
+| -------------------- | --------- | ----------------------------------------------- |
+| `libs/robinhood/`    | ✅ YES    | Copy to `endaoment-backend/libs/api/robinhood/` |
+| `app/api/robinhood/` | ❌ NO     | Delete - POC demonstration only                 |
+| `app/components/`    | ❌ NO     | Frontend - stays in POC                         |
+| Controller & Module  | ✅ YES    | Already included in `libs/robinhood/`           |
+| Services             | ✅ YES    | Work as-is in backend                           |
+| DTOs                 | ✅ YES    | Already have class-validator decorators         |
+| Tests                | ✅ YES    | Portable to backend with minimal changes        |
 
 ---
 
@@ -983,6 +1031,7 @@ export class RobinhoodModule {}
 You'll need to update the module when adding:
 
 **Database Integration**:
+
 ```typescript
 @Module({
   imports: [
@@ -993,6 +1042,7 @@ You'll need to update the module when adding:
 ```
 
 **Backend Service Dependencies**:
+
 ```typescript
 @Module({
   imports: [
@@ -1014,6 +1064,7 @@ All HTTP endpoints are defined in the controller:
 **Purpose**: Health check with registry statistics
 
 **Response**:
+
 ```json
 {
   "status": "healthy",
@@ -1031,6 +1082,7 @@ All HTTP endpoints are defined in the controller:
 **Purpose**: List all supported assets
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -1051,6 +1103,7 @@ All HTTP endpoints are defined in the controller:
 **Purpose**: Generate Robinhood Connect URL
 
 **Request Body** (validated by `GenerateUrlDto`):
+
 ```json
 {
   "asset": "ETH",
@@ -1062,6 +1115,7 @@ All HTTP endpoints are defined in the controller:
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -1074,6 +1128,7 @@ All HTTP endpoints are defined in the controller:
 **Purpose**: Handle callback from Robinhood after transfer
 
 **Request Body** (validated by `RobinhoodCallbackDto`):
+
 ```json
 {
   "asset": "ETH",
@@ -1085,6 +1140,7 @@ All HTTP endpoints are defined in the controller:
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -1094,7 +1150,8 @@ All HTTP endpoints are defined in the controller:
 ```
 
 ---
-```
+
+````
 
 ### Step 3: Update DEVELOPER_GUIDE.md
 
@@ -1107,21 +1164,23 @@ All HTTP endpoints are defined in the controller:
 
 This POC follows a clean **Frontend/Backend separation** pattern:
 
-```
+````
+
 robinhood-onramp/
-├── app/              # 🎨 FRONTEND: Next.js (POC demonstration)
-│   ├── api/          # ⚠️ POC-only routes (deleted in migration)
-│   ├── components/   # React components
-│   ├── hooks/        # React hooks
-│   └── lib/          # Frontend utils
+├── app/ # 🎨 FRONTEND: Next.js (POC demonstration)
+│ ├── api/ # ⚠️ POC-only routes (deleted in migration)
+│ ├── components/ # React components
+│ ├── hooks/ # React hooks
+│ └── lib/ # Frontend utils
 │
-├── libs/             # 🔧 BACKEND: Complete NestJS modules
-│   ├── robinhood/    # ✅ Backend-ready (copy to endaoment-backend)
-│   ├── coinbase/     # ✅ Backend-ready
-│   └── shared/       # ✅ Backend-ready
+├── libs/ # 🔧 BACKEND: Complete NestJS modules
+│ ├── robinhood/ # ✅ Backend-ready (copy to endaoment-backend)
+│ ├── coinbase/ # ✅ Backend-ready
+│ └── shared/ # ✅ Backend-ready
 │
-└── docs/             # 📚 Documentation
-```
+└── docs/ # 📚 Documentation
+
+````
 
 ### Import Patterns
 
@@ -1134,9 +1193,10 @@ import { cn } from "@/app/lib/utils";
 
 // Backend services (for POC demo)
 import { urlBuilderService } from "@/libs/robinhood";
-```
+````
 
 **Backend imports** (in `libs/` files):
+
 ```typescript
 // Within same library
 import { RobinhoodClientService } from "./services";
@@ -1150,7 +1210,8 @@ import { RobinhoodModule } from "@/libs/robinhood";
 ```
 
 ---
-```
+
+````
 
 **Update** the Development Workflow section:
 
@@ -1180,7 +1241,7 @@ npm test libs/robinhood
 
 # Run with coverage
 npm run test:coverage
-```
+````
 
 ### Type Checking
 
@@ -1193,7 +1254,8 @@ npx tsc --noEmit -p libs/robinhood/tsconfig.json
 ```
 
 ---
-```
+
+````
 
 ### Step 4: Update Root README.md
 
@@ -1204,11 +1266,11 @@ npx tsc --noEmit -p libs/robinhood/tsconfig.json
 ```markdown
 # Robinhood Connect - Onramp Application
 
-**Status**: ✅ **PRODUCTION-READY**  
-**Architecture**: Frontend/Backend Separation  
+**Status**: ✅ **PRODUCTION-READY**
+**Architecture**: Frontend/Backend Separation
 **Backend Ready**: 100% (NestJS module, controller, services, tests)
 
-> **🎯 This POC is structured to be a perfect template for future API integrations.**  
+> **🎯 This POC is structured to be a perfect template for future API integrations.**
 > See [STRUCTURE.md](./STRUCTURE.md) for complete directory organization.
 
 Complete Next.js application for transferring cryptocurrency from Robinhood to external wallets using the Robinhood Connect API.
@@ -1224,20 +1286,22 @@ This POC follows a clean **Frontend/Backend separation**:
 
 ### Backend Layer (`libs/`)
 
-```
+````
+
 libs/
-├── robinhood/              # ✅ 100% Backend-Ready
-│   ├── src/lib/
-│   │   ├── robinhood.controller.ts   # NestJS HTTP endpoints
-│   │   ├── robinhood.module.ts        # Dependency injection
-│   │   ├── services/                  # Business logic
-│   │   ├── dtos/                      # Validation (class-validator)
-│   │   └── constants/                 # Configuration
-│   └── tests/                         # 183+ tests, 98%+ coverage
+├── robinhood/ # ✅ 100% Backend-Ready
+│ ├── src/lib/
+│ │ ├── robinhood.controller.ts # NestJS HTTP endpoints
+│ │ ├── robinhood.module.ts # Dependency injection
+│ │ ├── services/ # Business logic
+│ │ ├── dtos/ # Validation (class-validator)
+│ │ └── constants/ # Configuration
+│ └── tests/ # 183+ tests, 98%+ coverage
 │
-├── coinbase/               # Coinbase Prime support
-└── shared/                 # Shared utilities
-```
+├── coinbase/ # Coinbase Prime support
+└── shared/ # Shared utilities
+
+````
 
 **Migration to Backend**:
 ```bash
@@ -1248,7 +1312,7 @@ cp -r libs/robinhood endaoment-backend/libs/api/robinhood
 import { RobinhoodModule } from '@/libs/robinhood';
 
 # Done! Controller, services, DTOs, tests all work as-is.
-```
+````
 
 ### Frontend Layer (`app/`) - POC Only
 
@@ -1263,42 +1327,45 @@ app/
 **Not migrated to backend** - exists only for POC demonstration.
 
 ---
-```
+
+````
 
 **Update** the Project Structure section:
 
 ```markdown
 ## 📂 Project Structure
 
-```
+````
+
 robinhood-onramp/
-├── app/                    # 🎨 Frontend (Next.js)
-│   ├── api/robinhood/      # POC demo routes
-│   ├── dashboard/          # Asset selection UI
-│   ├── callback/           # Transfer confirmation
-│   ├── components/         # React components
-│   ├── hooks/              # React hooks
-│   └── lib/                # Frontend utils (cn(), etc)
+├── app/ # 🎨 Frontend (Next.js)
+│ ├── api/robinhood/ # POC demo routes
+│ ├── dashboard/ # Asset selection UI
+│ ├── callback/ # Transfer confirmation
+│ ├── components/ # React components
+│ ├── hooks/ # React hooks
+│ └── lib/ # Frontend utils (cn(), etc)
 │
-├── libs/                   # 🔧 Backend (NestJS ready)
-│   ├── robinhood/
-│   │   ├── src/lib/
-│   │   │   ├── robinhood.controller.ts
-│   │   │   ├── robinhood.module.ts
-│   │   │   ├── services/
-│   │   │   ├── dtos/
-│   │   │   └── constants/
-│   │   └── tests/          # 183+ tests
-│   ├── coinbase/           # Prime API support
-│   └── shared/             # Utilities
+├── libs/ # 🔧 Backend (NestJS ready)
+│ ├── robinhood/
+│ │ ├── src/lib/
+│ │ │ ├── robinhood.controller.ts
+│ │ │ ├── robinhood.module.ts
+│ │ │ ├── services/
+│ │ │ ├── dtos/
+│ │ │ └── constants/
+│ │ └── tests/ # 183+ tests
+│ ├── coinbase/ # Prime API support
+│ └── shared/ # Utilities
 │
-├── docs/                   # 📚 Documentation
-│   ├── ARCHITECTURE.md
-│   ├── BACKEND-INTEGRATION.md
-│   ├── DEVELOPER_GUIDE.md
-│   └── ... (8 docs total)
+├── docs/ # 📚 Documentation
+│ ├── ARCHITECTURE.md
+│ ├── BACKEND-INTEGRATION.md
+│ ├── DEVELOPER_GUIDE.md
+│ └── ... (8 docs total)
 │
-└── STRUCTURE.md            # Complete structure guide
+└── STRUCTURE.md # Complete structure guide
+
 ```
 
 ---
@@ -1311,6 +1378,7 @@ robinhood-onramp/
 > **Note**: This file was created in SP9.6. Verify it exists and is referenced in README.md.
 
 **Verification**:
+
 ```bash
 ls robinhood-onramp/STRUCTURE.md
 ```
@@ -1322,6 +1390,7 @@ If missing, create it as specified in SP9.6 Step 12.
 **Action**: Ensure all docs reference the new structure
 
 **Files to check**:
+
 - `docs/ARCHITECTURE.md` - Should reference `STRUCTURE.md`
 - `docs/BACKEND-INTEGRATION.md` - Should reference `libs/robinhood/`
 - `docs/DEVELOPER_GUIDE.md` - Should reference `app/` and `libs/`
@@ -1329,6 +1398,7 @@ If missing, create it as specified in SP9.6 Step 12.
 - `README.md` - Should reference `STRUCTURE.md`
 
 **Search for old paths**:
+
 ```bash
 cd robinhood-onramp/docs
 grep -r "lib/robinhood" . || echo "✅ No old paths"
@@ -1336,6 +1406,7 @@ grep -r "__tests__" . || echo "✅ No old test paths"
 ```
 
 **Update any occurrences** of:
+
 - `lib/robinhood` → `libs/robinhood/src/lib`
 - `__tests__` → `libs/robinhood/tests`
 - `components/` → `app/components/`
@@ -1344,6 +1415,7 @@ grep -r "__tests__" . || echo "✅ No old test paths"
 ## Deliverables Checklist
 
 ### Root Level Documentation
+
 - [ ] `README.md` (root) updated with template guide
 - [ ] Root README shows frontend/backend separation
 - [ ] Root README includes "Using as Template" section
@@ -1355,6 +1427,7 @@ grep -r "__tests__" . || echo "✅ No old test paths"
 - [ ] Both root docs reference STRUCTURE.md
 
 ### POC Documentation
+
 - [ ] `robinhood-onramp/README.md` updated
 - [ ] POC README shows libs/ structure
 - [ ] POC README references STRUCTURE.md
@@ -1370,6 +1443,7 @@ grep -r "__tests__" . || echo "✅ No old test paths"
 - [ ] DEVELOPER includes new directory structure
 
 ### Cross-References
+
 - [ ] All docs reference STRUCTURE.md
 - [ ] All docs use `libs/` (not `lib/`)
 - [ ] All docs use `libs/*/tests/` (not `__tests__/`)
@@ -1412,6 +1486,7 @@ grep "STRUCTURE.md" README.md || echo "❌ README missing reference"
 ### 4. Manual Review
 
 Read through each updated doc to ensure:
+
 - Clear explanation of frontend vs backend
 - Controller and module documented
 - Migration instructions accurate
@@ -1425,6 +1500,7 @@ Read through each updated doc to ensure:
 **Validation**:
 
 1. **Structure matches docs**:
+
    ```bash
    # Check libs/ structure matches what docs say
    ls -la libs/robinhood/src/lib/robinhood.controller.ts
@@ -1433,6 +1509,7 @@ Read through each updated doc to ensure:
    ```
 
 2. **Import paths work**:
+
    ```typescript
    // Try importing as documented
    import { RobinhoodModule } from "@/libs/robinhood";
@@ -1456,14 +1533,16 @@ Read through each updated doc to ensure:
 ### Issue 1: Broken documentation links
 
 **Solution**: Use relative paths from doc location
+
 ```markdown
-[STRUCTURE.md](../STRUCTURE.md)  # From docs/
-[STRUCTURE.md](./STRUCTURE.md)   # From root
+[STRUCTURE.md](../STRUCTURE.md) # From docs/
+[STRUCTURE.md](./STRUCTURE.md) # From root
 ```
 
 ### Issue 2: Confusing frontend vs backend
 
 **Solution**: Use clear emoji markers
+
 ```markdown
 🎨 FRONTEND: app/
 🔧 BACKEND: libs/
@@ -1474,6 +1553,7 @@ Read through each updated doc to ensure:
 ### Issue 3: Old paths in examples
 
 **Solution**: Search and replace consistently
+
 ```bash
 find docs -type f -exec sed -i '' 's|lib/robinhood|libs/robinhood/src/lib|g' {} +
 ```
@@ -1499,10 +1579,12 @@ find docs -type f -exec sed -i '' 's|lib/robinhood|libs/robinhood/src/lib|g' {} 
 After completing SP10:
 
 1. **Proceed to SP11**: API Route Refactoring
+
    - Routes will use documented structure
    - Follow import patterns from docs
 
 2. **Proceed to SP12**: Migration Guide
+
    - Build on documentation foundation
    - Reference updated BACKEND-INTEGRATION.md
 
@@ -1513,4 +1595,3 @@ After completing SP10:
 ---
 
 **After this sub-plan, all documentation will accurately reflect the final frontend/backend separated structure, making the POC clear and the migration path obvious.**
-
