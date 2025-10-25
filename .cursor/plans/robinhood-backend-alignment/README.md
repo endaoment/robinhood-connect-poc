@@ -17,10 +17,10 @@
 | [SP6](./sub-plans/sub-plan-6-url-builder-service.md)                     | URL Builder Service         | ✅ Complete | High     | SP5          | 2-3 hours  |
 | [SP7](./sub-plans/sub-plan-7-mock-pledge-service.md)                     | Mock Pledge Service         | ✅ Complete | Critical | SP6, SP3     | 4-5 hours  |
 | [SP8](./sub-plans/sub-plan-8-test-infrastructure.md)                     | Test Infrastructure Setup   | ✅ Complete | High     | SP4-SP7      | 4-5 hours  |
-| [SP9](./sub-plans/sub-plan-9-comprehensive-test-suite.md)                | Comprehensive Test Suite     | ✅ Complete | High     | SP8          | 8-10 hours |
-| [SP9.5](./sub-plans/sub-plan-9.5-directory-restructuring-for-backend.md) | Directory Restructuring      | 🔵 Ready    | Critical | SP9          | 3-4 hours  |
-| [SP9.6](./sub-plans/sub-plan-9.6-frontend-backend-separation.md)         | Frontend/Backend Separation  | 🔵 Ready    | High     | SP9.5        | 2-3 hours  |
-| [SP10](./sub-plans/sub-plan-10-backend-integration-demo.md)              | Backend Integration Demo     | ⚪ Pending  | Medium   | SP9.6        | 3-4 hours  |
+| [SP9](./sub-plans/sub-plan-9-comprehensive-test-suite.md)                | Comprehensive Test Suite    | ✅ Complete | High     | SP8          | 8-10 hours |
+| [SP9.5](./sub-plans/sub-plan-9.5-directory-restructuring-for-backend.md) | Directory Restructuring     | 🔵 Ready    | Critical | SP9          | 3-4 hours  |
+| [SP9.6](./sub-plans/sub-plan-9.6-frontend-backend-separation.md)         | Frontend/Backend Separation | 🔵 Ready    | High     | SP9.5        | 2-3 hours  |
+| [SP10](./sub-plans/sub-plan-10-backend-integration-demo.md)              | Backend Integration Demo    | ⚪ Pending  | Medium   | SP9.6        | 3-4 hours  |
 | [SP11](./sub-plans/sub-plan-11-api-route-refactoring.md)                 | API Route Refactoring       | ⚪ Pending  | High     | SP10         | 2-3 hours  |
 | [SP12](./sub-plans/sub-plan-12-migration-guide.md)                       | Migration Guide             | ⚪ Pending  | High     | SP11         | 3-4 hours  |
 | [SP13](./sub-plans/sub-plan-13-architecture-documentation.md)            | Architecture Documentation  | ⚪ Pending  | Medium   | SP12         | 2-3 hours  |

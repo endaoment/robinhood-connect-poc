@@ -29,6 +29,7 @@ robinhood-onramp/
 ```
 
 **Issues**:
+
 1. Frontend code scattered (components, hooks, styles outside app/)
 2. `types/` directory unclear ownership
 3. `instrumentation.ts` at root instead of proper location
@@ -75,6 +76,7 @@ robinhood-onramp/
 ```
 
 **Benefits**:
+
 - ✅ **Clear separation**: Everything frontend in `app/`, everything backend in `libs/`
 - ✅ **Template ready**: Perfect structure for future POC repos
 - ✅ **Self-documenting**: Directory names explain purpose
@@ -99,6 +101,7 @@ robinhood-onramp/
 **Action**: Move all components into `app/components/`
 
 **Commands**:
+
 ```bash
 cd /Users/rheeger/Code/endaoment/robinhood-connect-poc/robinhood-onramp
 
@@ -113,6 +116,7 @@ rmdir components
 ```
 
 **Validation**:
+
 ```bash
 ls -la app/components/
 # Should show: asset-card.tsx, asset-selector.tsx, ui/, etc.
@@ -126,6 +130,7 @@ ls -la | grep components
 **Action**: Move all React hooks into `app/hooks/`
 
 **Commands**:
+
 ```bash
 # Create app/hooks
 mkdir -p app/hooks
@@ -140,6 +145,7 @@ rmdir hooks
 **Note**: `app/hooks/use-toast.ts` might already exist from components/ui. Consolidate if needed.
 
 **Validation**:
+
 ```bash
 ls -la app/hooks/
 # Should show: use-asset-selection.ts, use-mobile.tsx, use-toast.ts
@@ -153,6 +159,7 @@ ls -la | grep hooks
 **Action**: Move `types/robinhood.d.ts` into `app/types/`
 
 **Commands**:
+
 ```bash
 # Create app/types
 mkdir -p app/types
@@ -167,6 +174,7 @@ rmdir types
 **Note**: Backend types live in `libs/*/src/lib/types/`
 
 **Validation**:
+
 ```bash
 ls -la app/types/
 # Should show: robinhood.d.ts
@@ -180,6 +188,7 @@ ls -la | grep "^d" | grep types
 **Action**: Create `app/lib/` for frontend utilities (separate from `libs/` backend)
 
 **Commands**:
+
 ```bash
 # Create app/lib
 mkdir -p app/lib
@@ -190,7 +199,7 @@ mkdir -p app/lib
 ```typescript
 /**
  * Frontend Utility Functions
- * 
+ *
  * NOTE: This is the FRONTEND lib/ directory.
  * Backend libraries are in /libs/ (plural) at the root.
  */
@@ -216,6 +225,7 @@ export function cn(...inputs: ClassValue[]) {
 **Action**: Remove duplicate `styles/globals.css`
 
 **Commands**:
+
 ```bash
 # Check if styles/globals.css is identical to app/globals.css
 diff styles/globals.css app/globals.css
@@ -228,6 +238,7 @@ rm -rf styles/
 ```
 
 **Validation**:
+
 ```bash
 ls -la | grep styles
 # Should NOT show styles/ directory
@@ -247,10 +258,12 @@ grep -r "instrumentation" robinhood-onramp/ --include="*.ts" --include="*.tsx" -
 ```
 
 **If used by Next.js observability**:
+
 - Leave at root (Next.js convention for instrumentation)
 - Add comment explaining it
 
 **If not used**:
+
 ```bash
 rm instrumentation.ts
 ```
@@ -260,7 +273,7 @@ rm instrumentation.ts
 ```typescript
 /**
  * Next.js Instrumentation
- * 
+ *
  * This file must stay at the root of the app directory.
  * See: https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
  */
@@ -273,16 +286,19 @@ rm instrumentation.ts
 **Action**: Update all component imports from `@/components/*` to `@/app/components/*`
 
 **Files to Update**:
+
 - All pages: `app/**/*.tsx`
 - All components: `app/components/**/*.tsx`
 
 **Search and Replace**:
+
 ```bash
 # Update component imports
 find app -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i '' 's|@/components/|@/app/components/|g' {} +
 ```
 
 **Validation**:
+
 ```bash
 # Should find nothing
 grep -r "from '@/components/" app/ || echo "✅ No old component imports"
@@ -294,12 +310,14 @@ grep -r "from \"@/components/" app/ || echo "✅ No old component imports"
 **Action**: Update all hook imports from `@/hooks/*` to `@/app/hooks/*`
 
 **Search and Replace**:
+
 ```bash
 # Update hook imports
 find app -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i '' 's|@/hooks/|@/app/hooks/|g' {} +
 ```
 
 **Validation**:
+
 ```bash
 grep -r "from '@/hooks/" app/ || echo "✅ No old hook imports"
 ```
@@ -311,6 +329,7 @@ grep -r "from '@/hooks/" app/ || echo "✅ No old hook imports"
 **Note**: This only applies to the `cn()` utility function used by shadcn
 
 **Search and Replace**:
+
 ```bash
 # Update frontend lib imports (NOT backend libs!)
 # Only update single @/lib/utils, not @/libs/ (backend)
@@ -318,6 +337,7 @@ find app -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i '' 's|@/lib/ut
 ```
 
 **Validation**:
+
 ```bash
 # Should find nothing
 grep -r 'from "@/lib/utils"' app/ || echo "✅ No old lib/utils imports"
@@ -388,30 +408,38 @@ grep -r 'from "@/libs/' app/ && echo "✅ Backend lib imports present (correct)"
 This repository follows a clean **Frontend/Backend separation** pattern, making it an ideal template for future API integration POCs.
 
 ## Directory Layout
+```
 
-```
 robinhood-onramp/
-├── app/                    # 🎨 FRONTEND: Next.js Application
-│   ├── api/                #    API routes (thin wrappers to libs/)
-│   ├── (routes)/           #    Page routes
-│   ├── components/         #    React components
-│   ├── hooks/              #    React hooks  
-│   ├── lib/                #    Frontend utilities (cn(), etc)
-│   ├── types/              #    Frontend TypeScript types
-│   └── globals.css         #    Global styles
+├── app/ # 🎨 FRONTEND: Next.js Application
+│ ├── api/robinhood/ # ⚠️ POC-ONLY: Next.js API routes (demos libs/)
+│ │   # NOTE: These are deleted when migrating to backend!
+│ │   # Backend uses NestJS controller in libs/ instead
+│ ├── (routes)/ # Page routes
+│ ├── components/ # React components
+│ ├── hooks/ # React hooks  
+│ ├── lib/ # Frontend utilities (cn(), etc)
+│ ├── types/ # Frontend TypeScript types
+│ └── globals.css # Global styles
 │
-├── libs/                   # 🔧 BACKEND: API Libraries (Backend-ready)
-│   ├── robinhood/          #    Robinhood Connect integration
-│   │   ├── src/lib/        #    Services, DTOs, constants
-│   │   └── tests/          #    Tests co-located with code
-│   ├── coinbase/           #    Coinbase Prime support
-│   └── shared/             #    Shared utilities
+├── libs/ # 🔧 BACKEND: API Libraries (100% Backend-Ready!)
+│ ├── robinhood/ # Robinhood Connect integration
+│ │ ├── src/lib/
+│ │ │   ├── robinhood.controller.ts  # ✅ NestJS controller (backend-ready)
+│ │ │   ├── robinhood.module.ts      # ✅ NestJS module (backend-ready)
+│ │ │   ├── services/ # Business logic
+│ │ │   ├── dtos/ # Validation
+│ │ │   └── constants/ # Config
+│ │ └── tests/ # Tests co-located with code
+│ ├── coinbase/ # Coinbase Prime support
+│ └── shared/ # Shared utilities
 │
-├── public/                 # 📦 Static Assets
-├── docs/                   # 📚 Documentation  
-├── scripts/                # 🛠️  Development Scripts
-└── [config files]          # ⚙️  Configuration
-```
+├── public/ # 📦 Static Assets
+├── docs/ # 📚 Documentation  
+├── scripts/ # 🛠️ Development Scripts
+└── [config files] # ⚙️ Configuration
+
+````
 
 ## Key Principles
 
@@ -430,37 +458,53 @@ robinhood-onramp/
 import { AssetCard } from "@/app/components/asset-card";
 import { useAssetSelection } from "@/app/hooks/use-asset-selection";
 import { cn } from "@/app/lib/utils";
-```
+````
 
 ### 2. Backend in `libs/`
 
 **Everything for API integration lives in `libs/`**:
+
 - ✅ Services (business logic)
 - ✅ DTOs (data transfer objects)
 - ✅ Constants
 - ✅ Types
 - ✅ Tests
+- ✅ **NestJS Controller** (backend-ready HTTP endpoints)
+- ✅ **NestJS Module** (backend-ready DI configuration)
 
 **Import pattern**:
+
 ```typescript
-import { 
+import {
   RobinhoodClientService,
   AssetRegistryService,
-  GenerateUrlDto 
+  GenerateUrlDto,
 } from "@/libs/robinhood";
+
+// In backend, also import the module:
+import { RobinhoodModule } from "@/libs/robinhood";
 ```
+
+**Key Point**: The `libs/` directory contains a **complete NestJS module** that's ready to use in the backend. The Next.js routes in `app/api/` are just for POC demonstration and won't be migrated.
 
 ### 3. Backend Migration Ready
 
-The `libs/` directory is structured to mirror `endaoment-backend/libs/api/`:
+The `libs/` directory is structured to mirror `endaoment-backend/libs/api/` and includes a complete NestJS module:
 
 ```bash
-# To migrate to backend:
+# Migration is literally just copying the folder:
 cp -r robinhood-onramp/libs/robinhood \
       endaoment-backend/libs/api/robinhood
 
-# Add NestJS module wrapper and you're done!
+# Import in app.module.ts:
+# import { RobinhoodModule } from '@/libs/robinhood';
+
+# Done! Controller, services, DTOs, tests all work as-is.
 ```
+
+**What gets migrated**:
+- ✅ `libs/robinhood/` → Complete NestJS module with controller
+- ❌ `app/api/robinhood/` → Deleted (Next.js specific, not needed)
 
 ## Using This as a Template
 
@@ -468,11 +512,13 @@ When creating a new API integration POC:
 
 1. **Clone this repo's structure**
 2. **Replace `robinhood/` with your integration name**:
+
    ```bash
    mkdir libs/your-integration
    mkdir libs/your-integration/src/lib/{services,dtos,constants}
    mkdir libs/your-integration/tests
    ```
+
 3. **Build your services** following the same patterns
 4. **Add frontend UI** in `app/` to demonstrate
 5. **Write tests** co-located with code
@@ -480,21 +526,22 @@ When creating a new API integration POC:
 
 ## What Goes Where?
 
-| Item                     | Location               | Reason                           |
-| ------------------------ | ---------------------- | -------------------------------- |
-| React component          | `app/components/`      | Frontend UI                      |
-| React hook               | `app/hooks/`           | Frontend logic                   |
-| API service              | `libs/*/src/lib/services/` | Backend business logic       |
-| DTO (validation)         | `libs/*/src/lib/dtos/` | Backend data contracts           |
-| shadcn/ui components     | `app/components/ui/`   | Reusable UI components           |
-| Service tests            | `libs/*/tests/`        | Co-located with services         |
-| Frontend utils (cn, etc) | `app/lib/utils.ts`     | Frontend-only utilities          |
-| Backend utils            | `libs/shared/src/lib/` | Shared backend utilities         |
-| API routes               | `app/api/`             | Thin wrappers calling `libs/`    |
+| Item                     | Location                   | Reason                        |
+| ------------------------ | -------------------------- | ----------------------------- |
+| React component          | `app/components/`          | Frontend UI                   |
+| React hook               | `app/hooks/`               | Frontend logic                |
+| API service              | `libs/*/src/lib/services/` | Backend business logic        |
+| DTO (validation)         | `libs/*/src/lib/dtos/`     | Backend data contracts        |
+| shadcn/ui components     | `app/components/ui/`       | Reusable UI components        |
+| Service tests            | `libs/*/tests/`            | Co-located with services      |
+| Frontend utils (cn, etc) | `app/lib/utils.ts`         | Frontend-only utilities       |
+| Backend utils            | `libs/shared/src/lib/`     | Shared backend utilities      |
+| API routes               | `app/api/`                 | Thin wrappers calling `libs/` |
 
 ## Import Rules
 
-### ✅ DO:
+### ✅ DO
+
 ```typescript
 // Frontend imports frontend
 import { Button } from "@/app/components/ui/button";
@@ -508,7 +555,8 @@ import { urlBuilderService } from "@/libs/robinhood";
 import { PrimeApiService } from "@/libs/coinbase";
 ```
 
-### ❌ DON'T:
+### ❌ DON'T
+
 ```typescript
 // Backend should NOT import frontend
 // (libs/ files should not import from app/)
@@ -531,7 +579,8 @@ See [docs/MIGRATION-GUIDE.md](./docs/MIGRATION-GUIDE.md) for complete instructio
 ---
 
 **This structure makes the POC repo a living template for future API integrations.**
-```
+
+````
 
 ### Step 13: Update Root README
 
@@ -552,7 +601,7 @@ See [docs/MIGRATION-GUIDE.md](./docs/MIGRATION-GUIDE.md) for complete instructio
 - **Structure Guide**: [STRUCTURE.md](./STRUCTURE.md) - Directory organization
 
 [... rest of existing README ...]
-```
+````
 
 ## Deliverables Checklist
 
@@ -653,7 +702,8 @@ npm test
 npm run dev
 ```
 
-**Expected**: 
+**Expected**:
+
 - App starts successfully
 - No console errors
 - Can navigate to dashboard
@@ -675,6 +725,7 @@ ls app/components/ui/badge.tsx
 **Purpose**: Verify restructuring doesn't break functionality
 
 **Commands**:
+
 ```bash
 cd /Users/rheeger/Code/endaoment/robinhood-connect-poc/robinhood-onramp
 
@@ -709,6 +760,7 @@ npm run dev
 4. **Runtime Errors**: Check browser console for import issues
 
 **Rollback Procedure**:
+
 ```bash
 git checkout -- .
 git clean -fd app/components app/hooks app/lib app/types
@@ -721,6 +773,7 @@ git clean -fd app/components app/hooks app/lib app/types
 **Cause**: TypeScript path aliases not updated
 
 **Solution**:
+
 ```json
 // tsconfig.json
 {
@@ -737,6 +790,7 @@ git clean -fd app/components app/hooks app/lib app/types
 **Cause**: `components.json` not updated
 
 **Solution**: Update aliases in `components.json`:
+
 ```json
 {
   "aliases": {
@@ -751,6 +805,7 @@ git clean -fd app/components app/hooks app/lib app/types
 **Cause**: Move instead of remove, or existing files
 
 **Solution**: Check for duplicates and consolidate:
+
 ```bash
 # Find duplicate utils
 find . -name "utils.ts" -not -path "./node_modules/*"
@@ -763,6 +818,7 @@ find . -name "utils.ts" -not -path "./node_modules/*"
 **Cause**: CSS import path outdated
 
 **Solution**: Check `app/layout.tsx`:
+
 ```typescript
 import "./globals.css"; // Should be relative path
 ```
@@ -813,6 +869,7 @@ mv libs/coinbase libs/support-api  # If needed
 ```
 
 **Benefits for Future POCs**:
+
 - ✅ Clear template to follow
 - ✅ Proven structure
 - ✅ Backend-ready from day 1
@@ -822,4 +879,3 @@ mv libs/coinbase libs/support-api  # If needed
 ---
 
 **After this sub-plan, the POC will be a perfect template for future API integration projects, with crystal-clear Frontend/Backend separation.**
-

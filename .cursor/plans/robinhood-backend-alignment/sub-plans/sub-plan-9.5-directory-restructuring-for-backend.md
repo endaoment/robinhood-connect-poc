@@ -695,7 +695,268 @@ export * from "./pledge.service";
 export * from "./types";
 ```
 
-### Step 12: Clean Up Old Directories
+### Step 12: Add NestJS Controller and Module
+
+**Action**: Create NestJS controller and module in the Robinhood library
+
+**Purpose**: Make the library 100% backend-ready with working NestJS patterns
+
+**⚠️ KEY INSIGHT**: This makes migration literally just copying the folder!
+
+**Create**: `libs/robinhood/src/lib/robinhood.controller.ts`
+
+```typescript
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  RobinhoodClientService,
+  AssetRegistryService,
+  UrlBuilderService,
+  PledgeService,
+} from './services';
+import {
+  GenerateUrlDto,
+  RobinhoodCallbackDto,
+  CreatePledgeDto,
+} from './dtos';
+
+/**
+ * Robinhood Connect Controller
+ * 
+ * Handles HTTP endpoints for Robinhood Connect integration.
+ * This controller is backend-ready and will work in NestJS as-is.
+ * 
+ * In POC: Not used by Next.js (uses app/api/robinhood instead)
+ * In Backend: Replaces Next.js routes, handles actual API requests
+ */
+@Controller('robinhood')
+export class RobinhoodController {
+  constructor(
+    private readonly robinhoodClient: RobinhoodClientService,
+    private readonly assetRegistry: AssetRegistryService,
+    private readonly urlBuilder: UrlBuilderService,
+    private readonly pledgeService: PledgeService,
+  ) {}
+
+  /**
+   * Health check endpoint
+   * GET /robinhood/health
+   */
+  @Get('health')
+  async getHealth() {
+    const registry = this.assetRegistry;
+    const assets = registry.getAllAssets();
+    
+    return {
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      registry: {
+        totalAssets: assets.length,
+        evmAssets: assets.filter(a => a.chain === 'ETHEREUM' || a.chain === 'POLYGON' || a.chain === 'BASE').length,
+        nonEvmAssets: assets.filter(a => !['ETHEREUM', 'POLYGON', 'BASE'].includes(a.chain)).length,
+      },
+    };
+  }
+
+  /**
+   * List all available assets
+   * GET /robinhood/assets
+   */
+  @Get('assets')
+  async getAssets() {
+    const assets = this.assetRegistry.getAllAssets();
+    return {
+      success: true,
+      count: assets.length,
+      assets,
+    };
+  }
+
+  /**
+   * Generate onramp URL
+   * POST /robinhood/url/generate
+   */
+  @Post('url/generate')
+  async generateUrl(@Body() dto: GenerateUrlDto) {
+    const url = this.urlBuilder.generateOnrampUrl(dto);
+    
+    return {
+      success: true,
+      url,
+    };
+  }
+
+  /**
+   * Handle callback from Robinhood
+   * POST /robinhood/callback
+   * 
+   * In production, this would:
+   * 1. Validate callback data
+   * 2. Create pledge in database
+   * 3. Send notifications
+   * 4. Return success
+   */
+  @Post('callback')
+  async handleCallback(@Body() dto: RobinhoodCallbackDto) {
+    // Create pledge from callback
+    const pledge = await this.pledgeService.createFromCallback(dto);
+    
+    return {
+      success: true,
+      pledgeId: pledge.otcTransactionHash,
+      status: pledge.status,
+    };
+  }
+
+  /**
+   * Create pledge manually (for testing)
+   * POST /robinhood/pledge/create
+   */
+  @Post('pledge/create')
+  async createPledge(@Body() dto: CreatePledgeDto) {
+    const pledge = await this.pledgeService.createPledge(dto);
+    
+    return {
+      success: true,
+      pledge,
+    };
+  }
+}
+```
+
+**Create**: `libs/robinhood/src/lib/robinhood.module.ts`
+
+```typescript
+import { Module } from '@nestjs/common';
+import { RobinhoodController } from './robinhood.controller';
+import {
+  RobinhoodClientService,
+  AssetRegistryService,
+  UrlBuilderService,
+  PledgeService,
+  AssetDiscoveryService,
+  EvmAssetService,
+  NonEvmAssetService,
+  OtcLoaderService,
+} from './services';
+
+/**
+ * Robinhood Connect Module
+ * 
+ * Provides complete Robinhood Connect integration with:
+ * - Asset registry management
+ * - URL generation for onramp flows
+ * - Pledge creation and tracking
+ * - Robinhood API client
+ * 
+ * This module is backend-ready and can be used as-is in NestJS.
+ * 
+ * In POC: Services are used by Next.js API routes
+ * In Backend: Full NestJS module with controller
+ */
+@Module({
+  controllers: [RobinhoodController],
+  providers: [
+    // Main services
+    RobinhoodClientService,
+    AssetRegistryService,
+    UrlBuilderService,
+    PledgeService,
+    
+    // Asset processing services
+    AssetDiscoveryService,
+    EvmAssetService,
+    NonEvmAssetService,
+    OtcLoaderService,
+  ],
+  exports: [
+    // Export services for use by other modules
+    RobinhoodClientService,
+    AssetRegistryService,
+    UrlBuilderService,
+    PledgeService,
+  ],
+})
+export class RobinhoodModule {}
+```
+
+**Update**: `libs/robinhood/src/lib/index.ts`
+
+Add controller and module exports:
+
+```typescript
+/**
+ * Robinhood Connect API Library
+ * 
+ * Main entry point for Robinhood integration services, DTOs, and types.
+ */
+
+// NestJS Module and Controller (backend-ready)
+export * from './robinhood.module';
+export * from './robinhood.controller';
+
+// Services
+export * from './services';
+
+// DTOs
+export * from './dtos';
+
+// Constants
+export * from './constants';
+
+// Types
+export * from './types';
+```
+
+**Add NestJS Dependencies**:
+
+Update `package.json` to include NestJS (as dev dependencies for POC):
+
+```json
+{
+  "devDependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/core": "^10.0.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.0"
+  }
+}
+```
+
+**Install Dependencies**:
+
+```bash
+cd /Users/rheeger/Code/endaoment/robinhood-connect-poc/robinhood-onramp
+npm install --save-dev @nestjs/common@^10.0.0 @nestjs/core@^10.0.0 reflect-metadata@^0.1.13 rxjs@^7.8.0
+```
+
+**Validation**:
+
+```bash
+# Check files exist
+ls -la libs/robinhood/src/lib/robinhood.controller.ts
+ls -la libs/robinhood/src/lib/robinhood.module.ts
+
+# TypeScript compilation should still work
+npx tsc --noEmit
+
+# Note: Controller won't be used by Next.js, but will be ready for backend
+```
+
+**Benefits**:
+
+- ✅ Library is now **100% backend-ready**
+- ✅ Migration is just: `cp -r libs/robinhood backend/libs/api/robinhood`
+- ✅ Controller patterns proven in POC
+- ✅ Module structure validated
+- ✅ Future POCs have complete template
+- ✅ Can write controller tests in POC
+
+**Note**: The Next.js routes in `app/api/robinhood/` still exist for POC demo. When migrated to backend:
+- Next.js routes are deleted (POC-only)
+- NestJS controller handles the actual API routes
+- Everything else (services, DTOs) works unchanged
+
+### Step 13: Clean Up Old Directories
 
 **Action**: Remove old `lib/` directory and `__tests__/` directory
 
@@ -752,6 +1013,8 @@ tests/
 
 ## Usage
 
+### In POC (Next.js)
+
 ```typescript
 import {
   RobinhoodClientService,
@@ -761,17 +1024,63 @@ import {
 
 const client = new RobinhoodClientService();
 const registry = new AssetRegistryService();
-````
+```
+
+### In Backend (NestJS)
+
+```typescript
+// Import the complete module
+import { RobinhoodModule } from '@/libs/robinhood';
+
+// In your app.module.ts
+@Module({
+  imports: [RobinhoodModule],
+})
+export class AppModule {}
+
+// The controller automatically registers routes:
+// GET  /robinhood/health
+// GET  /robinhood/assets
+// POST /robinhood/url/generate
+// POST /robinhood/callback
+// POST /robinhood/pledge/create
+```
 
 ## Integration with endaoment-backend
 
+✅ **This library is 100% backend-ready with NestJS controller and module!**
+
 To integrate this library into endaoment-backend:
 
-1. Copy `libs/robinhood/` to `/Users/rheeger/Code/endaoment/endaoment-backend/libs/api/robinhood/`
-2. Add NestJS module wrapper (`robinhood.module.ts`)
-3. Add NestJS controller (`robinhood.controller.ts`)
-4. Wire up to database and existing services
-5. Run tests: `npm test libs/api/robinhood`
+1. **Copy the entire library**:
+   ```bash
+   cp -r robinhood-connect-poc/robinhood-onramp/libs/robinhood \
+         endaoment-backend/libs/api/robinhood
+   ```
+
+2. **Update the module** (if needed):
+   - Add database entities: `TypeOrmModule.forFeature([CryptoDonationPledge])`
+   - Import backend modules: `TokensModule`, `NotificationModule`, etc.
+   
+3. **Import in app module**:
+   ```typescript
+   // apps/api/src/app.module.ts
+   import { RobinhoodModule } from '@/libs/robinhood';
+   
+   @Module({
+     imports: [
+       // ... other modules
+       RobinhoodModule,
+     ],
+   })
+   ```
+
+4. **Delete POC-only files** (not in libs/):
+   - `app/api/robinhood/` (Next.js routes - not needed in backend)
+
+5. **Run tests**: `npm test libs/api/robinhood`
+
+**That's it!** The controller, module, services, DTOs, and tests are all ready to go.
 
 See [Migration Guide](../../docs/MIGRATION-GUIDE.md) for detailed instructions.
 
@@ -873,6 +1182,9 @@ The `backend-mock/` services are **POC-only** and should NOT be migrated to enda
 - [ ] `libs/` directory created (plural)
 - [ ] `libs/robinhood/src/lib/` follows NestJS structure
 - [ ] `libs/robinhood/tests/` contains all tests (`.spec.ts` extension)
+- [ ] `libs/robinhood/src/lib/robinhood.controller.ts` created (NestJS controller)
+- [ ] `libs/robinhood/src/lib/robinhood.module.ts` created (NestJS module)
+- [ ] NestJS dependencies added to package.json
 - [ ] `libs/coinbase/` created with Prime API services
 - [ ] `libs/shared/` created with utilities and mocks
 - [ ] All services refactored from `assets/` directory
