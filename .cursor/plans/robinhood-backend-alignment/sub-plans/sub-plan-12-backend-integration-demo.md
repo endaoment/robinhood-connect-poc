@@ -1,10 +1,37 @@
 # Sub-Plan 12: Backend Integration Demonstration
 
-**Status**: Pending
+**Status**: In Progress
 **Priority**: Medium
 **Dependencies**: Sub-Plan 11 (API Route Refactoring)
 
 > **Note**: This sub-plan uses the final `libs/` structure from SP9.5-9.6 and requires a working, compiled application (ensured by SP11).
+
+## Discovered Side-Quests
+
+### ✅ Chain ID Mappers Refactor (2025-10-25)
+
+**Trigger**: While preparing for callback page implementation, identified need for block explorer URL generation across all Robinhood networks.
+
+**Implementation**: Created `libs/shared/src/lib/helpers/chain-id-mappers.ts` that:
+
+- Mirrors backend's `chain-id-mappers.ts` structure exactly
+- Adds support for all Robinhood networks (EVM + non-EVM)
+- Preserves all existing backend functions (zero breaking changes)
+- Adds new network-aware helper functions
+- Includes comprehensive documentation for backend integration
+
+**Value**:
+
+- Backend team has clear migration path (only 6 lines to add for Zora + ETC support)
+- POC can generate block explorer links for any network
+- UI enhancement: Added globe icon in asset registry toast for one-click explorer access
+- Demonstrates backend alignment in practice
+
+**Log**: See [20251025-1618-CHAIN-ID-MAPPERS-REFACTOR.md](../implementation-logs/20251025-1618-CHAIN-ID-MAPPERS-REFACTOR.md)
+
+**Impact on SP12**: Can now include block explorer links in callback success page and demonstrate proper network-to-explorer URL mapping.
+
+---
 
 ## Context Required
 

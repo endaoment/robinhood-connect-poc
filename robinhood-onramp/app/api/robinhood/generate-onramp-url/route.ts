@@ -170,7 +170,7 @@ export async function POST(request: Request) {
 
       console.log(`   ✅ Valid connectId received: ${validConnectId}`)
 
-      // Step 2: Encode transfer details + connectId into redirect URL
+      // Step 2: Encode transfer details + connectId + amount into redirect URL
       // This ensures data survives the Robinhood roundtrip
       const transferData = new URLSearchParams({
         asset: body.selectedAsset,
@@ -178,6 +178,12 @@ export async function POST(request: Request) {
         connectId: validConnectId, // Robinhood Connect ID for tracking
         timestamp: Date.now().toString(),
       })
+
+      // Add assetAmount if provided
+      if (body.assetAmount) {
+        transferData.set('assetAmount', body.assetAmount)
+        console.log(`   Including asset amount in redirect: ${body.assetAmount}`)
+      }
 
       const redirectUrl = `${baseRedirectUrl}?${transferData.toString()}`
       console.log(`   Full redirect URL with transfer data: ${redirectUrl}`)
@@ -189,6 +195,7 @@ export async function POST(request: Request) {
         walletAddress: assetConfig.depositAddress.address,
         redirectUrl: redirectUrl,
         connectId: validConnectId, // Use the real connectId from Robinhood
+        assetAmount: body.assetAmount, // Pass user's intended crypto amount
       })
 
       result = {

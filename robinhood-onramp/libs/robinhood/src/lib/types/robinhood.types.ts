@@ -188,6 +188,7 @@ export interface DaffyStyleOnrampParams {
   walletAddress: string
   redirectUrl?: string
   connectId?: string
+  assetAmount?: string
 }
 
 /**

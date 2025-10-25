@@ -31,7 +31,7 @@ import { isValidWalletAddress } from "./validation";
 export function buildDaffyStyleOnrampUrl(
   params: DaffyStyleOnrampParams
 ): DaffyStyleOnrampUrlResult {
-  const { asset, network, walletAddress, redirectUrl, connectId } = params;
+  const { asset, network, walletAddress, redirectUrl, connectId, assetAmount } = params;
 
   // Validate required parameters
   if (!asset || !network || !walletAddress) {
@@ -70,6 +70,11 @@ export function buildDaffyStyleOnrampUrl(
     assetCode: asset, // Daffy includes this (same as supportedAssets)
     flow: "transfer", // CRITICAL: Specifies transfer flow (not sell)
   });
+
+  // Add assetAmount if provided (pre-fills the amount in Robinhood UI)
+  if (assetAmount) {
+    urlParams.set('assetAmount', assetAmount);
+  }
 
   const url = `${baseUrl}?${urlParams.toString()}`;
 

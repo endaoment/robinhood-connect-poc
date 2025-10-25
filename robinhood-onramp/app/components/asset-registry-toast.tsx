@@ -3,8 +3,9 @@
 import type { RobinhoodAssetConfig } from '@/libs/robinhood/lib/types'
 import { Button } from '@/app/components/ui/button'
 import { Card } from '@/app/components/ui/card'
-import { ChevronDown, ChevronUp, X } from 'lucide-react'
+import { ChevronDown, ChevronUp, X, Copy, Check, Globe } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
+import { buildNetworkAddressUrl } from '@/libs/shared/lib/helpers'
 
 interface RegistryStatus {
   totalAssets: number
@@ -177,6 +178,55 @@ function shortenAddress(address: string): string {
   return `${address.slice(0, 6)}...${address.slice(-4)}`
 }
 
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
+  }
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="ml-1 p-0.5 hover:bg-muted rounded transition-colors"
+      title={copied ? 'Copied!' : 'Copy address'}
+    >
+      {copied ? (
+        <Check className="h-3 w-3 text-green-600" />
+      ) : (
+        <Copy className="h-3 w-3 text-muted-foreground" />
+      )}
+    </button>
+  )
+}
+
+function ExplorerButton({ network, address }: { network: string; address: string }) {
+  try {
+    const explorerUrl = buildNetworkAddressUrl(network as any, address)
+    
+    return (
+      <a
+        href={explorerUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="ml-1 p-0.5 hover:bg-muted rounded transition-colors inline-flex items-center"
+        title="View on block explorer"
+      >
+        <Globe className="h-3 w-3 text-muted-foreground hover:text-blue-600" />
+      </a>
+    )
+  } catch (error) {
+    // If network not supported, don't show button
+    return null
+  }
+}
+
 function RegistrySummary({ data, status }: { data: any; status: RegistryStatus }) {
   const { discovery, primeAddresses } = data || {}
   const primeStats = primeAddresses?.stats
@@ -290,7 +340,15 @@ function AssetTable({ assets, missingAssets }: { assets: RobinhoodAssetConfig[];
                 <td className="p-1.5 font-medium">{asset.symbol}</td>
                 <td className="p-1.5 text-muted-foreground text-[9px]">{asset.network}</td>
                 <td className="p-1.5 font-mono text-muted-foreground text-[9px]">
-                  {asset.depositAddress?.address ? shortenAddress(asset.depositAddress.address) : '—'}
+                  <div className="flex items-center">
+                    <span>{asset.depositAddress?.address ? shortenAddress(asset.depositAddress.address) : '—'}</span>
+                    {asset.depositAddress?.address && (
+                      <>
+                        <CopyButton text={asset.depositAddress.address} />
+                        <ExplorerButton network={asset.network} address={asset.depositAddress.address} />
+                      </>
+                    )}
+                  </div>
                 </td>
                 <td className="p-1.5">
                   <span className={`text-[9px] px-1.5 py-0.5 rounded ${source.color}`}>

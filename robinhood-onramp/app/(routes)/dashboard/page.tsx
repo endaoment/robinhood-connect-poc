@@ -17,7 +17,6 @@ export default function Dashboard() {
 
   // Asset selection state
   const { selection, selectAsset, clearSelection, isSelected } = useAssetSelection()
-  const [step, setStep] = useState<'select' | 'confirm'>('select')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -183,17 +182,27 @@ export default function Dashboard() {
                     </div>
                   ) : orderDetails.backendPledge.data ? (
                     <div className="space-y-2">
+                      {/* Pledge ID (if available from entity) */}
+                      {orderDetails.backendPledge.pledgeId && (
+                        <div className="bg-emerald-50 p-2 rounded border border-emerald-200">
+                          <div className="text-xs font-semibold text-emerald-900 mb-1">✅ Pledge Created:</div>
+                          <div className="text-xs font-mono text-emerald-800 break-all">
+                            {orderDetails.backendPledge.pledgeId}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Crypto Given */}
                       <div className="bg-blue-50 p-2 rounded border border-blue-200">
                         <div className="text-xs font-semibold text-blue-900 mb-1">Crypto Given:</div>
                         <div className="text-xs font-mono text-blue-800 space-y-0.5">
                           <div>
-                            <strong>Token ID:</strong> {orderDetails.backendPledge.data.cryptoGiven.tokenId}
+                            <strong>Token ID:</strong> {orderDetails.backendPledge.data.inputToken}
                           </div>
                           <div>
-                            <strong>Input Amount:</strong> {orderDetails.backendPledge.data.cryptoGiven.inputAmount}
+                            <strong>Input Amount:</strong> {orderDetails.backendPledge.data.inputAmount}
                           </div>
-                          <div className="text-[10px] text-blue-600 italic">(smallest unit - e.g., wei for ETH)</div>
+                          <div className="text-[10px] text-blue-600 italic">(smallest unit - e.g., wei for ETH, satoshis for BTC)</div>
                         </div>
                       </div>
 
@@ -201,31 +210,46 @@ export default function Dashboard() {
                       <div className="bg-purple-50 p-2 rounded border border-purple-200">
                         <div className="text-xs font-semibold text-purple-900 mb-1">Transaction Hash:</div>
                         <div className="text-xs font-mono text-purple-800 break-all">
-                          {orderDetails.backendPledge.data.otcDonationTransactionHash}
+                          {orderDetails.backendPledge.data.otcTransactionHash}
                         </div>
                         <div className="text-[10px] text-purple-600 italic mt-0.5">
-                          (Robinhood orderId used as transaction identifier)
+                          (Prefixed with 'robinhood:' to distinguish from blockchain tx hashes)
                         </div>
                       </div>
 
-                      {/* Receiving Entity */}
+                      {/* Destination Org */}
                       <div className="bg-green-50 p-2 rounded border border-green-200">
-                        <div className="text-xs font-semibold text-green-900 mb-1">Receiving Entity:</div>
-                        <div className="text-xs font-mono text-green-800 space-y-0.5">
+                        <div className="text-xs font-semibold text-green-900 mb-1">Destination Organization:</div>
+                        <div className="text-xs font-mono text-green-800 break-all">
+                          {orderDetails.backendPledge.data.destinationOrgId}
+                        </div>
+                      </div>
+
+                      {/* Pledge Status */}
+                      <div className="bg-amber-50 p-2 rounded border border-amber-200">
+                        <div className="text-xs font-semibold text-amber-900 mb-1">Status:</div>
+                        <div className="text-xs text-amber-800 space-y-0.5">
                           <div>
-                            <strong>Type:</strong> {orderDetails.backendPledge.data.receivingEntityType}
+                            <strong>Pledge Status:</strong> {orderDetails.backendPledge.data.status || 'PendingLiquidation'}
                           </div>
-                          <div>
-                            <strong>ID:</strong> {orderDetails.backendPledge.data.receivingEntityId}
-                          </div>
+                          {orderDetails.backendPledge.data.centralizedExchangeDonationStatus && (
+                            <div>
+                              <strong>Exchange Status:</strong> {orderDetails.backendPledge.data.centralizedExchangeDonationStatus}
+                            </div>
+                          )}
+                          {orderDetails.backendPledge.data.centralizedExchangeTransactionId && (
+                            <div className="text-[10px] text-amber-600 mt-1">
+                              Exchange TX: {orderDetails.backendPledge.data.centralizedExchangeTransactionId}
+                            </div>
+                          )}
                         </div>
                       </div>
 
                       {/* Donor Info (if present) */}
-                      {orderDetails.backendPledge.data.donorName && (
-                        <div className="bg-amber-50 p-2 rounded border border-amber-200">
-                          <div className="text-xs font-semibold text-amber-900 mb-1">Donor:</div>
-                          <div className="text-xs text-amber-800">{orderDetails.backendPledge.data.donorName}</div>
+                      {orderDetails.backendPledge.data.pledgerUserId && (
+                        <div className="bg-indigo-50 p-2 rounded border border-indigo-200">
+                          <div className="text-xs font-semibold text-indigo-900 mb-1">Donor:</div>
+                          <div className="text-xs text-indigo-800">{orderDetails.backendPledge.data.pledgerUserId}</div>
                         </div>
                       )}
 
@@ -251,14 +275,12 @@ export default function Dashboard() {
                         </pre>
                       </details>
                     </div>
-                  ) : orderDetails.backendPledge.errors ? (
+                  ) : orderDetails.backendPledge.error ? (
                     <div className="bg-red-50 p-2 rounded border border-red-200">
-                      <div className="text-xs font-semibold text-red-900 mb-1">❌ Mapping Errors:</div>
-                      {orderDetails.backendPledge.errors.map((error: string, idx: number) => (
-                        <div key={idx} className="text-xs text-red-800">
-                          • {error}
-                        </div>
-                      ))}
+                      <div className="text-xs font-semibold text-red-900 mb-1">❌ Pledge Creation Error:</div>
+                      <div className="text-xs text-red-800">
+                        {orderDetails.backendPledge.error}
+                      </div>
                     </div>
                   ) : null}
                 </div>
@@ -329,14 +351,6 @@ export default function Dashboard() {
   }
 
   /**
-   * Handle going back to selection - NEW FLOW
-   */
-  const handleBack = () => {
-    setStep('select')
-    setError(null)
-  }
-
-  /**
    * Handle continue to Robinhood - NEW FLOW
    */
   const handleContinue = async () => {
@@ -362,6 +376,7 @@ export default function Dashboard() {
           supportedNetworks: [selection.asset.network],
           selectedAsset: selection.asset.symbol,
           selectedNetwork: selection.asset.network,
+          assetAmount: '0', // Force user to enter crypto amount in Robinhood UI
         }),
       })
 
@@ -384,14 +399,14 @@ export default function Dashboard() {
         connectId: localStorage.getItem('robinhood_connect_id'),
       })
 
-      // Open Robinhood Connect URL
+      // Open Robinhood Connect URL in NEW TAB
       console.log('[Navigation] Opening Robinhood in new tab')
       window.open(result.data.url, '_blank')
 
-      // Show instructions since Robinhood won't redirect back
+      // Show instructions
       toast({
         title: 'Complete your transfer in Robinhood',
-        description: `After transferring ${selection.asset.symbol}, close that tab and return here. Your donation will arrive at Coinbase Prime within minutes.`,
+        description: `Enter the amount of ${selection.asset.symbol} you want to transfer in the Robinhood tab. After completing the transfer, you'll be redirected back here to confirm the amount.`,
         duration: 10000, // Show for 10 seconds
       })
 
@@ -410,6 +425,12 @@ export default function Dashboard() {
       setIsLoading(false)
     }
   }
+
+  // Debug logging
+  console.log('[Dashboard] Render state:', {
+    hasSelection: !!selection,
+    assetsCount: apiAssets.length,
+  })
 
   // NEW FLOW (with asset pre-selection)
   return (

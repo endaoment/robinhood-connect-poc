@@ -4,8 +4,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert'
 import { Badge } from '@/app/components/ui/badge'
 import { Button } from '@/app/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card'
+import { Input } from '@/app/components/ui/input'
 import { useToast } from '@/app/hooks/use-toast'
-import { createPledgeFromCallback, validatePledgeInput } from '@/libs/robinhood/lib/backend-integration'
+import { pledgeService } from '@/libs/robinhood'
 import { getDepositAddress, getDepositMemo } from '@/libs/robinhood/lib/assets/asset-helpers'
 import type { CallbackParams, DepositAddressResponse } from '@/app/types/robinhood'
 import { AlertCircle, ArrowLeft, CheckCircle, Copy, ExternalLink } from 'lucide-react'
@@ -17,6 +18,9 @@ interface CallbackState {
   error: string | null
   depositAddress: DepositAddressResponse | null
   callbackParams: CallbackParams | null
+  needsAmountConfirmation: boolean
+  confirmedAmount: string | null
+  creatingPledge: boolean
 }
 
 function CallbackPageContent() {
@@ -29,9 +33,13 @@ function CallbackPageContent() {
     error: null,
     depositAddress: null,
     callbackParams: null,
+    needsAmountConfirmation: false,
+    confirmedAmount: null,
+    creatingPledge: false,
   })
 
   const [copied, setCopied] = useState(false)
+  const [amountInput, setAmountInput] = useState('')
 
   // Parse and validate callback parameters
   const parseCallbackParams = (): CallbackParams | null => {
@@ -151,6 +159,71 @@ function CallbackPageContent() {
     return explorers[network] || null
   }
 
+  // Handle amount confirmation and pledge creation
+  const handleAmountConfirmation = async (confirmedAmount: string) => {
+    try {
+      setState((prev) => ({ ...prev, creatingPledge: true, error: null }))
+
+      const pendingTransfer = sessionStorage.getItem('pending_transfer')
+      if (!pendingTransfer) {
+        throw new Error('Transfer data not found')
+      }
+
+      const transfer = JSON.parse(pendingTransfer)
+      
+      console.log('🔄 [CALLBACK] Creating pledge with confirmed amount:', confirmedAmount)
+
+      // Create pledge using PledgeService
+      const pledgeResult = await pledgeService.createFromCallback({
+        connectId: transfer.connectId,
+        asset: transfer.asset,
+        network: transfer.network,
+        amount: confirmedAmount,
+        destinationOrgId: '00000000-0000-0000-0000-000000000000',
+        orderId: transfer.orderId || undefined,
+        pledgerUserId: undefined,
+      })
+
+      console.log('📊 [CALLBACK] Pledge Creation Result:', pledgeResult)
+
+      // Store order details for dashboard
+      const orderDetails = {
+        orderId: transfer.orderId || '',
+        connectId: transfer.connectId || '',
+        depositQuoteId: '',
+        asset: transfer.asset,
+        network: transfer.network,
+        amount: confirmedAmount,
+        status: 'COMPLETED',
+        initiatedAt: transfer.timestamp ? new Date(parseInt(transfer.timestamp)).toISOString() : '',
+        completedAt: new Date().toISOString(),
+        backendPledge: pledgeResult.success
+          ? {
+              pledgeId: pledgeResult.backendPledge?.id,
+              data: pledgeResult.pledge,
+              entity: pledgeResult.backendPledge,
+              warnings: pledgeResult.warnings,
+            }
+          : {
+              error: pledgeResult.error,
+            },
+      }
+
+      localStorage.setItem('robinhood_order_success', JSON.stringify(orderDetails))
+      sessionStorage.removeItem('pending_transfer')
+
+      console.log('🎉 [CALLBACK] Redirecting to dashboard')
+      router.push('/dashboard')
+    } catch (error) {
+      console.error('❌ [CALLBACK] Amount confirmation failed:', error)
+      setState((prev) => ({
+        ...prev,
+        creatingPledge: false,
+        error: error instanceof Error ? error.message : 'Failed to create pledge',
+      }))
+    }
+  }
+
   // Main effect to handle callback processing
   useEffect(() => {
     const processCallback = async () => {
@@ -176,12 +249,14 @@ function CallbackPageContent() {
           const urlAsset = searchParams.get('asset')
           const urlNetwork = searchParams.get('network')
           const urlConnectId = searchParams.get('connectId')
+          const urlAssetAmount = searchParams.get('assetAmount')
           const urlTimestamp = searchParams.get('timestamp')
 
           console.log('🔗 [CALLBACK] Transfer data from URL:', {
             asset: urlAsset,
             network: urlNetwork,
             connectId: urlConnectId,
+            assetAmount: urlAssetAmount,
             timestamp: urlTimestamp,
           })
 
@@ -200,14 +275,16 @@ function CallbackPageContent() {
             timestamp: storedTimestamp,
           })
 
-          // Initialize with URL params or localStorage
+          // Initialize with URL params or localStorage (URL takes priority)
           let finalAsset = urlAsset || storedAsset || ''
           let finalNetwork = urlNetwork || storedNetwork || ''
+          let finalAssetAmount = urlAssetAmount || storedAmount || '' // URL amount takes priority!
           const finalTimestamp = urlTimestamp || storedTimestamp || ''
 
           console.log('✅ [CALLBACK] Initial transfer data (URL takes priority):', {
             asset: finalAsset,
             network: finalNetwork,
+            assetAmount: finalAssetAmount,
             timestamp: finalTimestamp,
             source: urlAsset ? 'URL' : storedAsset ? 'localStorage' : 'none',
           })
@@ -216,103 +293,76 @@ function CallbackPageContent() {
           // For onramp, we get all the data we need from the callback URL and localStorage
           // The presence of orderId indicates the transfer was initiated successfully
 
-          // IMPORTANT: Robinhood onramp callbacks DO NOT include the transfer amount
-          // The amount is only known from what the user entered in the Robinhood app
-          // We can try to get it from localStorage (if user entered it in our UI),
-          // but it won't be in the callback URL parameters
-          const orderAmount = storedAmount || 'Unknown'
+          // Check if amount was provided
+          const orderAmount = finalAssetAmount
           const orderStatus = orderId ? 'COMPLETED' : 'UNKNOWN'
 
-          console.log('✅ [CALLBACK] Using transfer data from URL and localStorage (no API fetch needed for onramp)')
-
-          console.log('✅ [CALLBACK] Final transfer data:', {
+          console.log('✅ [CALLBACK] Transfer data received:', {
             asset: finalAsset,
             network: finalNetwork,
-            amount: orderAmount,
+            amount: orderAmount || 'NOT PROVIDED - will ask user',
             status: orderStatus,
           })
 
-          // Map to backend pledge format (only if we have a valid amount)
-          let pledgeMappingResult = null
+          // If no amount, show confirmation UI instead of creating pledge
+          if (!orderAmount || orderAmount === '' || orderAmount === '0') {
+            console.log('📝 [CALLBACK] No amount provided - showing confirmation UI')
+            
+            // Store transfer data for amount confirmation
+            sessionStorage.setItem('pending_transfer', JSON.stringify({
+              orderId,
+              connectId: urlConnectId || connectId || storedConnectId,
+              asset: finalAsset,
+              network: finalNetwork,
+              timestamp: finalTimestamp,
+            }))
 
-          if (orderAmount && orderAmount !== 'Unknown' && orderAmount !== '') {
-            console.log('🔄 [CALLBACK] Mapping to backend pledge format...')
-            pledgeMappingResult = createPledgeFromCallback(
-              orderId || '',
-              finalAsset,
-              orderAmount,
-              finalNetwork,
-              'fund', // TODO: Get from donation context
-              '00000000-0000-0000-0000-000000000000', // TODO: Get actual fund UUID
-              undefined, // TODO: Get donor name if authenticated
-            )
-
-            console.log('📊 [CALLBACK] Pledge Mapping Result:', {
-              success: pledgeMappingResult.success,
-              hasData: !!pledgeMappingResult.data,
-              errors: pledgeMappingResult.errors,
-              warnings: pledgeMappingResult.warnings,
-            })
-
-            if (pledgeMappingResult.success && pledgeMappingResult.data) {
-              console.log(
-                '✅ [CALLBACK] Backend Pledge Data (CryptoPledgeInput):',
-                JSON.stringify(pledgeMappingResult.data, null, 2),
-              )
-
-              // Validate the pledge input
-              const validation = validatePledgeInput(pledgeMappingResult.data)
-              console.log('🔍 [CALLBACK] Pledge Validation:', {
-                valid: validation.valid,
-                errors: validation.errors,
-                warnings: validation.warnings,
-              })
-            } else {
-              console.error('❌ [CALLBACK] Pledge mapping failed:', pledgeMappingResult.errors)
-            }
-          } else {
-            console.warn('⚠️ [CALLBACK] Skipping pledge mapping - amount not available from callback')
-            console.warn('   This is expected for Robinhood onramp (amount comes from user input, not callback)')
+            setState((prev) => ({
+              ...prev,
+              loading: false,
+              needsAmountConfirmation: true,
+            }))
+            return
           }
 
-          // Store complete order details for dashboard to display
+          // We have amount, create pledge immediately and redirect
+          console.log('🔄 [CALLBACK] Amount provided, creating pledge immediately...')
+          
+          const pledgeResult = await pledgeService.createFromCallback({
+            connectId: urlConnectId || connectId || storedConnectId || 'unknown',
+            asset: finalAsset,
+            network: finalNetwork,
+            amount: orderAmount,
+            destinationOrgId: '00000000-0000-0000-0000-000000000000',
+            orderId: orderId || undefined,
+            pledgerUserId: undefined,
+          })
+
+          // Store order details and redirect to dashboard
           const orderDetails = {
-            // IDs from Robinhood callback
             orderId: orderId || '',
             connectId: urlConnectId || connectId || storedConnectId || '',
             depositQuoteId: depositQuoteId || '',
-
-            // Transaction details (URL params → API → localStorage priority)
             asset: finalAsset,
             network: finalNetwork,
             amount: orderAmount,
             status: orderStatus,
-
-            // Timestamps
             initiatedAt: finalTimestamp ? new Date(parseInt(finalTimestamp)).toISOString() : '',
             completedAt: new Date().toISOString(),
-
-            // Backend pledge data (if mapping was attempted)
-            backendPledge: pledgeMappingResult
-              ? pledgeMappingResult.success
-                ? {
-                    data: pledgeMappingResult.data,
-                    warnings: pledgeMappingResult.warnings,
-                  }
-                : {
-                    errors: pledgeMappingResult.errors,
-                  }
+            backendPledge: pledgeResult.success
+              ? {
+                  pledgeId: pledgeResult.backendPledge?.id,
+                  data: pledgeResult.pledge,
+                  entity: pledgeResult.backendPledge,
+                  warnings: pledgeResult.warnings,
+                }
               : {
-                  skipped: true,
-                  reason: 'Amount not available from callback',
+                  error: pledgeResult.error,
                 },
           }
 
-          console.log('✅ [CALLBACK] Complete order details:', orderDetails)
           localStorage.setItem('robinhood_order_success', JSON.stringify(orderDetails))
-
-          // Redirect to dashboard to show success toast
-          console.log('🎉 [CALLBACK] Redirecting to dashboard with order details')
+          console.log('🎉 [CALLBACK] Redirecting to dashboard')
           router.push('/dashboard')
           return
         }
@@ -377,8 +427,83 @@ function CallbackPageContent() {
     )
   }
 
+  // Amount confirmation state - BIG INPUT like search bar
+  if (state.needsAmountConfirmation) {
+    const pendingTransfer = sessionStorage.getItem('pending_transfer')
+    const transfer = pendingTransfer ? JSON.parse(pendingTransfer) : null
+
+    return (
+      <div className="flex min-h-screen justify-center bg-gradient-to-br from-zinc-50 to-zinc-100 p-4 pt-[40vh]">
+        <div className="w-full max-w-2xl h-fit">
+          <Card className="shadow-2xl border-2 border-blue-500">
+            <CardContent className="p-6 space-y-4">
+              <div>
+                <h2 className="text-2xl font-bold text-zinc-900 mb-2">Transfer Completed! 🎉</h2>
+                <p className="text-zinc-600">
+                  {transfer && `You transferred ${transfer.asset} on ${transfer.network}`}
+                </p>
+              </div>
+
+              <div className="border-t pt-4">
+                <label className="block text-lg font-semibold text-zinc-900 mb-3">
+                  How much {transfer?.asset} did you transfer?
+                </label>
+                <Input
+                  type="number"
+                  step="any"
+                  min="0"
+                  placeholder={`Enter amount in ${transfer?.asset || 'crypto'}`}
+                  value={amountInput}
+                  onChange={(e) => setAmountInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && amountInput && parseFloat(amountInput) > 0) {
+                      handleAmountConfirmation(amountInput)
+                    }
+                  }}
+                  className="w-full h-16 text-2xl pl-4 border-zinc-300 focus:border-blue-500 text-center font-bold"
+                  autoFocus
+                  disabled={state.creatingPledge}
+                />
+                <p className="text-sm text-zinc-500 mt-2 text-center">
+                  Enter the crypto amount from your Robinhood receipt (not the USD value)
+                </p>
+              </div>
+
+              <Button
+                onClick={() => handleAmountConfirmation(amountInput)}
+                size="lg"
+                className="w-full text-xl py-8 bg-emerald-600 hover:bg-emerald-700"
+                disabled={!amountInput || parseFloat(amountInput) <= 0 || state.creatingPledge}
+              >
+                {state.creatingPledge ? (
+                  <>
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent mr-3"></div>
+                    Creating Pledge...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="mr-3 h-6 w-6" />
+                    Confirm Transfer
+                  </>
+                )}
+              </Button>
+
+              {state.error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{state.error}</AlertDescription>
+                </Alert>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
   // Error state
-  if (state.error) {
+  if (state.error && !state.needsAmountConfirmation) {
     return (
       <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">

@@ -1,3 +1,4 @@
+import './polyfills'
 import { ThemeProvider } from '@/app/components/theme-provider'
 import { Toaster } from '@/app/components/ui/toaster'
 import { AssetRegistryToast } from '@/app/components/asset-registry-toast'
