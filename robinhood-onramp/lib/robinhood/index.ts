@@ -6,46 +6,51 @@
  */
 
 // Types
-export * from "./types";
+export * from './types'
 
 // Constants
-export * from "./constants/networks";
-export * from "./constants/errors";
+export * from './constants/errors'
+export * from './constants/networks'
 
-// Asset Registry
+// NEW: Service layer exports
+export { AssetRegistryService, RobinhoodClientService, UrlBuilderService, getAssetRegistry } from './services'
+
+export type {
+  FetchTradingAssetsParams,
+  GenerateConnectIdParams,
+  GenerateOnrampUrlParams,
+  GetAssetParams,
+  InitializeRegistryParams,
+  RobinhoodConfig,
+  ServiceLogger,
+  ValidateUrlParams,
+} from './services'
+
+// Asset Registry (legacy exports - will be deprecated)
 export {
-  getAssetRegistry,
   getAssetConfig,
+  getAssetRegistry as getAssetRegistryLegacy,
   getEnabledAssets,
   getFeaturedAssets,
-  validateAssetRegistry,
-  isRegistryReady,
   initializeAssetRegistry,
-} from "./assets/registry";
+  isRegistryReady,
+  validateAssetRegistry,
+} from './assets/registry'
 
 // Asset Helpers
 export {
-  searchAssets,
   getAssetsByCategory,
   getAssetsByNetwork,
-  isAssetSupported,
   getDepositAddress,
   getDepositMemo,
   getSupportedAssetSymbols,
   getSupportedNetworks,
-} from "./assets/asset-helpers";
+  isAssetSupported,
+  searchAssets,
+} from './assets/asset-helpers'
 
 // URL Builder
-export {
-  buildDaffyStyleOnrampUrl,
-  generateConnectId,
-  isValidConnectId,
-} from "./url-builder/daffy-style";
+export { buildDaffyStyleOnrampUrl, generateConnectId, isValidConnectId } from './url-builder/daffy-style'
 
 // Validation
-export {
-  isValidWalletAddress,
-  isValidAssetCode,
-  isValidAmount,
-} from "./url-builder/validation";
-
+export { isValidAmount, isValidAssetCode, isValidWalletAddress } from './url-builder/validation'

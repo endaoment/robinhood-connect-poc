@@ -956,3 +956,4 @@ After completing this sub-plan:
 - CreatePledgeDto matches CryptoDonationPledge entity exactly
 - Validation helpers make DTO usage easy in routes
 - All validation is asynchronous - must await
+

@@ -31,3 +31,4 @@ Extract URL generation logic into service following Daffy pattern.
 ## Next Steps
 
 **Proceed to** [Sub-Plan 7: Mock Pledge Service](./sub-plan-7-mock-pledge-service.md)
+

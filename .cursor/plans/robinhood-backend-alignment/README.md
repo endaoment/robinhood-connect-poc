@@ -399,3 +399,4 @@ Some sub-plans can be worked on simultaneously by different agents/people:
 ---
 
 **Ready to begin?** Start with [Sub-Plan 1: Service Layer Restructuring](./sub-plans/sub-plan-1-service-layer-restructuring.md)
+
