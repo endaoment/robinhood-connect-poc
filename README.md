@@ -12,6 +12,36 @@ A Robinhood Connect integration with separated concerns:
 - **Frontend** (`app/`) - Next.js demonstration UI
 - **Backend** (`libs/`) - NestJS modules designed for endaoment-backend
 
+## Directory Structure
+
+```text
+robinhood-onramp/
+├── app/                    # 🎨 FRONTEND: Next.js Application
+│   ├── (routes)/           # Page routes
+│   │   ├── dashboard/      #   → URL: /dashboard
+│   │   └── callback/       #   → URL: /callback
+│   ├── api/robinhood/      # ⚠️  POC-ONLY: Next.js API routes
+│   ├── components/         # React components
+│   ├── hooks/              # React hooks
+│   └── lib/                # Frontend utilities
+│
+├── libs/                   # 🔧 BACKEND: API Libraries
+│   ├── robinhood/          # Robinhood Connect integration
+│   │   ├── src/lib/
+│   │   │   ├── robinhood.controller.ts  # NestJS controller
+│   │   │   ├── robinhood.module.ts      # NestJS module
+│   │   │   ├── services/                # Business logic
+│   │   │   ├── dtos/                    # Validation
+│   │   │   └── constants/               # Config
+│   │   └── tests/                       # Tests (183+)
+│   ├── coinbase/           # Coinbase Prime support
+│   └── shared/             # Shared utilities
+│
+├── docs/                   # 📚 Documentation
+├── scripts/                # 🛠️  Development Scripts
+└── public/                 # 📦 Static Assets
+```
+
 ## Quick Links
 
 - **[QUICK-START.md](./QUICK-START.md)** - Get running now
