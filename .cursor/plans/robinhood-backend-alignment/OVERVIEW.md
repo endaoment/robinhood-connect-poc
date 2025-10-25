@@ -673,6 +673,58 @@ libs/
 
 **Review Date**: After SP9.5 completion
 
+### Decision 7: Frontend/Backend Separation
+
+**Date**: 2025-10-25
+**Context**: Need POC to be a reusable template for future API integrations
+
+**Options Considered**:
+
+1. Leave components/hooks scattered at root - Simpler, no changes needed
+2. Move to app/ subdirectories - Some organization
+3. Full Next.js App Router pattern - Complete frontend in app/
+4. Keep mixed structure - Accept inconsistency
+
+**Decision**: Full Next.js App Router pattern with complete frontend/backend separation
+
+**Rationale**:
+
+- Makes POC a perfect template for future integrations
+- Clear "frontend vs backend" boundaries
+- All React/Next.js in `app/`, all API libs in `libs/`
+- Self-documenting structure
+- Easy to understand and replicate
+
+**Consequences**:
+
+- **Positive**: Template-ready, clear organization, future-proof
+- **Negative**: More directory restructuring, import path updates
+- **Mitigations**: Detailed sub-plan (SP9.6), automated updates
+
+**Structure**:
+
+```
+robinhood-onramp/
+├── app/              # 🎨 FRONTEND: Everything Next.js/React
+│   ├── components/   # React components
+│   ├── hooks/        # React hooks
+│   ├── lib/          # Frontend utils (cn(), etc)
+│   └── types/        # Frontend types
+│
+└── libs/             # 🔧 BACKEND: All API libraries
+    ├── robinhood/    # Integration code
+    ├── coinbase/     # Support code
+    └── shared/       # Shared utilities
+```
+
+**Benefits for Future POCs**:
+- Clone structure for new integrations
+- Build frontend in `app/`, backend in `libs/`
+- When ready, copy `libs/` to endaoment-backend
+- Consistent pattern across all POCs
+
+**Review Date**: After SP9.6 completion
+
 ## Notes for Implementers
 
 ### Critical Checkpoints

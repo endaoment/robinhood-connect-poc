@@ -17,9 +17,10 @@
 | [SP6](./sub-plans/sub-plan-6-url-builder-service.md)                     | URL Builder Service         | ✅ Complete | High     | SP5          | 2-3 hours  |
 | [SP7](./sub-plans/sub-plan-7-mock-pledge-service.md)                     | Mock Pledge Service         | ✅ Complete | Critical | SP6, SP3     | 4-5 hours  |
 | [SP8](./sub-plans/sub-plan-8-test-infrastructure.md)                     | Test Infrastructure Setup   | ✅ Complete | High     | SP4-SP7      | 4-5 hours  |
-| [SP9](./sub-plans/sub-plan-9-comprehensive-test-suite.md)                | Comprehensive Test Suite    | ✅ Complete | High     | SP8          | 8-10 hours |
-| [SP9.5](./sub-plans/sub-plan-9.5-directory-restructuring-for-backend.md) | Directory Restructuring     | 🔵 Ready    | Critical | SP9          | 3-4 hours  |
-| [SP10](./sub-plans/sub-plan-10-backend-integration-demo.md)              | Backend Integration Demo    | ⚪ Pending  | Medium   | SP9.5        | 3-4 hours  |
+| [SP9](./sub-plans/sub-plan-9-comprehensive-test-suite.md)                | Comprehensive Test Suite     | ✅ Complete | High     | SP8          | 8-10 hours |
+| [SP9.5](./sub-plans/sub-plan-9.5-directory-restructuring-for-backend.md) | Directory Restructuring      | 🔵 Ready    | Critical | SP9          | 3-4 hours  |
+| [SP9.6](./sub-plans/sub-plan-9.6-frontend-backend-separation.md)         | Frontend/Backend Separation  | 🔵 Ready    | High     | SP9.5        | 2-3 hours  |
+| [SP10](./sub-plans/sub-plan-10-backend-integration-demo.md)              | Backend Integration Demo     | ⚪ Pending  | Medium   | SP9.6        | 3-4 hours  |
 | [SP11](./sub-plans/sub-plan-11-api-route-refactoring.md)                 | API Route Refactoring       | ⚪ Pending  | High     | SP10         | 2-3 hours  |
 | [SP12](./sub-plans/sub-plan-12-migration-guide.md)                       | Migration Guide             | ⚪ Pending  | High     | SP11         | 3-4 hours  |
 | [SP13](./sub-plans/sub-plan-13-architecture-documentation.md)            | Architecture Documentation  | ⚪ Pending  | Medium   | SP12         | 2-3 hours  |
@@ -100,6 +101,9 @@ Some sub-plans can be worked on simultaneously by different agents/people:
                          |
                          ↓
          SP9.5 (Directory Restructuring)
+                         |
+                         ↓
+        SP9.6 (Frontend/Backend Separation)
                          |
                          ↓
            SP10 (Backend Integration Demo)
@@ -398,10 +402,10 @@ Some sub-plans can be worked on simultaneously by different agents/people:
 **Location**: `.cursor/plans/robinhood-backend-alignment/`
 **Created**: 2025-10-24
 **Status**: Phase 3 Complete (SP0-SP9)
-**Current Phase**: Directory Restructuring (SP9.5)
+**Current Phase**: Structure Refinement (SP9.5-9.6)
 **Last Updated**: 2025-10-25
 
-**Progress**: 9 of 15 sub-plans complete (60%)
+**Progress**: 9 of 16 sub-plans complete (56%)
 
 ---
 
