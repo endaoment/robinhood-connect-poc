@@ -17,7 +17,7 @@ export type { FetchTradingAssetsParams, GenerateConnectIdParams } from './robinh
 
 export type { GetAssetParams, InitializeRegistryParams } from './asset-registry.service'
 
-export type { GenerateOnrampUrlParams, ValidateUrlParams } from './url-builder.service'
+export type { GenerateOnrampUrlParams, ValidateUrlParams, OnrampUrlResult } from './url-builder.service'
 
 // Constants
 export { createConsoleLogger, DEFAULT_RETRY_CONFIG } from './types'
