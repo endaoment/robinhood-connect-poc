@@ -92,9 +92,41 @@ export class RobinhoodClientService {
    * ```
    */
   async generateConnectId(params: GenerateConnectIdParams): Promise<string> {
-    // Implementation in SP4
-    this.logger.info('generateConnectId called', params)
-    throw new Error('Not implemented - see Sub-Plan 4')
+    const { walletAddress, userIdentifier, config } = params
+    const activeConfig = { ...this.config, ...config }
+
+    this.logger.info('Generating ConnectId', { walletAddress, userIdentifier })
+
+    try {
+      const response = await this.fetchWithRetry({
+        url: `${activeConfig.baseUrl}/catpay/v1/connect_id/`,
+        method: 'POST',
+        headers: {
+          'x-api-key': activeConfig.apiKey,
+          'application-id': activeConfig.appId,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          withdrawal_address: walletAddress,
+          user_identifier: userIdentifier,
+        }),
+      })
+
+      const data = await response.json()
+
+      // Handle both possible response formats (connect_id or connectId)
+      const connectId = data.connect_id || data.connectId
+
+      if (!connectId) {
+        throw new Error('No connect_id in response')
+      }
+
+      this.logger.info('ConnectId generated successfully', { connectId })
+      return connectId
+    } catch (error) {
+      this.logger.error('Failed to generate ConnectId', error)
+      throw new Error(`ConnectId generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
   }
 
   /**
@@ -112,9 +144,84 @@ export class RobinhoodClientService {
    * ```
    */
   async fetchTradingAssets(params: FetchTradingAssetsParams = {}): Promise<any[]> {
-    // Implementation in SP4
-    this.logger.info('fetchTradingAssets called', params)
-    throw new Error('Not implemented - see Sub-Plan 4')
+    const { assetType, includeInactive = false, config } = params
+    const activeConfig = { ...this.config, ...config }
+
+    this.logger.info('Fetching trading assets', { assetType, includeInactive })
+
+    try {
+      const url = new URL(`${activeConfig.baseUrl}/api/v1/crypto/trading/assets/`)
+      if (assetType) {
+        url.searchParams.append('asset_type', assetType)
+      }
+
+      const response = await this.fetchWithRetry({
+        url: url.toString(),
+        method: 'GET',
+        headers: {
+          'x-api-key': activeConfig.apiKey,
+          'application-id': activeConfig.appId,
+        },
+      })
+
+      const data = await response.json()
+      const assets = data.results || []
+
+      // Filter inactive if needed
+      const filteredAssets = includeInactive ? assets : assets.filter((asset: any) => asset.is_active)
+
+      this.logger.info('Assets fetched successfully', { count: filteredAssets.length })
+      return filteredAssets
+    } catch (error) {
+      this.logger.error('Failed to fetch assets', error)
+      throw new Error(`Asset fetch failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  /**
+   * Private helper method for fetching with retry logic
+   *
+   * Implements exponential backoff for network failures
+   *
+   * @param params - Fetch parameters
+   * @returns Promise resolving to fetch Response
+   * @throws {Error} If all retry attempts fail
+   */
+  private async fetchWithRetry(params: {
+    url: string
+    method: string
+    headers: Record<string, string>
+    body?: string
+  }): Promise<Response> {
+    const { url, method, headers, body } = params
+    let lastError: Error | null = null
+
+    for (let attempt = 1; attempt <= this.retryConfig.maxAttempts; attempt++) {
+      try {
+        const response = await fetch(url, {
+          method,
+          headers,
+          body,
+        })
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        }
+
+        return response
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown error')
+        this.logger.warn(`Attempt ${attempt} failed`, { error: lastError.message })
+
+        if (attempt < this.retryConfig.maxAttempts) {
+          const delay = this.retryConfig.delayMs * Math.pow(this.retryConfig.backoffMultiplier, attempt - 1)
+          this.logger.info(`Retrying in ${delay}ms...`)
+          await new Promise((resolve) => setTimeout(resolve, delay))
+        }
+      }
+    }
+
+    throw lastError || new Error('All retry attempts failed')
   }
 }
 

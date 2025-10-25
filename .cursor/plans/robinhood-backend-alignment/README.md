@@ -9,11 +9,11 @@
 | Sub-Plan                                                      | Title                       | Status      | Priority | Dependencies | Est. Time  |
 | ------------------------------------------------------------- | --------------------------- | ----------- | -------- | ------------ | ---------- |
 | [SP0](./sub-plans/sub-plan-0-drafting-plan.md)                | Drafting Plan               | ✅ Complete | Critical | None         | 2-3 hours  |
-| [SP1](./sub-plans/sub-plan-1-service-layer-restructuring.md)  | Service Layer Restructuring | 🔵 Ready    | Critical | SP0          | 4-5 hours  |
-| [SP2](./sub-plans/sub-plan-2-dtos-and-validation.md)          | DTOs and Type Definitions   | ⚪ Pending  | Critical | SP1          | 3-4 hours  |
-| [SP3](./sub-plans/sub-plan-3-mock-backend-services.md)        | Mock Backend Services       | ⚪ Pending  | High     | SP2          | 4-5 hours  |
-| [SP4](./sub-plans/sub-plan-4-robinhood-client-service.md)     | Robinhood Client Service    | ⚪ Pending  | Critical | SP1          | 3-4 hours  |
-| [SP5](./sub-plans/sub-plan-5-asset-registry-service.md)       | Asset Registry Service      | ⚪ Pending  | Critical | SP4          | 5-6 hours  |
+| [SP1](./sub-plans/sub-plan-1-service-layer-restructuring.md)  | Service Layer Restructuring | ✅ Complete | Critical | SP0          | 4-5 hours  |
+| [SP2](./sub-plans/sub-plan-2-dtos-and-validation.md)          | DTOs and Type Definitions   | ✅ Complete | Critical | SP1          | 3-4 hours  |
+| [SP3](./sub-plans/sub-plan-3-mock-backend-services.md)        | Mock Backend Services       | ✅ Complete | High     | SP2          | 4-5 hours  |
+| [SP4](./sub-plans/sub-plan-4-robinhood-client-service.md)     | Robinhood Client Service    | ✅ Complete | Critical | SP1          | 3-4 hours  |
+| [SP5](./sub-plans/sub-plan-5-asset-registry-service.md)       | Asset Registry Service      | 🔵 Ready    | Critical | SP4          | 5-6 hours  |
 | [SP6](./sub-plans/sub-plan-6-url-builder-service.md)          | URL Builder Service         | ⚪ Pending  | High     | SP5          | 2-3 hours  |
 | [SP7](./sub-plans/sub-plan-7-mock-pledge-service.md)          | Mock Pledge Service         | ⚪ Pending  | Critical | SP6, SP3     | 4-5 hours  |
 | [SP8](./sub-plans/sub-plan-8-test-infrastructure.md)          | Test Infrastructure Setup   | ⚪ Pending  | High     | SP4-SP7      | 4-5 hours  |
