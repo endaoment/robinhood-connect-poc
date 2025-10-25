@@ -1,366 +1,143 @@
 # Naming Conventions
 
-This document defines the naming conventions used throughout the robinhood-onramp codebase.
+> Consistent naming across the codebase.
 
 ## Terminology
 
-### User-Facing Terms
-
-Use these terms in UI text, button labels, and user-facing messages:
-
-- **Transfer**: The action of moving cryptocurrency from Robinhood to external wallet
-- **Asset**: The cryptocurrency being transferred (e.g., ETH, USDC)
-- **Network**: The blockchain network (e.g., Ethereum, Polygon)
-
-Avoid: "onramp", "deposit" in user-facing text
-
-### Technical Terms
-
-Use these terms in code, APIs, and technical documentation:
-
-- **Onramp**: The technical process/API for deposits to external wallets
-- **ConnectId**: The Robinhood Connect ID for tracking transfers
-- **Callback**: The redirect endpoint after transfer completion
-
-### Deprecated Terms
-
-DO NOT USE (removed from codebase):
-
-- **Offramp**: Removed - separate Robinhood API not implemented
-- **ReferenceId**: Deprecated - use `connectId` consistently
-- **Order Status**: Removed - not applicable for onramp (offramp-only API)
-- **Redemption API**: Removed - not used in current implementation
+**Onramp** - Transfer from Robinhood to external wallet  
+**Connect ID** - Robinhood's unique transfer identifier  
+**Pledge** - Database record of crypto donation  
+**Asset** - Cryptocurrency (ETH, SOL, USDC)  
+**Network** - Blockchain network (ETHEREUM, SOLANA, POLYGON)
 
 ## File Naming
 
-### Directories and Files
+```
+kebab-case for files:
+- robinhood-client.service.ts
+- generate-url.dto.ts
+- asset-registry.spec.ts
 
-- Use `kebab-case` for directories: `my-directory/`
-- Use `kebab-case` for utility files: `robinhood-url-builder.ts`
-- Use `kebab-case` for components: `asset-selector.tsx`
-
-### API Routes
-
-- Use `kebab-case`: `generate-onramp-url/`
-- Descriptive of action: `generate-X`, `fetch-X`, `create-X`
+PascalCase for classes/components:
+- RobinhoodClientService
+- GenerateUrlDto
+- AssetCard
+```
 
 ## Code Naming
 
-### Variables
+### Variables and Functions
 
 ```typescript
-// camelCase, descriptive
-const selectedAsset = 'ETH'
-const connectId = '123'
+// camelCase for variables and functions
+const walletAddress = '0x...'
+const connectId = 'abc-123'
 
-// Booleans: is/has/should prefix
-const isLoading = false
-const hasError = false
-const shouldRedirect = true
+function generateConnectId() { ... }
+function mapCallbackToPledge() { ... }
 ```
 
-### Functions
+### Classes
 
 ```typescript
-// camelCase, verb-first
-function generateOnrampUrl() {}
-function handleAssetSelect() {}
-function validateNetwork() {}
-
-// Avoid abbreviations
-function generateURL() {} // ❌ Bad
-function generateUrl() {} // ✅ Good
-```
-
-### Components
-
-```typescript
-// PascalCase or kebab-case file names
-// PascalCase for component names
-export function AssetSelector() {}
-export function TransactionHistory() {}
-
-// Descriptive, not generic
-export function Component() {} // ❌ Bad
-export function AssetCard() {} // ✅ Good
-```
-
-### Types and Interfaces
-
-```typescript
-// PascalCase
-interface OnrampURLResponse {}
-type AssetConfig = {}
-
-// Descriptive
-interface Params {} // ❌ Too generic
-interface OnrampParams {} // ✅ Better
-interface DaffyStyleOnrampParams {} // ✅ Best - context included
+// PascalCase for classes
+class RobinhoodClientService { ... }
+class GenerateUrlDto { ... }
+class AssetRegistryService { ... }
 ```
 
 ### Constants
 
 ```typescript
-// UPPER_SNAKE_CASE for true constants
-const API_BASE_URL = 'https://...'
-const MAX_RETRIES = 3
-
-// camelCase for configuration objects
-const assetConfig = {}
+// UPPER_SNAKE_CASE for constants
+const ROBINHOOD_BASE_URL = 'https://...'
+const MAX_RETRY_ATTEMPTS = 3
+const DEFAULT_TIMEOUT = 5000
 ```
 
-## UI Text Conventions
+## Service Patterns
 
-### Button Labels
+Services end with `Service`:
 
-- "Initiate Transfer" (not "Start Onramp" or "Begin Deposit")
-- "Select Asset" (not "Choose Crypto")
-- "Confirm" / "Cancel" (standard)
+- `RobinhoodClientService`
+- `AssetRegistryService`
+- `UrlBuilderService`
+- `PledgeService`
 
-### Messages
+DTOs end with `Dto`:
 
-- Success: "Transfer completed successfully"
-- Error: "Transfer failed: [reason]"
-- Loading: "Initiating transfer..."
-
-### Consistent Capitalization
-
-- Title Case for headings: "Select Your Asset"
-- Sentence case for descriptions: "Choose the cryptocurrency you want to transfer"
+- `GenerateUrlDto`
+- `RobinhoodCallbackDto`
+- `CreatePledgeDto`
+- `AssetDto`
 
 ## API Naming
 
 ### Endpoints
 
 ```
-POST /api/robinhood/generate-onramp-url
+kebab-case for paths:
+/api/robinhood/generate-onramp-url
+/api/robinhood/order-status
 ```
 
 ### Request/Response Fields
 
-```typescript
-// Request
+```json
 {
-  selectedAsset: 'ETH',
-  selectedNetwork: 'ETHEREUM'
-}
-
-// Response
-{
-  url: 'https://...',
-  connectId: '...'
+  "assetCode": "ETH",
+  "networkName": "ETHEREUM",
+  "walletAddress": "0x...",
+  "connectId": "abc-123"
 }
 ```
 
-## Comments
+camelCase for JSON fields.
 
-### Function Comments
+## UI Text
 
-```typescript
-/**
- * Generates a Robinhood Connect onramp URL.
- *
- * @param connectId - The Connect ID from Robinhood API
- * @param selectedAsset - Asset to transfer (e.g., 'ETH')
- * @param selectedNetwork - Network to use (e.g., 'ETHEREUM')
- * @returns The complete Robinhood Connect URL
- */
-```
+**Buttons**: Title Case
 
-### Inline Comments
+- "Initiate Transfer"
+- "View Details"
+- "Select Asset"
 
-```typescript
-// Fetch connectId from Robinhood API
-const response = await fetch(ROBINHOOD_API_URL)
+**Messages**: Sentence case
 
-// Not:
-// Get ID from RH  ❌ (too abbreviated)
-```
+- "Transfer initiated successfully"
+- "Please select an asset to continue"
 
 ## Examples
 
-### Good Naming ✅
+### Good ✅
 
 ```typescript
-const selectedAsset = 'ETH'
-const isLoading = false
-
-function handleAssetSelect(asset: string) {
-  generateOnrampUrl(connectId, asset, selectedNetwork)
-}
-
-interface OnrampURLResponse {
-  url: string
-  connectId: string
-}
+const connectId = await robinhoodClient.generateConnectId(params)
+const asset = assetRegistry.getAsset('ETH', 'ETHEREUM')
+const url = urlBuilder.generateUrl({ asset, network })
 ```
 
-### Bad Naming ❌
+### Avoid ❌
 
 ```typescript
-const sa = 'ETH' // Too abbreviated
-const loading = false // Should be isLoading
-
-function select(a: string) {
-  // Unclear, abbreviated
-  getURL(id, a, n) // All unclear
-}
-
-interface Res {
-  // Too generic
-  url: string
-  id: string
-}
+const cid = await rhClient.genConnId(p) // Too abbreviated
+const a = registry.get('ETH', 'ETHEREUM') // Not descriptive
+const u = builder.gen({ a, n }) // Unclear
 ```
 
-## Architecture-Specific Patterns
+## Object Parameters
 
-### Onramp vs Offramp
-
-**Critical**: This codebase implements **onramp only** (deposits to external wallets).
-
-- **Use "onramp"** in technical code and API names
-- **Use "transfer"** in user-facing text
-- **Never use "offramp"** - it's a separate Robinhood API not implemented here
-
-### ID System
-
-**Use `connectId` consistently** throughout the codebase:
+Use object parameters for 3+ arguments:
 
 ```typescript
-// ✅ Good - backend-aligned
-const connectId = await robinhoodClient.generateConnectId(params);
-localStorage.setItem('connectId', connectId);
-
-// Services use connectId
-await pledgeService.createFromCallback({ connectId, ... });
-
-// ❌ Bad (deprecated)
-const referenceId = '...' // Use connectId instead
-```
-
-**Note**: The term `connectId` aligns with Robinhood API terminology and backend patterns.
-
-### Asset Selection Flow
-
-Follow this naming pattern:
-
-```typescript
-// User selects asset
-const selectedAsset = 'ETH'
-const selectedNetwork = 'ETHEREUM'
-
-// Generate URL
-const { url, connectId } = await generateOnrampUrl({
-  asset: selectedAsset,
-  network: selectedNetwork,
-  walletAddress: getWalletAddress(selectedAsset),
-})
-
-// Track transfer
-localStorage.setItem('connectId', connectId)
-```
-
-## Common Pitfalls
-
-### Inconsistent Terminology
-
-```typescript
-// ❌ Bad - mixing terms
-<Button>Start Onramp</Button>
-toast({ title: "Transfer complete" })
-
-// ✅ Good - consistent user-facing terms
-<Button>Initiate Transfer</Button>
-toast({ title: "Transfer Completed Successfully!" })
-```
-
-### Over-Abbreviation
-
-```typescript
-// ❌ Bad
-const sa = selectedAsset
-const sn = selectedNetwork
-const cid = connectId
-
 // ✅ Good
-// Use full names - they're clearer
+generateUrl({ asset, network, amount, walletAddress })
+
+// ❌ Avoid
+generateUrl(asset, network, amount, walletAddress)
 ```
 
-### Generic Names
+## Documentation
 
-```typescript
-// ❌ Bad
-interface Response {}
-function handle() {}
-const data = {}
-
-// ✅ Good
-interface OnrampURLResponse {}
-function handleAssetSelect() {}
-const assetData = {}
-```
-
----
-
-## Validation Checklist
-
-When reviewing code or PRs, check:
-
-- [ ] No "offramp" in variable/function names
-- [ ] User-facing text uses "transfer", not "onramp"
-- [ ] Technical code uses "onramp", not "offramp"
-- [ ] `connectId` used consistently (not `referenceId`)
-- [ ] Component names are descriptive
-- [ ] Function names start with verbs
-- [ ] Boolean variables use `is/has/should` prefix
-- [ ] No unclear abbreviations
-- [ ] Types are PascalCase
-- [ ] Constants are UPPER_SNAKE_CASE
-- [ ] Files are kebab-case
-
-## Service Naming Patterns
-
-### Service Classes
-
-Follow NestJS conventions:
-
-```typescript
-// ✅ Good - descriptive service names
-export class RobinhoodClientService {}
-export class AssetRegistryService {}
-export class UrlBuilderService {}
-export class PledgeService {}
-
-// ❌ Bad - generic or abbreviated
-export class RHService {}
-export class Client {}
-export class Service {}
-```
-
-### DTO Classes
-
-```typescript
-// ✅ Good - clear what they validate
-export class GenerateUrlDto {}
-export class RobinhoodCallbackDto {}
-export class CreatePledgeDto {}
-
-// ❌ Bad
-export class UrlParams {}
-export class Input {}
-```
-
----
-
-## Related Documentation
-
-- [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) - Development guidelines
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - Architecture patterns
-- [LINTING-AND-TYPE-SAFETY.md](./LINTING-AND-TYPE-SAFETY.md) - Code quality standards
-
----
-
-**Last Updated**: October 25, 2025  
-**Version**: v1.0.0 (Backend-Aligned)  
-**Status**: Active - Follow these conventions for all new code
+- [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) - Development guide
+- [LINTING-AND-TYPE-SAFETY.md](./LINTING-AND-TYPE-SAFETY.md) - Type safety

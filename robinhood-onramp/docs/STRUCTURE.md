@@ -1,10 +1,10 @@
 # Repository Structure
 
-This repository follows a clean **Frontend/Backend separation** pattern, making it an ideal template for future API integration POCs.
+Directory organization for the Robinhood Connect POC.
 
 ## Directory Layout
 
-```
+```text
 robinhood-onramp/
 ├── app/                    # 🎨 FRONTEND: Next.js Application
 │   ├── (routes)/           # Page routes (route group - doesn't affect URLs)
@@ -14,27 +14,27 @@ robinhood-onramp/
 │   │                       #    NOTE: These are deleted when migrating to backend!
 │   │                       #    Backend uses NestJS controller in libs/ instead
 │   ├── components/         # React components
-│   ├── hooks/              # React hooks  
+│   ├── hooks/              # React hooks
 │   ├── lib/                # Frontend utilities (cn(), etc)
 │   ├── types/              # Frontend TypeScript types
 │   ├── globals.css         # Global styles
 │   ├── layout.tsx          # Root layout
 │   └── page.tsx            # Root page (redirects to dashboard)
 │
-├── libs/                   # 🔧 BACKEND: API Libraries (100% Backend-Ready!)
+├── libs/                   # 🔧 BACKEND: API Libraries
 │   ├── robinhood/          # Robinhood Connect integration
 │   │   ├── src/lib/
-│   │   │   ├── robinhood.controller.ts  # ✅ NestJS controller (backend-ready)
-│   │   │   ├── robinhood.module.ts      # ✅ NestJS module (backend-ready)
+│   │   │   ├── robinhood.controller.ts  # NestJS controller
+│   │   │   ├── robinhood.module.ts      # NestJS module
 │   │   │   ├── services/                # Business logic
 │   │   │   ├── dtos/                    # Validation
 │   │   │   └── constants/               # Config
-│   │   └── tests/                       # Tests co-located with code
+│   │   └── tests/                       # Tests
 │   ├── coinbase/           # Coinbase Prime support
 │   └── shared/             # Shared utilities
 │
 ├── public/                 # 📦 Static Assets
-├── docs/                   # 📚 Documentation  
+├── docs/                   # 📚 Documentation
 ├── scripts/                # 🛠️  Development Scripts
 └── [config files]          # ⚙️  Configuration
 ```
@@ -44,6 +44,7 @@ robinhood-onramp/
 ### 1. Frontend in `app/`
 
 **Everything React/Next.js lives in `app/`**:
+
 - ✅ Components
 - ✅ Hooks
 - ✅ Pages (organized in route groups)
@@ -54,58 +55,35 @@ robinhood-onramp/
 **Note on Route Groups**: Directories wrapped in parentheses like `(routes)` are route groups in Next.js App Router. They organize code without affecting the URL structure. For example, `app/(routes)/dashboard/page.tsx` maps to URL `/dashboard`, not `/routes/dashboard`.
 
 **Import pattern**:
+
 ```typescript
-import { AssetCard } from "@/app/components/asset-card";
-import { useAssetSelection } from "@/app/hooks/use-asset-selection";
-import { cn } from "@/app/lib/utils";
+import { AssetCard } from '@/app/components/asset-card'
+import { useAssetSelection } from '@/app/hooks/use-asset-selection'
+import { cn } from '@/app/lib/utils'
 ```
 
 ### 2. Backend in `libs/`
 
 **Everything for API integration lives in `libs/`**:
 
-- ✅ Services (business logic)
-- ✅ DTOs (data transfer objects)
-- ✅ Constants
-- ✅ Types
-- ✅ Tests
-- ✅ **NestJS Controller** (backend-ready HTTP endpoints)
-- ✅ **NestJS Module** (backend-ready DI configuration)
+- Services (business logic)
+- DTOs (data transfer objects)
+- Constants
+- Types
+- Tests
+- NestJS Controller (HTTP endpoints)
+- NestJS Module (DI configuration)
 
 **Import pattern**:
 
 ```typescript
-import {
-  RobinhoodClientService,
-  AssetRegistryService,
-  GenerateUrlDto,
-} from "@/libs/robinhood";
+import { RobinhoodClientService, AssetRegistryService, GenerateUrlDto } from '@/libs/robinhood'
 
 // In backend, also import the module:
-import { RobinhoodModule } from "@/libs/robinhood";
+import { RobinhoodModule } from '@/libs/robinhood'
 ```
 
-**Key Point**: The `libs/` directory contains a **complete NestJS module** that's ready to use in the backend. The Next.js routes in `app/api/` are just for POC demonstration and won't be migrated.
-
-### 3. Backend Migration Ready
-
-The `libs/` directory is structured to mirror `endaoment-backend/libs/api/` and includes a complete NestJS module:
-
-```bash
-# Migration is literally just copying the folder:
-cp -r robinhood-onramp/libs/robinhood \
-      endaoment-backend/libs/api/robinhood
-
-# Import in app.module.ts:
-# import { RobinhoodModule } from '@/libs/robinhood';
-
-# Done! Controller, services, DTOs, tests all work as-is.
-```
-
-**What gets migrated**:
-
-- ✅ `libs/robinhood/` → Complete NestJS module with controller
-- ❌ `app/api/robinhood/` → Deleted (Next.js specific, not needed)
+**Key Point**: The `libs/` directory contains a NestJS module. The Next.js routes in `app/api/` are for POC demonstration only.
 
 ## Using This as a Template
 
@@ -146,15 +124,15 @@ When creating a new API integration POC:
 
 ```typescript
 // Frontend imports frontend
-import { Button } from "@/app/components/ui/button";
-import { useToast } from "@/app/hooks/use-toast";
+import { Button } from '@/app/components/ui/button'
+import { useToast } from '@/app/hooks/use-toast'
 
 // Frontend imports backend (API calls)
-import { urlBuilderService } from "@/libs/robinhood";
+import { urlBuilderService } from '@/libs/robinhood'
 
 // Backend imports backend
 // (within libs/ files)
-import { PrimeApiService } from "@/libs/coinbase";
+import { PrimeApiService } from '@/libs/coinbase'
 ```
 
 ### ❌ DON'T
@@ -162,23 +140,9 @@ import { PrimeApiService } from "@/libs/coinbase";
 ```typescript
 // Backend should NOT import frontend
 // (libs/ files should not import from app/)
-import { AssetCard } from "@/app/components/asset-card"; // ❌ NO!
+import { AssetCard } from '@/app/components/asset-card' // ❌ NO!
 ```
-
-## Benefits of This Structure
-
-1. **Clear Boundaries**: Frontend vs Backend code is obvious
-2. **Backend Ready**: `libs/` can be copied directly to endaoment-backend
-3. **Template Ready**: Perfect starting point for future POCs
-4. **Scalable**: Add more `libs/integration-name/` as needed
-5. **Testable**: Each library has its own tests
-6. **Maintainable**: Clear ownership and organization
 
 ## Migration to Backend
 
-See [docs/MIGRATION-GUIDE.md](./docs/MIGRATION-GUIDE.md) for complete instructions on migrating `libs/` to endaoment-backend.
-
----
-
-**This structure makes the POC repo a living template for future API integrations.**
-
+See [docs/MIGRATION-GUIDE.md](./docs/MIGRATION-GUIDE.md) for migration instructions.
