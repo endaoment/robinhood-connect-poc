@@ -3,7 +3,6 @@
 **Status**: Pending
 **Priority**: Medium
 **Dependencies**: Sub-Plan 10 (Documentation & README Updates)
-**Estimated Time**: 2-3 hours
 
 > **Note**: This sub-plan uses the final `libs/` structure from SP9.5-9.6 and updated docs from SP10.
 

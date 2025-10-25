@@ -3,7 +3,6 @@
 **Status**: Pending
 **Priority**: Critical
 **Dependencies**: Sub-Plan 1 (Service Layer Restructuring)
-**Estimated Time**: 3-4 hours
 
 ## Context Required
 

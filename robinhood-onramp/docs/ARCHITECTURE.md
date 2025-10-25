@@ -19,7 +19,7 @@ This integration allows users to transfer cryptocurrency from Robinhood to exter
 
 ### 1. Frontend Components
 
-#### Dashboard (`app/dashboard/page.tsx`)
+#### Dashboard (`app/(routes)/dashboard/page.tsx`)
 
 - Displays asset selector with search functionality
 - User selects cryptocurrency (ETH, SOL, USDC, etc.)
@@ -28,7 +28,7 @@ This integration allows users to transfer cryptocurrency from Robinhood to exter
 
 **Key Component**: Asset selection with dropdown search and filtering
 
-#### Callback (`app/callback/page.tsx`)
+#### Callback (`app/(routes)/callback/page.tsx`)
 
 - Receives redirect from Robinhood after transfer completion
 - Displays transfer success message

@@ -3,7 +3,6 @@
 **Status**: Pending
 **Priority**: High
 **Dependencies**: Sub-Plan 2 (DTOs and Validation)
-**Estimated Time**: 4-5 hours
 
 ## Context Required
 

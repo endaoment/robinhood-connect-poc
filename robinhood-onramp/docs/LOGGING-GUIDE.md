@@ -41,7 +41,7 @@ All server logs follow this structure:
 
 ### 1. Client-Side (Dashboard)
 
-**File:** `app/dashboard/page.tsx`
+**File:** `app/(routes)/dashboard/page.tsx`
 
 **What's logged:**
 

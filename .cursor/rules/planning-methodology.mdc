@@ -111,7 +111,6 @@ All complex projects should follow this hierarchical planning structure:
 **Status**: Ready for Implementation / In Progress / Complete
 **Priority**: Critical / High / Medium / Low
 **Dependencies**: Sub-Plan X, Sub-Plan Y
-**Estimated Time**: X-Y minutes/hours
 ```
 
 ### Context Required
@@ -507,23 +506,6 @@ configuration and found no differences, so no changes are needed.
 - Any resources showing in "will be created/modified/destroyed"
 ```
 
-### Time Estimates
-
-Provide realistic time ranges:
-
-```markdown
-**Estimated Time**:
-
-- Reading context: 15-20 minutes
-- Implementation: 30-45 minutes
-- Validation: 10-15 minutes
-- Documentation: 5-10 minutes
-  **Total**: 60-90 minutes
-
-**Complexity**: Medium
-**Interruption Risk**: Can pause after any step
-```
-
 ### Progress Tracking Format
 
 For implementation logs, use this structure:
@@ -532,7 +514,6 @@ For implementation logs, use this structure:
 # Sub-Plan {N} Implementation Complete
 
 **Date**: YYYY-MM-DD HH:MM
-**Duration**: {actual time taken}
 **Implementer**: {name or "AI Agent"}
 **Status**: ✅ COMPLETE / ⚠️ COMPLETE WITH DEVIATIONS / ❌ INCOMPLETE
 
@@ -573,15 +554,6 @@ For implementation logs, use this structure:
 - [ ] Review this completion log
 - [ ] Proceed to Sub-Plan {N+1}: {name}
 - [ ] Update OVERVIEW.md if needed
-
-## Time Breakdown
-
-- Context review: {minutes}
-- Implementation: {minutes}
-- Validation: {minutes}
-- Documentation: {minutes}
-
-**Total**: {total time}
 ```
 
 ### Cross-Reference Format

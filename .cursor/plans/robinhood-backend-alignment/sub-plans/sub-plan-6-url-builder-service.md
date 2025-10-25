@@ -3,7 +3,6 @@
 **Status**: Pending
 **Priority**: High
 **Dependencies**: Sub-Plan 5 (Asset Registry Service)
-**Estimated Time**: 2-3 hours
 
 ## Context Required
 

@@ -3,7 +3,6 @@
 **Status**: Pending
 **Priority**: High
 **Dependencies**: Sub-Plan 9.6 (Frontend/Backend Separation)
-**Estimated Time**: 3-4 hours
 
 > **Note**: This sub-plan assumes SP9.5 and SP9.6 are complete, with final `libs/` and `app/` structure in place.
 
@@ -222,9 +221,7 @@ This repository is designed to be **forked for future API integrations**:
 ```markdown
 # Quick Start Guide
 
-**Status**: ✅ **READY TO RUN**  
-**Setup Time**: 5 minutes  
-**Migration Time**: 5 minutes (just copy folder!)
+**Status**: ✅ **READY TO RUN**
 
 ## 🚀 Run the POC
 
@@ -310,12 +307,12 @@ cp -r robinhood-onramp/libs/robinhood \
 # Edit libs/api/robinhood/src/lib/robinhood.module.ts
 # Add: imports: [TypeOrmModule.forFeature([CryptoDonationPledge])]
 
-# 3. Import in app module (1 minute)
+# 3. Import in app module
 # Edit apps/api/src/app.module.ts
 # Add: import { RobinhoodModule } from '@/libs/robinhood';
 # Add to imports array
 
-# 4. Run tests (2 minutes)
+# 4. Run tests
 npm test libs/api/robinhood
 
 # Done! All endpoints automatically registered:
@@ -454,8 +451,6 @@ npm run build
 ```markdown
 # Quick Start Guide
 
-**Setup Time**: ⏱️ 5 minutes  
-**Migration Time**: ⏱️ 5 minutes  
 **Template Ready**: ✅ Yes
 
 ## 🚀 For POC Development
@@ -530,16 +525,16 @@ robinhood-connect-poc/
 
 ## 🔄 Migrate to endaoment-backend
 
-### The Complete Migration (5 minutes)
+### The Complete Migration
 
-**Step 1: Copy Library** (1 minute)
+**Step 1: Copy Library**
 
 ```bash
 cp -r robinhood-onramp/libs/robinhood \
       endaoment-backend/libs/api/robinhood
 ```
 
-**Step 2: Update Module** (2 minutes)
+**Step 2: Update Module**
 
 Edit `endaoment-backend/libs/api/robinhood/src/lib/robinhood.module.ts`:
 

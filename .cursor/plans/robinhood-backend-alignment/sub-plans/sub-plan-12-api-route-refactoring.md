@@ -3,7 +3,6 @@
 **Status**: Pending
 **Priority**: High
 **Dependencies**: Sub-Plan 11 (Backend Integration Demo)
-**Estimated Time**: 2-3 hours
 
 > **Note**: This sub-plan uses the final `libs/` structure from SP9.5-9.6. These Next.js routes are POC-only and won't be migrated to backend (the NestJS controller in `libs/robinhood/` handles routes in production).
 

@@ -3,7 +3,6 @@
 **Status**: Pending
 **Priority**: Critical  
 **Dependencies**: Sub-Plan 6 (URL Builder), Sub-Plan 3 (Mock Backend)
-**Estimated Time**: 4-5 hours
 
 ## Context Required
 

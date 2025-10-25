@@ -3,7 +3,6 @@
 **Status**: Pending
 **Priority**: Critical
 **Dependencies**: Sub-Plan 4 (Robinhood Client Service)
-**Estimated Time**: 5-6 hours
 
 ## Context Required
 

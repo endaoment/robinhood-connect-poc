@@ -69,7 +69,7 @@ Backend API endpoints for Robinhood integration.
 
 ### 3. UI Components
 
-#### Dashboard (`app/dashboard/page.tsx`)
+#### Dashboard (`app/(routes)/dashboard/page.tsx`)
 
 - Asset search and selection interface
 - Displays ~120 supported assets across 20 networks
@@ -82,7 +82,7 @@ Backend API endpoints for Robinhood integration.
 - Pre-configured wallet addresses
 - Transfer success toast notifications
 
-#### Callback (`app/callback/page.tsx`)
+#### Callback (`app/(routes)/callback/page.tsx`)
 
 - Receives redirect from Robinhood after transfer
 - Displays transfer confirmation

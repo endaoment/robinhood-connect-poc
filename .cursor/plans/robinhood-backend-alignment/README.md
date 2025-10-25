@@ -6,25 +6,25 @@
 
 ## Plan Structure
 
-| Sub-Plan                                                                 | Title                       | Status      | Priority | Dependencies | Est. Time  |
-| ------------------------------------------------------------------------ | --------------------------- | ----------- | -------- | ------------ | ---------- |
-| [SP0](./sub-plans/sub-plan-0-drafting-plan.md)                           | Drafting Plan               | ✅ Complete | Critical | None         | 2-3 hours  |
-| [SP1](./sub-plans/sub-plan-1-service-layer-restructuring.md)             | Service Layer Restructuring | ✅ Complete | Critical | SP0          | 4-5 hours  |
-| [SP2](./sub-plans/sub-plan-2-dtos-and-validation.md)                     | DTOs and Type Definitions   | ✅ Complete | Critical | SP1          | 3-4 hours  |
-| [SP3](./sub-plans/sub-plan-3-mock-backend-services.md)                   | Mock Backend Services       | ✅ Complete | High     | SP2          | 4-5 hours  |
-| [SP4](./sub-plans/sub-plan-4-robinhood-client-service.md)                | Robinhood Client Service    | ✅ Complete | Critical | SP1          | 3-4 hours  |
-| [SP5](./sub-plans/sub-plan-5-asset-registry-service.md)                  | Asset Registry Service      | ✅ Complete | Critical | SP4          | 5-6 hours  |
-| [SP6](./sub-plans/sub-plan-6-url-builder-service.md)                     | URL Builder Service         | ✅ Complete | High     | SP5          | 2-3 hours  |
-| [SP7](./sub-plans/sub-plan-7-mock-pledge-service.md)                     | Mock Pledge Service         | ✅ Complete | Critical | SP6, SP3     | 4-5 hours  |
-| [SP8](./sub-plans/sub-plan-8-test-infrastructure.md)                     | Test Infrastructure Setup   | ✅ Complete | High     | SP4-SP7      | 4-5 hours  |
-| [SP9](./sub-plans/sub-plan-9-comprehensive-test-suite.md)                | Comprehensive Test Suite    | ✅ Complete | High     | SP8          | 8-10 hours |
-| [SP9.5](./sub-plans/sub-plan-9.5-directory-restructuring-for-backend.md) | Directory Restructuring     | 🔵 Ready    | Critical | SP9          | 3-4 hours  |
-| [SP9.6](./sub-plans/sub-plan-9.6-frontend-backend-separation.md)         | Frontend/Backend Separation | 🔵 Ready    | High     | SP9.5        | 2-3 hours  |
-| [SP10](./sub-plans/sub-plan-10-updated-docs-readme.md)                   | Update Docs & README        | 🔵 Ready    | High     | SP9.6        | 3-4 hours  |
-| [SP11](./sub-plans/sub-plan-11-backend-integration-demo.md)              | Backend Integration Demo    | ⚪ Pending  | Medium   | SP10         | 2-3 hours  |
-| [SP12](./sub-plans/sub-plan-12-api-route-refactoring.md)                 | API Route Refactoring       | ⚪ Pending  | High     | SP11         | 2-3 hours  |
-| [SP13](./sub-plans/sub-plan-13-migration-guide.md)                       | Migration Guide             | ⚪ Pending  | High     | SP12         | 3-4 hours  |
-| [SP14](./sub-plans/sub-plan-14-architecture-documentation.md)            | Final Architecture Polish   | ⚪ Pending  | Medium   | SP13         | 2-3 hours  |
+| Sub-Plan                                                                 | Title                       | Status      | Priority | Dependencies |
+| ------------------------------------------------------------------------ | --------------------------- | ----------- | -------- | ------------ |
+| [SP0](./sub-plans/sub-plan-0-drafting-plan.md)                           | Drafting Plan               | ✅ Complete | Critical | None         |
+| [SP1](./sub-plans/sub-plan-1-service-layer-restructuring.md)             | Service Layer Restructuring | ✅ Complete | Critical | SP0          |
+| [SP2](./sub-plans/sub-plan-2-dtos-and-validation.md)                     | DTOs and Type Definitions   | ✅ Complete | Critical | SP1          |
+| [SP3](./sub-plans/sub-plan-3-mock-backend-services.md)                   | Mock Backend Services       | ✅ Complete | High     | SP2          |
+| [SP4](./sub-plans/sub-plan-4-robinhood-client-service.md)                | Robinhood Client Service    | ✅ Complete | Critical | SP1          |
+| [SP5](./sub-plans/sub-plan-5-asset-registry-service.md)                  | Asset Registry Service      | ✅ Complete | Critical | SP4          |
+| [SP6](./sub-plans/sub-plan-6-url-builder-service.md)                     | URL Builder Service         | ✅ Complete | High     | SP5          |
+| [SP7](./sub-plans/sub-plan-7-mock-pledge-service.md)                     | Mock Pledge Service         | ✅ Complete | Critical | SP6, SP3     |
+| [SP8](./sub-plans/sub-plan-8-test-infrastructure.md)                     | Test Infrastructure Setup   | ✅ Complete | High     | SP4-SP7      |
+| [SP9](./sub-plans/sub-plan-9-comprehensive-test-suite.md)                | Comprehensive Test Suite    | ✅ Complete | High     | SP8          |
+| [SP9.5](./sub-plans/sub-plan-9.5-directory-restructuring-for-backend.md) | Directory Restructuring     | 🔵 Ready    | Critical | SP9          |
+| [SP9.6](./sub-plans/sub-plan-9.6-frontend-backend-separation.md)         | Frontend/Backend Separation | 🔵 Ready    | High     | SP9.5        |
+| [SP10](./sub-plans/sub-plan-10-updated-docs-readme.md)                   | Update Docs & README        | 🔵 Ready    | High     | SP9.6        |
+| [SP11](./sub-plans/sub-plan-11-backend-integration-demo.md)              | Backend Integration Demo    | ⚪ Pending  | Medium   | SP10         |
+| [SP12](./sub-plans/sub-plan-12-api-route-refactoring.md)                 | API Route Refactoring       | ⚪ Pending  | High     | SP11         |
+| [SP13](./sub-plans/sub-plan-13-migration-guide.md)                       | Migration Guide             | ⚪ Pending  | High     | SP12         |
+| [SP14](./sub-plans/sub-plan-14-architecture-documentation.md)            | Final Architecture Polish   | ⚪ Pending  | Medium   | SP13         |
 
 **Legend**:
 
@@ -299,54 +299,24 @@ Some sub-plans can be worked on simultaneously by different agents/people:
 - Wire to actual database
 - Deploy to production
 
-## Estimated Timeline
-
-### By Phase
-
-- **Phase 1** (Foundation): 11-14 hours
-- **Phase 2** (Services): 14-18 hours
-- **Phase 3** (Testing): 12-15 hours
-- **Phase 4** (Integration): 5-7 hours
-- **Phase 5** (Documentation): 5-7 hours
-
-**Total**: 47-61 hours (6-8 days of focused work)
-
-### By Role
-
-**Backend Engineer** (if doing all work):
-
-- Planning: 3 hours
-- Implementation: 40 hours
-- Testing: 12 hours
-- Documentation: 6 hours
-- **Total**: 61 hours
-
-**Team Approach** (parallel tracks):
-
-- Planning: 3 hours
-- Implementation: 25 hours (parallelized)
-- Testing: 12 hours
-- Documentation: 6 hours
-- **Total**: 46 hours (3-4 days with 2 engineers)
-
 ## Quick Start
 
 ### For First-Time Implementer
 
-1. **Read Documentation** (1 hour)
+1. **Read Documentation**
 
    - Read this README completely
    - Read [OVERVIEW.md](./OVERVIEW.md)
    - Scan all 13 sub-plans
 
-2. **Review Gold Standard** (1 hour)
+2. **Review Gold Standard**
 
    - Study Coinbase integration structure
    - Review service patterns
    - Understand DTO validation
    - Check test coverage
 
-3. **Verify Environment** (15 minutes)
+3. **Verify Environment**
 
    ```bash
    cd robinhood-onramp

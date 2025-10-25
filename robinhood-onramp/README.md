@@ -6,14 +6,14 @@
 
 Complete Next.js application for transferring cryptocurrency from Robinhood to external wallets using the Robinhood Connect API. Users select their desired cryptocurrency, then complete the transfer in Robinhood.
 
-> **Note**: This POC follows a clean Frontend/Backend separation pattern. See [STRUCTURE.md](./STRUCTURE.md) for the complete directory layout guide.
+> **Note**: This POC follows a clean Frontend/Backend separation pattern. See [docs/STRUCTURE.md](./docs/STRUCTURE.md) for the complete directory layout guide.
 
 ## Quick Navigation
 
 - **Frontend Code**: [`app/`](./app/) - Next.js application
 - **Backend Code**: [`libs/`](./libs/) - API libraries (backend-ready)
 - **Documentation**: [`docs/`](./docs/) - Architecture and guides
-- **Structure Guide**: [STRUCTURE.md](./STRUCTURE.md) - Directory organization
+- **Structure Guide**: [docs/STRUCTURE.md](./docs/STRUCTURE.md) - Directory organization
 
 ---
 

@@ -139,32 +139,32 @@ export async function POST(request: Request) {
 
 ### High-Level Phases
 
-**Phase 1: Foundation** (SP1-3, 11-14 hours)
+**Phase 1: Foundation** (SP1-3)
 
 - Create service directory structure
 - Define DTOs with validation
 - Build mock backend services with toast logger
 
-**Phase 2: Core Services** (SP4-7, 14-18 hours)
+**Phase 2: Core Services** (SP4-7)
 
 - Extract RobinhoodClientService
 - Extract AssetRegistryService
 - Extract UrlBuilderService
 - Create MockPledgeService
 
-**Phase 3: Testing** (SP8-9, 12-15 hours)
+**Phase 3: Testing** (SP8-9)
 
 - Set up Jest + nock infrastructure
 - Write comprehensive test suites
 - Match Coinbase coverage standards
 
-**Phase 4: Integration** (SP10-11, 5-7 hours)
+**Phase 4: Integration** (SP10-11)
 
 - Wire up mock backend calls
 - Refactor API routes to use services
 - Demonstrate end-to-end flow with toasts
 
-**Phase 5: Documentation** (SP12-13, 5-7 hours)
+**Phase 5: Documentation** (SP12-13)
 
 - Create migration guide for backend implementer
 - Update architecture documentation

@@ -3,7 +3,6 @@
 **Status**: Pending
 **Priority**: High
 **Dependencies**: Sub-Plan 12 (API Route Refactoring)
-**Estimated Time**: 3-4 hours
 
 > **Note**: This sub-plan documents migration of the complete `libs/` structure (from SP9.5-9.6) including NestJS controller and module.
 

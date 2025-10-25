@@ -7,15 +7,19 @@ This repository follows a clean **Frontend/Backend separation** pattern, making 
 ```
 robinhood-onramp/
 ├── app/                    # 🎨 FRONTEND: Next.js Application
+│   ├── (routes)/           # Page routes (route group - doesn't affect URLs)
+│   │   ├── dashboard/      #   → URL: /dashboard
+│   │   └── callback/       #   → URL: /callback
 │   ├── api/robinhood/      # ⚠️  POC-ONLY: Next.js API routes (demos libs/)
 │   │                       #    NOTE: These are deleted when migrating to backend!
 │   │                       #    Backend uses NestJS controller in libs/ instead
-│   ├── (routes)/           # Page routes
 │   ├── components/         # React components
 │   ├── hooks/              # React hooks  
 │   ├── lib/                # Frontend utilities (cn(), etc)
 │   ├── types/              # Frontend TypeScript types
-│   └── globals.css         # Global styles
+│   ├── globals.css         # Global styles
+│   ├── layout.tsx          # Root layout
+│   └── page.tsx            # Root page (redirects to dashboard)
 │
 ├── libs/                   # 🔧 BACKEND: API Libraries (100% Backend-Ready!)
 │   ├── robinhood/          # Robinhood Connect integration
@@ -42,10 +46,12 @@ robinhood-onramp/
 **Everything React/Next.js lives in `app/`**:
 - ✅ Components
 - ✅ Hooks
-- ✅ Pages
+- ✅ Pages (organized in route groups)
 - ✅ API routes (thin wrappers)
 - ✅ Frontend utilities
 - ✅ Styles
+
+**Note on Route Groups**: Directories wrapped in parentheses like `(routes)` are route groups in Next.js App Router. They organize code without affecting the URL structure. For example, `app/(routes)/dashboard/page.tsx` maps to URL `/dashboard`, not `/routes/dashboard`.
 
 **Import pattern**:
 ```typescript
@@ -123,6 +129,7 @@ When creating a new API integration POC:
 
 | Item                     | Location                   | Reason                        |
 | ------------------------ | -------------------------- | ----------------------------- |
+| Page routes              | `app/(routes)/*/page.tsx`  | Next.js pages (route groups)  |
 | React component          | `app/components/`          | Frontend UI                   |
 | React hook               | `app/hooks/`               | Frontend logic                |
 | API service              | `libs/*/src/lib/services/` | Backend business logic        |
