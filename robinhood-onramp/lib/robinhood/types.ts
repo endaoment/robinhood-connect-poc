@@ -174,7 +174,7 @@ export interface IOtcToken {
  * Complete asset configuration with deposit address
  * This is what's used for generating Robinhood Connect URLs
  */
-export interface RobinhoodAssetConfig extends RobinhoodAsset {
+export type RobinhoodAssetConfig = RobinhoodAsset & {
   /** Deposit address configuration */
   depositAddress: RobinhoodDepositAddress
 }
