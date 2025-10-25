@@ -24,12 +24,12 @@ export interface ApiCallToastParams {
   /**
    * Request body
    */
-  body?: any;
+  body?: unknown;
 
   /**
    * Expected response from backend
    */
-  expectedResponse?: any;
+  expectedResponse?: unknown;
 
   /**
    * Database query that would be executed
@@ -123,7 +123,7 @@ export function showApiCallToast(params: ApiCallToastParams): void {
 /**
  * Show success toast for backend operation
  */
-export function showBackendSuccess(operation: string, details?: any): void {
+export function showBackendSuccess(operation: string, details?: unknown): void {
   toast.success(`✅ Backend: ${operation}`, {
     description: details ? JSON.stringify(details, null, 2) : undefined,
     duration: 5000,

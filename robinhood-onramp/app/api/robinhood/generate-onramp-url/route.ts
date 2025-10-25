@@ -119,7 +119,7 @@ export async function POST(request: Request) {
     console.log('   ✨ Using Daffy-style URL builder (asset pre-selected)')
     console.log(`   Asset: ${body.selectedAsset}, Network: ${body.selectedNetwork}`)
 
-    let result: { url: string; connectId: string; params: any }
+    let result: { url: string; connectId: string; params: { asset: string; network: string; walletAddress: string } }
 
     try {
       // Get asset configuration including wallet address
@@ -208,8 +208,9 @@ export async function POST(request: Request) {
       console.log(`   🆔 Connect ID: ${daffyResult.connectId}`)
       console.log(`   🔗 FULL URL:\n${daffyResult.url}`)
       console.log(`   ⚙️  Params: ${JSON.stringify(daffyResult.params)}`)
-    } catch (error: any) {
-      console.error(`❌ [BUILD-URL] Daffy-style URL generation failed: ${error.message}`)
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      console.error(`❌ [BUILD-URL] Daffy-style URL generation failed: ${errorMessage}`)
       throw error
     }
 
@@ -225,18 +226,22 @@ export async function POST(request: Request) {
         params: result.params,
       },
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     const duration = Date.now() - startTime
+    const errorMessage = error instanceof Error ? error.message : 'Failed to generate onramp URL'
+    const errorStack = error instanceof Error ? error.stack : undefined
     console.error('\n❌ [ERROR] Failed to generate onramp URL')
-    console.error(`   Message: ${error.message}`)
-    console.error(`   Stack: ${error.stack}`)
+    console.error(`   Message: ${errorMessage}`)
+    if (errorStack) {
+      console.error(`   Stack: ${errorStack}`)
+    }
     console.log(`⏱️  [TIMING] Request failed after ${duration}ms`)
     console.log('='.repeat(80) + '\n')
 
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Failed to generate onramp URL',
+        error: errorMessage,
       },
       { status: 500 },
     )

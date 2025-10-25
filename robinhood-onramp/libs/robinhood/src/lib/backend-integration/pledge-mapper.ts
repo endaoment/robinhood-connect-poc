@@ -137,10 +137,21 @@ export function mapRobinhoodToPledge(
   };
 }
 
+interface DonorIdentityInput {
+  email?: string
+  firstname?: string
+  lastname?: string
+  addressLine1?: string
+  addressCity?: string
+  addressCountry?: string
+  addressState?: string
+  addressZip?: string
+}
+
 /**
  * Validate donor identity structure
  */
-function validateDonorIdentity(identity: any): string[] {
+function validateDonorIdentity(identity: DonorIdentityInput): string[] {
   const errors: string[] = [];
 
   if (!identity.email) {

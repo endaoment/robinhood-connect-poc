@@ -133,7 +133,7 @@ function isValidUUID(uuid: string): boolean {
 export function sanitizePledgeInput(
   input: CryptoPledgeInput
 ): CryptoPledgeInput {
-  const sanitized: any = {
+  const sanitized: Partial<CryptoPledgeInput> = {
     cryptoGiven: input.cryptoGiven,
     otcDonationTransactionHash: input.otcDonationTransactionHash,
     receivingEntityType: input.receivingEntityType,
@@ -165,6 +165,6 @@ export function sanitizePledgeInput(
     sanitized.shareMyEmail = input.shareMyEmail;
   }
 
-  return sanitized;
+  return sanitized as CryptoPledgeInput;
 }
 

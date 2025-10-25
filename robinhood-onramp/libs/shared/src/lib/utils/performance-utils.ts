@@ -14,9 +14,9 @@ export function debounce<T extends (...args: any[]) => any>(func: T, wait: numbe
 
 // Simple cache for API responses
 class SimpleCache {
-  private cache = new Map<string, { data: any; expiry: number }>()
+  private cache = new Map<string, { data: unknown; expiry: number }>()
 
-  set(key: string, data: any, ttlMs = 300000): void {
+  set(key: string, data: unknown, ttlMs = 300000): void {
     // 5 minutes default
     this.cache.set(key, {
       data,
@@ -24,7 +24,7 @@ class SimpleCache {
     })
   }
 
-  get(key: string): any | null {
+  get(key: string): unknown | null {
     const item = this.cache.get(key)
 
     if (!item || Date.now() > item.expiry) {

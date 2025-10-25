@@ -429,7 +429,8 @@ See `../SECURITY-AUDIT.md` for complete audit.
 - **[docs/BACKEND-INTEGRATION.md](./docs/BACKEND-INTEGRATION.md)** - Migration guide
 - **[docs/DEVELOPER_GUIDE.md](./docs/DEVELOPER_GUIDE.md)** - Developer reference
 
-### Testing
+### Quality & Standards
+- **[docs/LINTING-AND-TYPE-SAFETY.md](./docs/LINTING-AND-TYPE-SAFETY.md)** - Type safety standards & linting
 - **[docs/TESTING_GUIDE.md](./docs/TESTING_GUIDE.md)** - Testing strategies
 
 ### Other Guides

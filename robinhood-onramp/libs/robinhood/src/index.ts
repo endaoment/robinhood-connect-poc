@@ -1,2 +1,4 @@
-export * from './lib'
+import 'reflect-metadata';
+
+export * from './lib';
 

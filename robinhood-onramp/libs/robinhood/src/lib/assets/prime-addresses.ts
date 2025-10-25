@@ -281,15 +281,17 @@ async function fetchAddressesViaPythonScript(): Promise<Record<string, PrimeDepo
     }
 
     return addresses
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Log clean error message without full traceback
-    if (error.stderr?.includes('dotenv') || error.message?.includes('dotenv')) {
+    const stderr = (error as { stderr?: string }).stderr
+    const message = error instanceof Error ? error.message : ''
+    if (stderr?.includes('dotenv') || message?.includes('dotenv')) {
       console.error('[Prime Addresses] ⚠️  Python dependencies missing')
       console.error('[Prime Addresses] 💡 Run: pip3 install python-dotenv requests')
-    } else if (error.stderr?.includes('Traceback')) {
+    } else if (stderr?.includes('Traceback')) {
       console.error('[Prime Addresses] Python script error (check credentials in .env.local)')
     } else {
-      console.error('[Prime Addresses] Python script failed:', error.message || 'Unknown error')
+      console.error('[Prime Addresses] Python script failed:', message || 'Unknown error')
     }
     throw error
   }

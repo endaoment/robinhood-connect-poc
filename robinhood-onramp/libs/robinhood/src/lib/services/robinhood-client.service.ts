@@ -168,7 +168,7 @@ export class RobinhoodClientService {
       const assets = data.results || []
 
       // Filter inactive if needed
-      const filteredAssets = includeInactive ? assets : assets.filter((asset: any) => asset.is_active)
+      const filteredAssets = includeInactive ? assets : assets.filter((asset: { is_active?: boolean }) => asset.is_active)
 
       this.logger.info('Assets fetched successfully', { count: filteredAssets.length })
       return filteredAssets

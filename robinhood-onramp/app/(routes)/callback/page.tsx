@@ -118,9 +118,10 @@ function CallbackPageContent() {
         assetAmount: callbackParams.assetAmount,
         networkCode: callbackParams.network,
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to get deposit address:', error)
-      throw new Error(error.message || 'Deposit address not configured for this asset')
+      const errorMessage = error instanceof Error ? error.message : 'Deposit address not configured for this asset'
+      throw new Error(errorMessage)
     }
   }
 
@@ -393,12 +394,13 @@ function CallbackPageContent() {
         localStorage.removeItem('robinhood_selected_asset')
         localStorage.removeItem('robinhood_selected_network')
         localStorage.removeItem('robinhood_transfer_amount')
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('❌ [CALLBACK] Callback processing failed:', error)
+        const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred while processing your transfer.'
         setState((prev) => ({
           ...prev,
           loading: false,
-          error: error.message || 'An unexpected error occurred while processing your transfer.',
+          error: errorMessage,
         }))
       }
     }

@@ -55,7 +55,7 @@ export function validateEnvironment(): void {
 }
 
 // Log security events (implement proper logging in production)
-export function logSecurityEvent(event: string, details: any): void {
+export function logSecurityEvent(event: string, details: Record<string, unknown>): void {
   console.warn(`[SECURITY] ${event}:`, {
     timestamp: new Date().toISOString(),
     ...details,

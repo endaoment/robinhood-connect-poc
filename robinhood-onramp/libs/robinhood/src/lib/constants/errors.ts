@@ -53,13 +53,14 @@ export function createSuccessResponse<T>(data: T) {
 }
 
 // Error logging with sanitization (don't expose sensitive data)
-export function logError(context: string, error: any, additionalInfo?: Record<string, any>): void {
+export function logError(context: string, error: unknown, additionalInfo?: Record<string, unknown>): void {
+  const err = error as { message?: string; code?: string; statusCode?: number }
   const errorInfo = {
     context,
     timestamp: new Date().toISOString(),
-    message: error?.message || 'Unknown error',
-    code: error?.code,
-    statusCode: error?.statusCode,
+    message: err?.message || 'Unknown error',
+    code: err?.code,
+    statusCode: err?.statusCode,
     ...additionalInfo,
   }
 

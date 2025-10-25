@@ -7,6 +7,17 @@ import nock from 'nock'
 
 const ROBINHOOD_BASE_URL = 'https://api.robinhood.com'
 
+interface MockRobinhoodAsset {
+  asset_code: string
+  name: string
+  is_active: boolean
+  networks: Array<{
+    blockchain: string
+    is_active: boolean
+    confirmation_count: number
+  }>
+}
+
 /**
  * Mock successful ConnectId generation
  */
@@ -33,7 +44,7 @@ export function mockConnectIdFailure(statusCode: number = 500, message: string =
 /**
  * Mock successful Discovery API call
  */
-export function mockDiscoverySuccess(assets: any[] = []) {
+export function mockDiscoverySuccess(assets: MockRobinhoodAsset[] = []) {
   return nock(ROBINHOOD_BASE_URL)
     .get('/api/v1/crypto/trading/assets/')
     .reply(200, {
@@ -45,7 +56,7 @@ export function mockDiscoverySuccess(assets: any[] = []) {
 /**
  * Mock Discovery API with query parameters
  */
-export function mockDiscoveryWithQuery(query: Record<string, string>, assets: any[] = []) {
+export function mockDiscoveryWithQuery(query: Record<string, string>, assets: MockRobinhoodAsset[] = []) {
   return nock(ROBINHOOD_BASE_URL)
     .get('/api/v1/crypto/trading/assets/')
     .query(query)
@@ -98,7 +109,7 @@ export function createMockAsset(overrides: Partial<any> = {}) {
 /**
  * Create multiple mock assets
  */
-export function createMockAssets(count: number = 3): any[] {
+export function createMockAssets(count: number = 3): MockRobinhoodAsset[] {
   const assetCodes = ['BTC', 'ETH', 'SOL', 'USDC', 'MATIC', 'AVAX', 'DOGE']
   const names = ['Bitcoin', 'Ethereum', 'Solana', 'USD Coin', 'Polygon', 'Avalanche', 'Dogecoin']
   const networks = ['BITCOIN', 'ETHEREUM', 'SOLANA', 'ETHEREUM', 'POLYGON', 'AVALANCHE', 'DOGECOIN']

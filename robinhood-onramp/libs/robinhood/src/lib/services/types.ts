@@ -42,19 +42,19 @@ export const DEFAULT_RETRY_CONFIG: RetryConfig = {
  * Logger interface for services
  */
 export interface ServiceLogger {
-  info(message: string, ...args: any[]): void
-  warn(message: string, ...args: any[]): void
-  error(message: string, ...args: any[]): void
-  debug(message: string, ...args: any[]): void
+  info(message: string, ...args: unknown[]): void
+  warn(message: string, ...args: unknown[]): void
+  error(message: string, ...args: unknown[]): void
+  debug(message: string, ...args: unknown[]): void
 }
 
 /**
  * Default console logger implementation
  */
 export const createConsoleLogger = (serviceName: string): ServiceLogger => ({
-  info: (message: string, ...args: any[]) => console.log(`[${serviceName}] INFO:`, message, ...args),
-  warn: (message: string, ...args: any[]) => console.warn(`[${serviceName}] WARN:`, message, ...args),
-  error: (message: string, ...args: any[]) => console.error(`[${serviceName}] ERROR:`, message, ...args),
-  debug: (message: string, ...args: any[]) => console.debug(`[${serviceName}] DEBUG:`, message, ...args),
+  info: (message: string, ...args: unknown[]) => console.log(`[${serviceName}] INFO:`, message, ...args),
+  warn: (message: string, ...args: unknown[]) => console.warn(`[${serviceName}] WARN:`, message, ...args),
+  error: (message: string, ...args: unknown[]) => console.error(`[${serviceName}] ERROR:`, message, ...args),
+  debug: (message: string, ...args: unknown[]) => console.debug(`[${serviceName}] DEBUG:`, message, ...args),
 })
 

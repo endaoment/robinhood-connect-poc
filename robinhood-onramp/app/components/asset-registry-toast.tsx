@@ -16,12 +16,27 @@ interface RegistryStatus {
   enabled: number
 }
 
+interface DetailsData {
+  discovery?: {
+    totalAssets?: number
+    activeAssets?: number
+  }
+  primeAddresses?: {
+    stats?: {
+      totalWalletsFetched?: number
+      [key: string]: unknown
+    }
+    [key: string]: unknown
+  }
+  [key: string]: unknown
+}
+
 type ViewState = 'compact' | 'open' | 'expanded'
 
 export function AssetRegistryToast() {
   const [status, setStatus] = useState<RegistryStatus | null>(null)
   const [viewState, setViewState] = useState<ViewState>('compact')
-  const [detailsData, setDetailsData] = useState<any>(null)
+  const [detailsData, setDetailsData] = useState<DetailsData | null>(null)
   const [assets, setAssets] = useState<RobinhoodAssetConfig[]>([])
   const [missingAssets, setMissingAssets] = useState<RobinhoodAssetConfig[]>([])
 
@@ -227,7 +242,7 @@ function ExplorerButton({ network, address }: { network: string; address: string
   }
 }
 
-function RegistrySummary({ data, status }: { data: any; status: RegistryStatus }) {
+function RegistrySummary({ data, status }: { data: DetailsData | null; status: RegistryStatus }) {
   const { discovery, primeAddresses } = data || {}
   const primeStats = primeAddresses?.stats
   const totalPrimeWallets = primeStats?.totalWalletsFetched || 0
