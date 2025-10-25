@@ -1339,7 +1339,7 @@ ROBINHOOD_APP_ID=your-app-id
 # Backend Integration
 NEXT_PUBLIC_BACKEND_URL=https://api.endaoment.org
 # Or for local development:
-# NEXT_PUBLIC_BACKEND_URL=http://localhost:3000
+# NEXT_PUBLIC_BACKEND_URL=http://localhost:3030
 ```
 
 ### Step 9: Create Documentation

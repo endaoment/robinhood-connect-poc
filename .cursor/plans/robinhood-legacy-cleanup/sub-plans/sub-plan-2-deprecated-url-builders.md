@@ -14,6 +14,7 @@
 Review these files to understand why deprecated URL builders must be removed:
 
 **Key Implementation Logs**:
+
 - `.cursor/plans/robinhood-asset-preselection/implementation-logs/20251022-2130-CRITICAL-URL-FIX.md` (lines 1-169)
   - Lines 45-90: Explains why buildOnrampUrl() failed
   - Lines 100-140: Documents 31 URL variations tested
@@ -22,12 +23,14 @@ Review these files to understand why deprecated URL builders must be removed:
   - Robinhood team confirmed Daffy-style approach is correct
 
 **Current Code State**:
+
 - `robinhood-onramp/lib/robinhood-url-builder.ts` (lines 1-638)
   - Lines 166-200: `buildOnrampUrl()` - DEPRECATED (uses wrong base URL)
   - Lines 327-370: `buildMultiNetworkOnrampUrl()` - DEPRECATED (balance-first doesn't work)
   - Lines 400-550: `buildDaffyStyleOnrampUrl()` - WORKING (keep this)
 
 **API Route State**:
+
 - `robinhood-onramp/app/api/robinhood/generate-onramp-url/route.ts` (lines 1-233)
   - Lines 90-178: Primary path using buildDaffyStyleOnrampUrl() (KEEP)
   - Lines 180-201: Legacy fallback using old builders (REMOVE)
@@ -65,8 +68,9 @@ grep -n "@deprecated" lib/robinhood-url-builder.ts
 ```
 
 **Expected Functions to Find**:
+
 1. `buildOnrampUrl()` - marked @deprecated (REMOVE)
-2. `buildMultiNetworkOnrampUrl()` - marked @deprecated (REMOVE)  
+2. `buildMultiNetworkOnrampUrl()` - marked @deprecated (REMOVE)
 3. `buildDaffyStyleOnrampUrl()` - working implementation (KEEP)
 4. Helper functions (keep if used by buildDaffyStyleOnrampUrl)
 
@@ -79,6 +83,7 @@ grep -n "@deprecated" lib/robinhood-url-builder.ts
 **Purpose**: Confirm buildOnrampUrl() can be safely deleted
 
 **Commands**:
+
 ```bash
 cd /Users/rheeger/Code/endaoment/robinhood-connect-poc/robinhood-onramp
 
@@ -89,7 +94,8 @@ grep -r "buildOnrampUrl" --include="*.ts" --include="*.tsx" . | grep -v node_mod
 grep -r "import.*buildOnrampUrl" --include="*.ts" --include="*.tsx" . | grep -v node_modules
 ```
 
-**Expected Output**: 
+**Expected Output**:
+
 - Should ONLY find references in:
   - `lib/robinhood-url-builder.ts` (the function definition itself)
   - Possibly in API route fallback (which we'll remove in Step 5)
@@ -108,6 +114,7 @@ grep -r "import.*buildOnrampUrl" --include="*.ts" --include="*.tsx" . | grep -v 
 **Approximate Lines**: ~166-200 (verify exact lines by reading the file)
 
 **Steps**:
+
 1. Open `lib/robinhood-url-builder.ts`
 2. Find the function definition:
    ```typescript
@@ -126,6 +133,7 @@ grep -r "import.*buildOnrampUrl" --include="*.ts" --include="*.tsx" . | grep -v 
 4. Save the file
 
 **Validation**:
+
 ```bash
 # Verify function is gone
 grep -n "buildOnrampUrl" lib/robinhood-url-builder.ts
@@ -147,6 +155,7 @@ npx tsc --noEmit
 **Approximate Lines**: ~327-370 (verify exact lines by reading the file)
 
 **Pre-Check**:
+
 ```bash
 # Search for usage
 grep -r "buildMultiNetworkOnrampUrl" --include="*.ts" --include="*.tsx" . | grep -v node_modules | grep -v "robinhood-url-builder.ts"
@@ -155,6 +164,7 @@ grep -r "buildMultiNetworkOnrampUrl" --include="*.ts" --include="*.tsx" . | grep
 ```
 
 **Steps**:
+
 1. Open `lib/robinhood-url-builder.ts`
 2. Find the function definition:
    ```typescript
@@ -167,12 +177,13 @@ grep -r "buildMultiNetworkOnrampUrl" --include="*.ts" --include="*.tsx" . | grep
    ```
 3. Delete the entire function including:
    - JSDoc comment
-   - @deprecated marker  
+   - @deprecated marker
    - Function signature
    - Function body
 4. Save the file
 
 **Validation**:
+
 ```bash
 # Verify function is gone
 grep -n "buildMultiNetworkOnrampUrl" lib/robinhood-url-builder.ts
@@ -199,16 +210,19 @@ grep -n "^export function\|^function" lib/robinhood-url-builder.ts
 ```
 
 **Common Helpers** (likely safe to delete if present):
+
 - `buildLegacyOnrampUrl()` - helper for old approach
 - `validateOnrampParams()` - if only used by old builders
 - Any functions with "legacy" in the name
 
 **Keep These Helpers** (if used by buildDaffyStyleOnrampUrl):
+
 - `buildBaseRobinhoodUrl()` - used by working builder
 - `encodeTransferData()` - used for redirectUrl
 - `validateAssetNetwork()` - used for validation
 
 **Steps**:
+
 1. For each helper function, check if it's used:
    ```bash
    grep -n "helperFunctionName" lib/robinhood-url-builder.ts
@@ -217,6 +231,7 @@ grep -n "^export function\|^function" lib/robinhood-url-builder.ts
 3. If called by `buildDaffyStyleOnrampUrl()`, keep it
 
 **Validation**:
+
 ```bash
 npx tsc --noEmit
 # Should compile successfully
@@ -238,6 +253,7 @@ cat app/api/robinhood/generate-onramp-url/route.ts | grep -A 5 -B 5 "fallback\|l
 **Approximate Lines**: ~180-201 (verify by reading file)
 
 **Likely Code to Remove**:
+
 ```typescript
 // Legacy fallback (if Daffy-style fails)
 try {
@@ -249,6 +265,7 @@ try {
 ```
 
 **Steps**:
+
 1. Open `app/api/robinhood/generate-onramp-url/route.ts`
 2. Find the legacy fallback code block (likely in a catch or after main try)
 3. Delete the entire fallback block
@@ -257,6 +274,7 @@ try {
 6. Save the file
 
 **Validation**:
+
 ```bash
 # Verify only one URL builder is called
 grep -n "build.*OnrampUrl" app/api/robinhood/generate-onramp-url/route.ts
@@ -276,22 +294,25 @@ npx tsc --noEmit
 **Purpose**: Remove imports of deleted functions
 
 **Current Import** (likely):
+
 ```typescript
 import {
   buildOnrampUrl,
   buildMultiNetworkOnrampUrl,
-  buildDaffyStyleOnrampUrl
-} from '@/lib/robinhood-url-builder';
+  buildDaffyStyleOnrampUrl,
+} from "@/lib/robinhood-url-builder";
 ```
 
 **Action**: Update to only import working function
 
 **New Import**:
+
 ```typescript
-import { buildDaffyStyleOnrampUrl } from '@/lib/robinhood-url-builder';
+import { buildDaffyStyleOnrampUrl } from "@/lib/robinhood-url-builder";
 ```
 
 **Steps**:
+
 1. Open `app/api/robinhood/generate-onramp-url/route.ts`
 2. Find the import statement from robinhood-url-builder
 3. Remove `buildOnrampUrl` and `buildMultiNetworkOnrampUrl` from imports
@@ -299,6 +320,7 @@ import { buildDaffyStyleOnrampUrl } from '@/lib/robinhood-url-builder';
 5. Save the file
 
 **Validation**:
+
 ```bash
 # Verify import
 grep -n "from.*robinhood-url-builder" app/api/robinhood/generate-onramp-url/route.ts
@@ -327,6 +349,7 @@ grep -A 20 "buildDaffyStyleOnrampUrl" lib/robinhood-url-builder.ts | grep -i "wa
 **If Found**: Remove any warnings about other builders since they no longer exist
 
 **Example - Remove This**:
+
 ```typescript
 export function buildDaffyStyleOnrampUrl(...) {
   console.warn('Using buildDaffyStyleOnrampUrl - other builders are deprecated');
@@ -335,6 +358,7 @@ export function buildDaffyStyleOnrampUrl(...) {
 ```
 
 **Should Become**:
+
 ```typescript
 export function buildDaffyStyleOnrampUrl(...) {
   // Clean implementation - no warnings needed
@@ -361,16 +385,19 @@ grep -n "export.*interface.*Onramp" lib/robinhood-url-builder.ts
 ```
 
 **Types to Remove** (if present):
+
 - `OnrampUrlParams` (if only used by old buildOnrampUrl)
 - `MultiNetworkOnrampParams` (if only used by buildMultiNetworkOnrampUrl)
 
 **Types to Keep**:
+
 - `DaffyStyleOnrampParams` (used by working builder)
 - Any types used by buildDaffyStyleOnrampUrl
 
 **If Types Only Used by Deleted Functions**: Delete them
 
 **Validation**:
+
 ```bash
 npx tsc --noEmit
 # Should compile successfully
@@ -385,6 +412,7 @@ npx tsc --noEmit
 **Purpose**: Clean up file formatting and comments
 
 **Actions**:
+
 1. Remove any TODO comments about deprecated functions
 2. Remove comments comparing old vs new approaches
 3. Ensure consistent spacing between remaining functions
@@ -394,20 +422,22 @@ npx tsc --noEmit
 **Example File Header Update**:
 
 **Before**:
+
 ```typescript
 /**
  * Robinhood URL Builders
- * 
+ *
  * Contains multiple approaches to URL generation.
  * Use buildDaffyStyleOnrampUrl for new code.
  */
 ```
 
 **After**:
+
 ```typescript
 /**
  * Robinhood URL Builder
- * 
+ *
  * Generates Robinhood Connect URLs for onramp transfers.
  */
 ```
@@ -457,7 +487,8 @@ grep -r "buildMultiNetworkOnrampUrl" --include="*.ts" --include="*.tsx" . | grep
 npx tsc --noEmit
 ```
 
-**Success Criteria**: 
+**Success Criteria**:
+
 - Zero errors about missing functions
 - Zero errors about undefined types
 - Clean compilation (may have pre-existing unrelated errors)
@@ -477,12 +508,13 @@ grep -n "build.*OnrampUrl\|build.*Url" app/api/robinhood/generate-onramp-url/rou
 # Start dev server
 npm run dev
 
-# In browser console (http://localhost:3000/dashboard):
+# In browser console (http://localhost:3030/dashboard):
 # Try generating a URL by selecting asset and clicking "Initiate Transfer"
 # Should succeed without errors
 ```
 
 **Success Criteria**:
+
 - URL generated successfully
 - No console errors
 - URL follows pattern: `https://robinhood.com/connect/amount?applicationId=...&connectId=...`
@@ -496,23 +528,26 @@ npm run dev
 ### Manual Testing Steps:
 
 1. **Start Development Server**:
+
    ```bash
    cd /Users/rheeger/Code/endaoment/robinhood-connect-poc/robinhood-onramp
    npm run dev
    ```
 
-2. **Navigate to Dashboard**: `http://localhost:3000/dashboard`
+2. **Navigate to Dashboard**: `http://localhost:3030/dashboard`
 
 3. **Select Asset**: Choose ETH on Ethereum network
 
 4. **Initiate Transfer**: Click "Initiate Transfer" button
 
 5. **Verify URL Generation**:
+
    - Open Network tab in DevTools
    - Look for POST to `/api/robinhood/generate-onramp-url`
    - Should return 200 OK with valid URL
 
 6. **Check Console**:
+
    - Should be ZERO errors
    - Should be ZERO warnings about deprecated functions
 
@@ -533,11 +568,13 @@ npm run dev
 ### If Checkpoint Fails:
 
 1. **Error: "buildOnrampUrl is not defined"**
+
    - Review Step 6-7: Didn't update API route imports
    - Check for missed references to old function
    - Update all imports to use buildDaffyStyleOnrampUrl
 
 2. **Error: "Type 'OnrampUrlParams' not found"**
+
    - Review Step 9: Deleted type but code still references it
    - Search for the type: `grep -r "OnrampUrlParams" .`
    - Update to use correct type (DaffyStyleOnrampParams)
@@ -559,6 +596,7 @@ npm run dev
 **Cause**: Code still calls the deleted function
 
 **Solution**:
+
 ```bash
 # Find all references
 grep -r "buildOnrampUrl" --include="*.ts" --include="*.tsx" . | grep -v node_modules
@@ -574,6 +612,7 @@ grep -r "buildOnrampUrl" --include="*.ts" --include="*.tsx" . | grep -v node_mod
 **Cause**: Deleted a helper function that buildDaffyStyleOnrampUrl needs
 
 **Solution**:
+
 1. Check browser console for specific function name
 2. Restore the helper function (git checkout)
 3. Verify it's used by working builder
@@ -586,6 +625,7 @@ grep -r "buildOnrampUrl" --include="*.ts" --include="*.tsx" . | grep -v node_mod
 **Cause**: Accidentally deleted working code
 
 **Solution**:
+
 ```bash
 # Restore from git
 git diff lib/robinhood-url-builder.ts
@@ -646,10 +686,12 @@ After completing this sub-plan:
 ### Key Distinction:
 
 **DELETE These**:
+
 - `buildOnrampUrl()` - wrong base URL, tested and failed
 - `buildMultiNetworkOnrampUrl()` - balance-first approach, doesn't work
 
 **KEEP This**:
+
 - `buildDaffyStyleOnrampUrl()` - working implementation, proven with Robinhood
 
 ---
@@ -658,4 +700,3 @@ After completing this sub-plan:
 **Estimated Duration**: 1-2 hours  
 **Complexity**: Low  
 **Risk Level**: 🟢 Low (well-documented deprecated code)
-

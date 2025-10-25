@@ -198,7 +198,7 @@ import { RobinhoodModule } from '@/libs/robinhood';
 - ✅ `libs/robinhood/` - Complete NestJS module
 - ❌ `app/` - POC demonstration only
 
-See [docs/BACKEND-INTEGRATION.md](./docs/BACKEND-INTEGRATION.md) for complete migration guide.
+See [docs/MIGRATION-GUIDE.md](./docs/MIGRATION-GUIDE.md) for complete migration guide.
 
 ---
 
@@ -426,7 +426,7 @@ See `../SECURITY-AUDIT.md` for complete audit.
 
 ### Architecture
 - **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - System architecture with NestJS patterns
-- **[docs/BACKEND-INTEGRATION.md](./docs/BACKEND-INTEGRATION.md)** - Migration guide
+- **[docs/MIGRATION-GUIDE.md](./docs/MIGRATION-GUIDE.md)** - Complete backend migration guide
 - **[docs/DEVELOPER_GUIDE.md](./docs/DEVELOPER_GUIDE.md)** - Developer reference
 
 ### Quality & Standards

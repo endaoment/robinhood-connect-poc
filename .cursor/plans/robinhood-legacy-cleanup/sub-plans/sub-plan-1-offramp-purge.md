@@ -414,7 +414,7 @@ npm run dev
 
 ### Manual Testing Checklist
 
-- [ ] Navigate to dashboard (`http://localhost:3000/dashboard`)
+- [ ] Navigate to dashboard (`http://localhost:3030/dashboard`)
 - [ ] Verify asset selector renders
 - [ ] Select an asset (e.g., ETH on Ethereum)
 - [ ] Click "Initiate Transfer"

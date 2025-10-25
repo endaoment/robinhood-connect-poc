@@ -1284,7 +1284,7 @@ npm run test:coverage
 npm run dev
 ```
 
-**Expected**: App starts on http://localhost:3000
+**Expected**: App starts on http://localhost:3030
 
 **Manual Test**:
 

@@ -16,17 +16,20 @@ Sub-Plan 12 integrated the `PledgeService` into the callback page to demonstrate
 ### Option 1: Simulated Callback (Quickest)
 
 1. **Start dev server**:
+
    ```bash
    cd robinhood-onramp
    npm run dev
    ```
 
 2. **Navigate to callback URL with test params**:
+
    ```
-   http://localhost:3000/callback?orderId=TEST123&connectId=abc-def-ghi&asset=BTC&network=BITCOIN&amount=0.5&timestamp=1698765432000
+   http://localhost:3030/callback?orderId=TEST123&connectId=abc-def-ghi&asset=BTC&network=BITCOIN&amount=0.5&timestamp=1698765432000
    ```
 
 3. **Watch the toast sequence**:
+
    - Toast 1: "Resolving token from backend..."
    - Toast 2: "Token resolved successfully"
    - Toast 3: "Creating pledge in backend..."
@@ -39,7 +42,7 @@ Sub-Plan 12 integrated the `PledgeService` into the callback page to demonstrate
 
 1. **Start dev server**: `npm run dev`
 
-2. **Go to home page**: `http://localhost:3000`
+2. **Go to home page**: `http://localhost:3030`
 
 3. **Select an asset** (e.g., BTC)
 
@@ -50,8 +53,9 @@ Sub-Plan 12 integrated the `PledgeService` into the callback page to demonstrate
 6. **Extract the connectId** from the URL
 
 7. **Simulate callback** by navigating to:
+
    ```
-   http://localhost:3000/callback?orderId=TEST123&connectId={EXTRACTED_CONNECT_ID}&asset=BTC&network=BITCOIN&amount=0.5
+   http://localhost:3030/callback?orderId=TEST123&connectId={EXTRACTED_CONNECT_ID}&asset=BTC&network=BITCOIN&amount=0.5
    ```
 
 8. **Watch toasts** demonstrate backend integration
@@ -63,6 +67,7 @@ Sub-Plan 12 integrated the `PledgeService` into the callback page to demonstrate
 **Title**: 🔍 Resolving token from backend...
 
 **Body**:
+
 ```
 Backend API Call: POST /v1/tokens/resolve
 
@@ -89,6 +94,7 @@ Expected Response:
 **Title**: ✅ Token resolved successfully
 
 **Body**:
+
 ```
 Token Details:
 - ID: uuid-...
@@ -104,6 +110,7 @@ Token Details:
 **Title**: 💾 Creating pledge in backend...
 
 **Body**:
+
 ```
 Backend API Call: POST /v1/pledges/create
 
@@ -126,6 +133,7 @@ Request (CreatePledgeDto):
 **Title**: ✅ Pledge created successfully
 
 **Body**:
+
 ```
 Pledge Details:
 - ID: uuid-...
@@ -142,6 +150,7 @@ Pledge Details:
 **Title**: 📢 Sending Discord notification...
 
 **Body**:
+
 ```
 Webhook Call: POST https://discord.com/api/webhooks/...
 
@@ -180,17 +189,20 @@ In addition to toasts, check the browser console for detailed logs:
 ## What This Demonstrates for Backend Team
 
 1. **Complete Data Flow**:
+
    - Robinhood callback → PledgeService → Backend APIs
    - All required data properly formatted
    - No missing fields or incorrect types
 
 2. **Service Integration**:
+
    - TokenService for asset resolution
    - PledgeService for pledge creation
    - NotificationService for alerts
    - All services working together
 
 3. **Copy/Paste Ready**:
+
    - Exact DTO structures shown
    - Field mappings demonstrated
    - API endpoints documented
@@ -205,6 +217,7 @@ In addition to toasts, check the browser console for detailed logs:
 ## Mock vs Real Backend
 
 **Current (POC - Mock)**:
+
 - MockTokenService returns hardcoded token data
 - MockPledgeService simulates database insert
 - Toast notifications show what would happen
@@ -212,6 +225,7 @@ In addition to toasts, check the browser console for detailed logs:
 
 **Future (Backend - Real)**:
 When migrating to endaoment-backend:
+
 1. Replace `mockTokenService` with real `TokenService` from `@api/token`
 2. Replace `mockPledgeService` with real `PledgeService` from `@api/pledge`
 3. Replace `mockNotificationService` with real `NotificationService`
@@ -220,6 +234,7 @@ When migrating to endaoment-backend:
 6. Add actual Discord webhook calls
 
 **Migration is trivial** because:
+
 - Same method signatures
 - Same parameter structures
 - Same return types
@@ -228,36 +243,43 @@ When migrating to endaoment-backend:
 ## Files Involved
 
 **Callback Page**:
+
 - `app/(routes)/callback/page.tsx` - Uses PledgeService
 
 **Services**:
+
 - `libs/robinhood/src/lib/services/pledge.service.ts` - Orchestrates pledge creation
 - `libs/shared/src/lib/backend-mock/mock-token.service.ts` - Mock token resolution
 - `libs/shared/src/lib/backend-mock/mock-pledge.service.ts` - Mock pledge creation
 - `libs/shared/src/lib/backend-mock/mock-notification.service.ts` - Mock notifications
 
 **DTOs**:
+
 - `libs/robinhood/src/lib/dtos/create-pledge.dto.ts` - Pledge structure
 - `libs/robinhood/src/lib/dtos/callback.dto.ts` - Callback parameters
 
 ## Troubleshooting
 
 **No toasts appear**:
+
 - Check browser console for errors
 - Verify dev server is running
 - Confirm toast component is mounted (check `app/layout.tsx`)
 
 **Toasts show but no data**:
+
 - Verify callback URL has required parameters
 - Check console for validation errors
 - Ensure amount is a valid number
 
 **"Token not found" error**:
+
 - Asset/network combination not in mock registry
 - Check `mock-token.service.ts` for supported tokens
 - Add new tokens to MOCK_TOKENS array if needed
 
 **Redirect doesn't happen**:
+
 - Check for JavaScript errors in console
 - Verify localStorage is accessible
 - Ensure router is available (Next.js App Router)
@@ -274,4 +296,3 @@ After seeing the demonstration:
 ---
 
 **Demo successfully shows**: Complete backend integration flow from Robinhood callback to pledge creation with visual demonstration of all API calls.
-

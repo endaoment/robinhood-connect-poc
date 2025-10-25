@@ -260,7 +260,7 @@ ROBINHOOD_APP_ID=your-app-id
 ROBINHOOD_API_KEY=your-api-key
 
 # Optional
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3030
 ```
 
 > **Note**: Contact Robinhood team for API credentials
@@ -271,7 +271,7 @@ NEXTAUTH_URL=http://localhost:3000
 npm run dev
 ```
 
-Visit: <http://localhost:3000>
+Visit: <http://localhost:3030>
 
 ### 4. Test the Integration
 
@@ -498,7 +498,7 @@ cp .env.example .env.local
 npm run dev
 ````
 
-Visit: <http://localhost:3000>
+Visit: <http://localhost:3030>
 
 ### Test the Integration
 

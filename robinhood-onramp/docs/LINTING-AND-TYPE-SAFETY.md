@@ -306,43 +306,58 @@ Configure your IDE (VS Code, Cursor, etc.) to show TypeScript errors inline:
 
 ## Backend Alignment
 
-All types in this project are designed to align with endaoment-backend types:
+All types in this project are designed to align with endaoment-backend types for seamless migration.
 
-### Pledge Types
+### Service Classes
+
+All services use NestJS patterns:
 
 ```typescript
-// Aligned with backend CryptoPledge entity
-export interface CryptoPledgeInput {
-  cryptoGiven: CryptoGiven
-  otcDonationTransactionHash: string
-  receivingEntityType: 'fund' | 'org' | 'both'
-  receivingEntityId: string
-  recommendationId?: string
-  donorName?: string
-  donorIdentity?: DonorIdentity
-  updateIdentity?: boolean
-  shareMyEmail?: boolean
-  isRebalanceRequested?: boolean
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class RobinhoodClientService {
+  constructor(
+    @Inject('CONFIG') private readonly config: RobinhoodConfig
+  ) {}
 }
 ```
 
-### Token Types
+### DTO Classes
+
+All DTOs use class-validator decorators:
 
 ```typescript
-// Aligned with backend Token entity
-export interface RobinhoodBaseAsset {
-  symbol: string           // e.g., 'BTC', 'ETH'
-  name: string             // e.g., 'Bitcoin', 'Ethereum'
-  description: string
-  icon: string
-  logoUrl: string | null
-  decimals: number
-  enabled: boolean
-  featured?: boolean
-  popularity: number
-  sortOrder: number
-  category: AssetCategory
-  type: RobinhoodTokenType
+import { IsString, IsNotEmpty, IsNumber, IsPositive } from 'class-validator';
+import { Transform } from 'class-transformer';
+
+export class GenerateUrlDto {
+  @IsString()
+  @IsNotEmpty()
+  asset: string;
+
+  @IsNumber()
+  @IsPositive()
+  @Transform(({ value }) => parseFloat(value))
+  amount: number;
+}
+```
+
+### Pledge Mapping
+
+Aligned with `CryptoDonationPledge` entity:
+
+```typescript
+// Field mapping
+{
+  otcTransactionHash: `robinhood:${connectId}`,
+  pledgerUserId: userId,
+  inputToken: resolvedToken,  // From TokenService
+  inputAmount: convertToSmallestUnit(amount, decimals),
+  destinationOrgId: fundId,
+  status: PledgeStatus.PendingLiquidation,
+  centralizedExchangeDonationStatus: 'Completed',
+  centralizedExchangeTransactionId: orderId
 }
 ```
 
@@ -367,6 +382,16 @@ $ npx tsc --noEmit
 
 ---
 
-Last Updated: October 25, 2025
-Maintained By: Endaoment Development Team
+## Related Documentation
+
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture and patterns
+- [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) - Development guidelines
+- [NAMING-CONVENTIONS.md](./NAMING-CONVENTIONS.md) - Naming standards
+- [TESTING_GUIDE.md](./TESTING_GUIDE.md) - Testing documentation
+
+---
+
+**Last Updated**: October 25, 2025  
+**Version**: v1.0.0 (Backend-Aligned)  
+**Status**: ✅ 0 Type Errors
 

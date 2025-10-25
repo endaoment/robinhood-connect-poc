@@ -76,18 +76,21 @@ This repository is designed to be **forked for future API integrations**:
 ### Creating a New Integration POC
 
 1. **Fork this repository**:
+
    ```bash
    git clone https://github.com/endaoment/robinhood-connect-poc.git new-api-poc
    cd new-api-poc/robinhood-onramp
    ```
 
 2. **Rename the integration**:
+
    ```bash
    mv libs/robinhood libs/your-api
    mv libs/coinbase libs/support-api  # If needed
    ```
 
 3. **Update package.json**:
+
    ```json
    {
      "name": "your-api-onramp"
@@ -95,6 +98,7 @@ This repository is designed to be **forked for future API integrations**:
    ```
 
 4. **Build your integration** following the same structure:
+
    - Services in `libs/your-api/src/lib/services/`
    - DTOs in `libs/your-api/src/lib/dtos/`
    - Controller in `libs/your-api/src/lib/your-api.controller.ts`
@@ -102,6 +106,7 @@ This repository is designed to be **forked for future API integrations**:
    - Tests in `libs/your-api/tests/`
 
 5. **Build frontend demo** in `app/`:
+
    - Pages to demonstrate the integration
    - Components to showcase functionality
    - API routes to test services
@@ -134,7 +139,7 @@ cp .env.example .env.local  # Add your API keys
 npm run dev
 ```
 
-Visit: http://localhost:3000
+Visit: http://localhost:3030
 
 ---
 
@@ -150,7 +155,7 @@ Visit: http://localhost:3000
 - **[robinhood-onramp/README.md](./robinhood-onramp/README.md)** - POC-specific documentation
 - **[robinhood-onramp/docs/](./robinhood-onramp/docs/)** - Complete technical docs
   - ARCHITECTURE.md - System architecture
-  - BACKEND-INTEGRATION.md - Migration guide
+  - MIGRATION-GUIDE.md - Complete backend migration guide
   - DEVELOPER_GUIDE.md - Developer reference
   - TESTING_GUIDE.md - Testing strategies
   - And 4 more guides...
@@ -229,7 +234,7 @@ npm test libs/api/robinhood
 - 3 lines in module imports
 - 1 line in app.module.ts
 
-See **[robinhood-onramp/docs/BACKEND-INTEGRATION.md](./robinhood-onramp/docs/BACKEND-INTEGRATION.md)** for complete guide.
+See **[robinhood-onramp/docs/MIGRATION-GUIDE.md](./robinhood-onramp/docs/MIGRATION-GUIDE.md)** for complete guide.
 
 ---
 
@@ -262,15 +267,19 @@ See **[robinhood-onramp/docs/BACKEND-INTEGRATION.md](./robinhood-onramp/docs/BAC
 ## 🌐 Supported Networks (19 of 20)
 
 ### EVM-Compatible (8)
+
 - Ethereum, Polygon, Arbitrum, Base, Optimism, Zora, Avalanche, Ethereum Classic
 
 ### Bitcoin & Bitcoin-Like (4)
+
 - Bitcoin, Bitcoin Cash, Litecoin, Dogecoin
 
 ### Other Layer 1 (4)
+
 - Solana, Cardano, Tezos, Sui
 
 ### Memo-Required (3)
+
 - Stellar (XLM), XRP (Ripple), Hedera (HBAR)
 
 **Total**: 19 networks (95% coverage)
@@ -303,7 +312,7 @@ npm run build            # Build for production
 
 - **Setup Issues**: See [QUICK-START.md](./QUICK-START.md)
 - **Architecture Questions**: See [robinhood-onramp/STRUCTURE.md](./robinhood-onramp/STRUCTURE.md)
-- **Migration Guide**: See [robinhood-onramp/docs/BACKEND-INTEGRATION.md](./robinhood-onramp/docs/BACKEND-INTEGRATION.md)
+- **Migration Guide**: See [robinhood-onramp/docs/MIGRATION-GUIDE.md](./robinhood-onramp/docs/MIGRATION-GUIDE.md)
 - **Development**: See [robinhood-onramp/docs/DEVELOPER_GUIDE.md](./robinhood-onramp/docs/DEVELOPER_GUIDE.md)
 
 ---

@@ -66,7 +66,7 @@ https://applink.robinhood.com/u/connect
   ?applicationId=your-app-id
   &offRamp=true
   &supportedNetworks=ETHEREUM
-  &redirectUrl=http://localhost:3000/callback
+  &redirectUrl=http://localhost:3030/callback
   &referenceId=f2056f4c-93c7-422b-bd59-fbfb5b05b6ad
   &assetCode=ETH
   &assetAmount=0.1
@@ -79,7 +79,7 @@ https://applink.robinhood.com/u/connect
   ?applicationId=your-app-id
   &offRamp=true
   &supportedNetworks=ETHEREUM,POLYGON,SOLANA
-  &redirectUrl=http://localhost:3000/callback
+  &redirectUrl=http://localhost:3030/callback
   &referenceId=276cada2-e033-4ba8-8b2d-41374ea99ef2
 ```
 
@@ -92,7 +92,7 @@ When you receive your keys from Robinhood, add them to `.env.local`:
 ```bash
 ROBINHOOD_APP_ID=your-app-id-from-robinhood
 ROBINHOOD_API_KEY=your-api-key-from-robinhood
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3030
 ```
 
 ### 2. Test the API
@@ -104,7 +104,7 @@ Start the dev server and test URL generation:
 npm run dev
 
 # Test URL generation
-curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
   -H "Content-Type: application/json" \
   -d '{
     "supportedNetworks": ["ETHEREUM"],
@@ -244,7 +244,7 @@ const result = buildSimpleOfframpUrl("ETH", "ETHEREUM", "0.1");
 ### Generate URL via API
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
   -H "Content-Type: application/json" \
   -d '{"supportedNetworks": ["ETHEREUM"], "assetCode": "ETH", "assetAmount": "0.1"}'
 ```

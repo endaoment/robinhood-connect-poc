@@ -21,7 +21,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Visit: http://localhost:3000
+Visit: http://localhost:3030
 
 ### Test the Integration
 
@@ -193,7 +193,7 @@ vim package.json  # Change name to "stripe-onramp"
 
 - **[robinhood-onramp/STRUCTURE.md](./robinhood-onramp/STRUCTURE.md)** - Complete directory guide
 - **[robinhood-onramp/docs/ARCHITECTURE.md](./robinhood-onramp/docs/ARCHITECTURE.md)** - Architecture details
-- **[robinhood-onramp/docs/BACKEND-INTEGRATION.md](./robinhood-onramp/docs/BACKEND-INTEGRATION.md)** - Migration guide
+- **[robinhood-onramp/docs/MIGRATION-GUIDE.md](./robinhood-onramp/docs/MIGRATION-GUIDE.md)** - Complete backend migration guide
 
 ### Planning Methodology
 

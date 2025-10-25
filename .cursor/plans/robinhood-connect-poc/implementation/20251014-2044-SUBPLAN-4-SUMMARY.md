@@ -136,7 +136,7 @@ Supports direct links to:
 
 1. **User initiates offramp** → referenceId generated and stored in localStorage
 2. **User redirected to Robinhood** → completes flow in Robinhood app
-3. **Robinhood redirects back** → `http://localhost:3000/callback?assetCode=ETH&assetAmount=0.05&network=ETHEREUM`
+3. **Robinhood redirects back** → `http://localhost:3030/callback?assetCode=ETH&assetAmount=0.05&network=ETHEREUM`
 4. **Callback page processes** → validates parameters, retrieves referenceId
 5. **API redemption triggered** → calls `/api/robinhood/redeem-deposit-address`
 6. **Deposit address displayed** → user sees address with copy functionality

@@ -24,11 +24,12 @@ Use these terms in code, APIs, and technical documentation:
 
 ### Deprecated Terms
 
-DO NOT USE (from removed code):
+DO NOT USE (removed from codebase):
 
-- **Offramp**: Removed - not supported (separate Robinhood API)
-- **ReferenceId**: Deprecated - use connectId instead
-- **Order Status**: Removed - not needed for onramp (offramp-only API)
+- **Offramp**: Removed - separate Robinhood API not implemented
+- **ReferenceId**: Deprecated - use `connectId` consistently
+- **Order Status**: Removed - not applicable for onramp (offramp-only API)
+- **Redemption API**: Removed - not used in current implementation
 
 ## File Naming
 
@@ -224,18 +225,21 @@ interface Res {
 
 ### ID System
 
-**Use `connectId` consistently**:
+**Use `connectId` consistently** throughout the codebase:
 
 ```typescript
-// ✅ Good
-const connectId = await generateConnectId()
-localStorage.setItem('connectId', connectId)
+// ✅ Good - backend-aligned
+const connectId = await robinhoodClient.generateConnectId(params);
+localStorage.setItem('connectId', connectId);
+
+// Services use connectId
+await pledgeService.createFromCallback({ connectId, ... });
 
 // ❌ Bad (deprecated)
 const referenceId = '...' // Use connectId instead
 ```
 
-**Note**: `referenceId` exists only for backward compatibility in types but is not used in this codebase.
+**Note**: The term `connectId` aligns with Robinhood API terminology and backend patterns.
 
 ### Asset Selection Flow
 
@@ -315,7 +319,48 @@ When reviewing code or PRs, check:
 - [ ] Constants are UPPER_SNAKE_CASE
 - [ ] Files are kebab-case
 
+## Service Naming Patterns
+
+### Service Classes
+
+Follow NestJS conventions:
+
+```typescript
+// ✅ Good - descriptive service names
+export class RobinhoodClientService {}
+export class AssetRegistryService {}
+export class UrlBuilderService {}
+export class PledgeService {}
+
+// ❌ Bad - generic or abbreviated
+export class RHService {}
+export class Client {}
+export class Service {}
+```
+
+### DTO Classes
+
+```typescript
+// ✅ Good - clear what they validate
+export class GenerateUrlDto {}
+export class RobinhoodCallbackDto {}
+export class CreatePledgeDto {}
+
+// ❌ Bad
+export class UrlParams {}
+export class Input {}
+```
+
 ---
 
-**Last Updated**: October 24, 2025
+## Related Documentation
+
+- [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) - Development guidelines
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - Architecture patterns
+- [LINTING-AND-TYPE-SAFETY.md](./LINTING-AND-TYPE-SAFETY.md) - Code quality standards
+
+---
+
+**Last Updated**: October 25, 2025  
+**Version**: v1.0.0 (Backend-Aligned)  
 **Status**: Active - Follow these conventions for all new code

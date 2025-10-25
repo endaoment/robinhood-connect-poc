@@ -820,7 +820,7 @@ export default function TestPage() {
 }
 ```
 
-Start dev server and visit: `http://localhost:3000/test-asset-selector`
+Start dev server and visit: `http://localhost:3030/test-asset-selector`
 
 **Verify**:
 
@@ -869,8 +869,8 @@ npx tsc --noEmit
 npm run dev
 
 # 3. Visit existing pages
-# - http://localhost:3000/dashboard
-# - http://localhost:3000/callback
+# - http://localhost:3030/dashboard
+# - http://localhost:3030/callback
 ```
 
 ### Success Criteria

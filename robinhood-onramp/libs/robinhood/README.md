@@ -55,11 +55,7 @@ tests/
 ### In POC (Next.js)
 
 ```typescript
-import {
-  RobinhoodClientService,
-  AssetRegistryService,
-  GenerateUrlDto,
-} from '@/libs/robinhood'
+import { RobinhoodClientService, AssetRegistryService, GenerateUrlDto } from '@/libs/robinhood'
 
 const client = new RobinhoodClientService()
 const registry = new AssetRegistryService()
@@ -119,23 +115,13 @@ Add database entities and backend module dependencies:
 ```typescript
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CryptoDonationPledge]),  // Add DB entities
-    TokensModule,              // Backend dependencies
+    TypeOrmModule.forFeature([CryptoDonationPledge]), // Add DB entities
+    TokensModule, // Backend dependencies
     NotificationModule,
   ],
   controllers: [RobinhoodController],
-  providers: [
-    RobinhoodClientService,
-    AssetRegistryService,
-    UrlBuilderService,
-    PledgeService,
-  ],
-  exports: [
-    RobinhoodClientService,
-    AssetRegistryService,
-    UrlBuilderService,
-    PledgeService,
-  ],
+  providers: [RobinhoodClientService, AssetRegistryService, UrlBuilderService, PledgeService],
+  exports: [RobinhoodClientService, AssetRegistryService, UrlBuilderService, PledgeService],
 })
 export class RobinhoodModule {}
 ```
@@ -251,7 +237,7 @@ When migrating to backend:
 - [ ] Import RobinhoodModule in AppModule
 - [ ] Delete `app/api/robinhood/` (POC-only routes)
 - [ ] Run tests: `npm test libs/api/robinhood`
-- [ ] Verify routes work: `curl http://localhost:3000/robinhood/health`
+- [ ] Verify routes work: `curl http://localhost:3030/robinhood/health`
 
 ## Architecture
 
@@ -264,4 +250,3 @@ This library follows the endaoment-backend service architecture:
 - **Module**: Dependency injection setup (NestJS)
 
 See [Migration Guide](../../docs/MIGRATION-GUIDE.md) for detailed instructions.
-

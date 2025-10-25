@@ -181,7 +181,7 @@ describe('UrlBuilderService', () => {
           asset: 'BTC',
           network: 'BITCOIN',
           walletAddress: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        })
+        }),
       ).toThrow('ConnectId is required')
     })
 
@@ -194,7 +194,7 @@ describe('UrlBuilderService', () => {
           asset: 'BTC',
           network: 'BITCOIN',
           walletAddress: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        })
+        }),
       ).toThrow('ConnectId is required')
     })
 
@@ -207,7 +207,7 @@ describe('UrlBuilderService', () => {
           asset: '',
           network: 'BITCOIN',
           walletAddress: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        })
+        }),
       ).toThrow(/Invalid asset code/)
     })
 
@@ -220,7 +220,7 @@ describe('UrlBuilderService', () => {
           asset: 'BTC',
           network: '' as any,
           walletAddress: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        })
+        }),
       ).toThrow('Network is required')
     })
 
@@ -233,7 +233,7 @@ describe('UrlBuilderService', () => {
           asset: 'BTC',
           network: 'BITCOIN',
           walletAddress: '',
-        })
+        }),
       ).toThrow(/Invalid wallet address/)
     })
 
@@ -484,8 +484,7 @@ describe('UrlBuilderService', () => {
     it('should handle URL-encoded values', () => {
       const service = new UrlBuilderService()
 
-      const callbackUrl =
-        'https://app.endaoment.org/callback?message=Hello%20World&email=test%40example.com'
+      const callbackUrl = 'https://app.endaoment.org/callback?message=Hello%20World&email=test%40example.com'
       const params = service.parseCallbackUrl(callbackUrl)
 
       expect(params.message).toBe('Hello World')
@@ -495,8 +494,7 @@ describe('UrlBuilderService', () => {
     it('should handle special characters', () => {
       const service = new UrlBuilderService()
 
-      const callbackUrl =
-        'https://app.endaoment.org/callback?id=abc-123-def&hash=0xabc123'
+      const callbackUrl = 'https://app.endaoment.org/callback?id=abc-123-def&hash=0xabc123'
       const params = service.parseCallbackUrl(callbackUrl)
 
       expect(params.id).toBe('abc-123-def')
@@ -506,8 +504,7 @@ describe('UrlBuilderService', () => {
     it('should handle duplicate parameters (takes last)', () => {
       const service = new UrlBuilderService()
 
-      const callbackUrl =
-        'https://app.endaoment.org/callback?param=first&param=second'
+      const callbackUrl = 'https://app.endaoment.org/callback?param=first&param=second'
       const params = service.parseCallbackUrl(callbackUrl)
 
       // URL API typically takes the last value for duplicate keys
@@ -543,8 +540,7 @@ describe('UrlBuilderService', () => {
     it('should handle boolean-like values as strings', () => {
       const service = new UrlBuilderService()
 
-      const callbackUrl =
-        'https://app.endaoment.org/callback?success=true&failed=false'
+      const callbackUrl = 'https://app.endaoment.org/callback?success=true&failed=false'
       const params = service.parseCallbackUrl(callbackUrl)
 
       expect(params.success).toBe('true')
@@ -702,8 +698,7 @@ describe('UrlBuilderService', () => {
       const service = new UrlBuilderService()
 
       // Hash fragments are typically ignored by URL API
-      const callbackUrl =
-        'https://app.endaoment.org/callback?status=success#section'
+      const callbackUrl = 'https://app.endaoment.org/callback?status=success#section'
       const params = service.parseCallbackUrl(callbackUrl)
 
       expect(params.status).toBe('success')
@@ -712,7 +707,7 @@ describe('UrlBuilderService', () => {
     it('should handle callback URLs with port numbers', () => {
       const service = new UrlBuilderService()
 
-      const callbackUrl = 'http://localhost:3000/callback?orderId=123'
+      const callbackUrl = 'http://localhost:3030/callback?orderId=123'
       const params = service.parseCallbackUrl(callbackUrl)
 
       expect(params.orderId).toBe('123')
@@ -796,4 +791,3 @@ describe('UrlBuilderService', () => {
     })
   })
 })
-

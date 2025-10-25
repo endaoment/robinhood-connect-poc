@@ -404,7 +404,7 @@ npm run dev
 ```
 ````
 
-2. Navigate to: `http://localhost:3000/dashboard`
+2. Navigate to: `http://localhost:3030/dashboard`
 
 ### With ngrok (for testing callbacks)
 
@@ -423,7 +423,7 @@ npm run dev
 
 **Steps**:
 
-1. Navigate to dashboard: `http://localhost:3000/dashboard`
+1. Navigate to dashboard: `http://localhost:3030/dashboard`
 2. Select asset (e.g., "Ethereum")
 3. Select network (e.g., "Ethereum")
 4. Click "Initiate Transfer"
@@ -452,7 +452,7 @@ npm run dev
 **Test Generate URL API**:
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-onramp-url \
   -H "Content-Type: application/json" \
   -d '{
     "selectedAsset": "ETH",
@@ -486,7 +486,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
 Navigate to (replace with actual values):
 
 ```
-http://localhost:3000/callback?asset=ETH&network=ETHEREUM&connectId=abc123&timestamp=2025-10-24T12:00:00Z&orderId=ORDER123
+http://localhost:3030/callback?asset=ETH&network=ETHEREUM&connectId=abc123&timestamp=2025-10-24T12:00:00Z&orderId=ORDER123
 ```
 
 **Expected Results**:
@@ -562,7 +562,7 @@ https://robinhood.com/connect/amount?
 **API Call**:
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-onramp-url \
   -H "Content-Type: application/json" \
   -d '{
 
@@ -578,7 +578,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
 **API Call**:
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-onramp-url \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -590,7 +590,7 @@ curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
 **API Call**:
 
 ```bash
-curl -X POST http://localhost:3000/api/robinhood/generate-onramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-onramp-url \
   -H "Content-Type: application/json" \
   -d '{
     "selectedAsset": "ETH",

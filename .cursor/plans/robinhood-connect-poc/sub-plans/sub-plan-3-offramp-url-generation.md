@@ -142,7 +142,7 @@ export function isValidAmount(amount: string): boolean {
  * Get redirect URL for the current environment
  */
 export function getRedirectUrl(): string {
-  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3030";
   return `${baseUrl}/callback`;
 }
 
@@ -524,7 +524,7 @@ rm lib/test-url-generation.ts
 npm run dev
 
 # Test URL generation API
-curl -X POST http://localhost:3000/api/robinhood/generate-offramp-url \
+curl -X POST http://localhost:3030/api/robinhood/generate-offramp-url \
   -H "Content-Type: application/json" \
   -d '{
     "supportedNetworks": ["ETHEREUM"],
@@ -542,7 +542,7 @@ https://applink.robinhood.com/u/connect?
   offRamp=true&
   applicationId=your-app-id&
   supportedNetworks=ETHEREUM&
-  redirectUrl=http://localhost:3000/callback&
+  redirectUrl=http://localhost:3030/callback&
   referenceId=f2056f4c-93c7-422b-bd59-fbfb5b05b6ad&
   assetCode=ETH&
   assetAmount=0.1

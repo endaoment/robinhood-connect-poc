@@ -337,9 +337,9 @@ git checkout <commit-hash> -- path/to/file
 ```bash
 # Verify POC still works
 npm run dev
-# Visit http://localhost:3000
+# Visit http://localhost:3030
 # Test health endpoint
-curl http://localhost:3000/api/robinhood/health
+curl http://localhost:3030/api/robinhood/health
 ```
 
 ## Success Metrics

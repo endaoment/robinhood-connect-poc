@@ -1,6 +1,6 @@
-import { ServiceLogger, createConsoleLogger } from './types'
 import { RobinhoodNetwork } from '../types'
-import { isValidWalletAddress, isValidAssetCode } from '../url-builder/validation'
+import { isValidAssetCode, isValidWalletAddress } from '../url-builder/validation'
+import { ServiceLogger, createConsoleLogger } from './types'
 
 /**
  * Parameters for generating onramp URL
@@ -256,9 +256,7 @@ export class UrlBuilderService {
       return params
     } catch (error) {
       this.logger.error('Failed to parse callback URL', error)
-      throw new Error(
-        `Invalid callback URL: ${error instanceof Error ? error.message : 'Unknown error'}`
-      )
+      throw new Error(`Invalid callback URL: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
@@ -300,14 +298,10 @@ export class UrlBuilderService {
    * @private
    */
   private getApplicationId(): string {
-    const appId =
-      process.env.NEXT_PUBLIC_ROBINHOOD_APPLICATION_ID ||
-      process.env.ROBINHOOD_APP_ID
+    const appId = process.env.NEXT_PUBLIC_ROBINHOOD_APPLICATION_ID || process.env.ROBINHOOD_APP_ID
 
     if (!appId) {
-      throw new Error(
-        'NEXT_PUBLIC_ROBINHOOD_APPLICATION_ID or ROBINHOOD_APP_ID environment variable not set'
-      )
+      throw new Error('NEXT_PUBLIC_ROBINHOOD_APPLICATION_ID or ROBINHOOD_APP_ID environment variable not set')
     }
 
     return appId
@@ -327,7 +321,6 @@ export class UrlBuilderService {
     }
 
     // Fallback for server-side rendering
-    return process.env.NEXT_PUBLIC_CALLBACK_URL || 'http://localhost:3000/callback'
+    return process.env.NEXT_PUBLIC_CALLBACK_URL || 'http://localhost:3030/callback'
   }
 }
-
