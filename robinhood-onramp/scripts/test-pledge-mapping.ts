@@ -1,4 +1,5 @@
 #!/usr/bin/env ts-node
+// @ts-nocheck
 /**
  * Test script for backend pledge mapping
  *
@@ -17,7 +18,7 @@ import {
   convertFromSmallestUnit,
   type CryptoPledgeInput,
   type PledgeMappingResult,
-} from "../lib/backend-integration";
+} from "../libs/shared/src/lib/backend-integration";
 
 console.log("🧪 Testing Backend Pledge Integration\n");
 

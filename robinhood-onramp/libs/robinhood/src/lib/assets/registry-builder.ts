@@ -94,14 +94,14 @@ export function buildDynamicRegistry(
           `[Asset Registry] ${symbol}: Network mismatch but using EVM fallback EOA - ` +
             `our address is ${ourNetwork}, Robinhood supports ${normalizedRobinhoodNetworks.join(', ')}`
         )
-        registry[symbol] = {
-          ...metadata,
-          depositAddress: {
-            address: EVM_FALLBACK_EOA,
-            walletType: PrimeWalletType.OTC,
-            note: 'OTC List - EVM fallback EOA (network mismatch)',
-          },
-        }
+      registry[symbol] = {
+        ...metadata!,
+        depositAddress: {
+          address: EVM_FALLBACK_EOA,
+          walletType: PrimeWalletType.OTC,
+          note: 'OTC List - EVM fallback EOA (network mismatch)',
+        },
+      }
         continue
       }
 
@@ -110,8 +110,9 @@ export function buildDynamicRegistry(
         `[Asset Registry] ${symbol}: Network mismatch (non-EVM) - ` +
           `our address is ${ourNetwork}, Robinhood supports ${normalizedRobinhoodNetworks.join(', ')}`
       )
+      const assetMeta = metadata as RobinhoodAssetConfig // We know it exists from the early check
       registry[symbol] = {
-        ...metadata,
+        ...assetMeta,
         depositAddress: { address: '', note: 'Network mismatch (non-EVM)' },
       }
       continue
@@ -125,8 +126,9 @@ export function buildDynamicRegistry(
         console.log(
           `[Asset Registry] ${symbol}: Using EVM fallback EOA (no CBP/OTC address found)`
         )
+        const assetMeta1 = metadata as RobinhoodAssetConfig
         registry[symbol] = {
-          ...metadata,
+          ...assetMeta1,
           depositAddress: {
             address: EVM_FALLBACK_EOA,
             walletType: PrimeWalletType.OTC,
@@ -140,8 +142,9 @@ export function buildDynamicRegistry(
       console.warn(
         `[Asset Registry] No Prime/OTC address for ${symbol} (non-EVM) - including without address`
       )
+      const assetMeta2 = metadata as RobinhoodAssetConfig
       registry[symbol] = {
-        ...metadata,
+        ...assetMeta2,
         depositAddress: { address: '', note: 'No CBP/OTC address' },
       }
       continue

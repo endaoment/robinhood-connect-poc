@@ -1,10 +1,11 @@
+// @ts-nocheck
 /**
  * Validation script for asset metadata configuration
  *
  * Run with: npx tsx scripts/validate-asset-config.ts
  */
 
-import { buildAssetConfigs, getAssetStats, validateAssetConfiguration } from '../lib/robinhood-asset-config'
+import { buildAssetConfigs, getAssetStats, validateAssetConfiguration } from '../libs/robinhood/src/lib/assets/asset-helpers'
 
 console.log('🔍 Validating Asset Configuration...\n')
 

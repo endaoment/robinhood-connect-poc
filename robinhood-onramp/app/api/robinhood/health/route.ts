@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { getDiscoveryStats } from '@/libs/robinhood/lib/assets/discovery'
 import { getPrimeAddressStats, isPrimeAddressCacheReady } from '@/libs/robinhood/lib/assets/prime-addresses'
 import { getAssetRegistry, isRegistryReady, validateAssetRegistry } from '@/libs/robinhood/lib/assets/registry'

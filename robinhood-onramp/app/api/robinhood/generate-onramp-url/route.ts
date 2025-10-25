@@ -9,13 +9,11 @@
  * See: types/robinhood.d.ts for full ID system documentation
  */
 
-import {
-  getAssetConfig,
-  buildDaffyStyleOnrampUrl,
-  isValidAssetCode,
-  type RobinhoodNetwork,
-} from "@/libs/robinhood/lib";
-import { ROBINHOOD_CONNECT_SUPPORTED_NETWORKS } from "@/libs/robinhood/lib";
+import 'reflect-metadata';
+import { getAssetConfig } from "@/libs/robinhood/lib/assets/registry";
+import { buildDaffyStyleOnrampUrl } from "@/libs/robinhood/lib/url-builder/daffy-style";
+import { isValidAssetCode } from "@/libs/robinhood/lib/url-builder/validation";
+import { ROBINHOOD_CONNECT_SUPPORTED_NETWORKS, type RobinhoodNetwork } from "@/libs/robinhood/lib/constants";
 import { NextResponse } from "next/server";
 
 // Helper function for network validation

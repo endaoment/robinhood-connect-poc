@@ -56,13 +56,31 @@ declare global {
 }
 
 /**
- * REMOVED: buildOtcRegistry() and buildStaticRegistry()
- *
- * The static registry has been removed. The app now ONLY uses the dynamic registry
- * built from Robinhood Discovery API + Coinbase Prime API on the server.
- *
- * Clients must fetch assets from /api/robinhood/assets endpoint.
+ * Build a minimal fallback registry from static asset metadata
+ * Used when dynamic registry initialization fails
  */
+function buildOtcRegistry(): Record<string, RobinhoodAssetConfig> {
+  const registry: Record<string, RobinhoodAssetConfig> = {}
+  
+  // Combine EVM and non-EVM assets
+  const allAssets = [...Object.values(EVM_ASSETS), ...Object.values(NON_EVM_ASSETS)]
+  
+  allAssets.forEach((asset, index) => {
+    registry[asset.symbol] = {
+      ...asset,
+      sortOrder: index,
+      enabled: false, // Mark as disabled since we don't have deposit addresses
+      depositAddress: {
+        address: '',
+        memo: null,
+        walletType: 'Other' as PrimeWalletType,
+        note: 'Dynamic registry initialization failed - no deposit address available',
+      },
+    }
+  })
+  
+  return registry
+}
 
 /**
  * Build dynamic registry from Robinhood Discovery + Prime addresses
@@ -138,7 +156,7 @@ function buildDynamicRegistry(discoveredAssets: DiscoveredAsset[]): Record<strin
             `our address is ${ourNetwork}, Robinhood supports ${normalizedRobinhoodNetworks.join(', ')}`,
         )
         registry[symbol] = {
-          ...metadata,
+          ...metadata!,
           depositAddress: {
             address: EVM_FALLBACK_EOA,
             walletType: PrimeWalletType.OTC,
@@ -153,10 +171,11 @@ function buildDynamicRegistry(discoveredAssets: DiscoveredAsset[]): Record<strin
         `[Asset Registry] ${symbol}: Network mismatch (non-EVM) - ` +
           `our address is ${ourNetwork}, Robinhood supports ${normalizedRobinhoodNetworks.join(', ')}`,
       )
-      registry[symbol] = {
-        ...metadata,
-        depositAddress: { address: '', note: 'Network mismatch (non-EVM)' },
-      }
+        const assetMeta = metadata as RobinhoodAssetConfig
+        registry[symbol] = {
+          ...assetMeta,
+          depositAddress: { address: '', note: 'Network mismatch (non-EVM)' },
+        }
       continue
     }
 
@@ -179,8 +198,9 @@ function buildDynamicRegistry(discoveredAssets: DiscoveredAsset[]): Record<strin
 
       // For non-EVM tokens, cannot use fallback (each needs specific address)
       console.warn(`[Asset Registry] No Prime/OTC address for ${symbol} (non-EVM) - including without address`)
+      const assetMeta2 = metadata as RobinhoodAssetConfig
       registry[symbol] = {
-        ...metadata,
+        ...assetMeta2,
         depositAddress: { address: '', note: 'No CBP/OTC address' },
       }
       continue

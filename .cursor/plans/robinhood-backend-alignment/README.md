@@ -20,9 +20,9 @@
 | [SP9](./sub-plans/sub-plan-9-comprehensive-test-suite.md)                | Comprehensive Test Suite    | ✅ Complete | High     | SP8          |
 | [SP9.5](./sub-plans/sub-plan-9.5-directory-restructuring-for-backend.md) | Directory Restructuring     | ✅ Complete | Critical | SP9          |
 | [SP9.6](./sub-plans/sub-plan-9.6-frontend-backend-separation.md)         | Frontend/Backend Separation | ✅ Complete | High     | SP9.5        |
-| [SP10](./sub-plans/sub-plan-10-updated-docs-readme.md)                   | Update Docs & README        | 🔵 Ready    | High     | SP9.6        |
-| [SP11](./sub-plans/sub-plan-11-api-route-refactoring.md)                 | API Route Refactoring       | 🔵 Ready    | Critical | SP9.6        |
-| [SP12](./sub-plans/sub-plan-12-backend-integration-demo.md)              | Backend Integration Demo    | ⚪ Pending  | Medium   | SP11         |
+| [SP10](./sub-plans/sub-plan-10-updated-docs-readme.md)                   | Update Docs & README        | ✅ Complete | High     | SP9.6        |
+| [SP11](./sub-plans/sub-plan-11-api-route-refactoring.md)                 | API Route Refactoring       | ✅ Complete | Critical | SP9.6        |
+| [SP12](./sub-plans/sub-plan-12-backend-integration-demo.md)              | Backend Integration Demo    | 🔵 Ready    | Medium   | SP11         |
 | [SP13](./sub-plans/sub-plan-13-migration-guide.md)                       | Migration Guide             | ⚪ Pending  | High     | SP12         |
 | [SP14](./sub-plans/sub-plan-14-architecture-documentation.md)            | Final Architecture Polish   | ⚪ Pending  | Medium   | SP13         |
 
@@ -373,14 +373,14 @@ Some sub-plans can be worked on simultaneously by different agents/people:
 **Repository**: robinhood-connect-poc
 **Location**: `.cursor/plans/robinhood-backend-alignment/`
 **Created**: 2025-10-24
-**Status**: Phase 3 Complete (SP0-SP9.6)
-**Current Phase**: Integration & Refinement (SP10-SP11)
+**Status**: Phase 4 In Progress (SP0-SP11 complete)
+**Current Phase**: Backend Integration Demo (SP12)
 **Last Updated**: 2025-10-25
 
-**Progress**: 11 of 17 sub-plans complete (65%)
+**Progress**: 13 of 17 sub-plans complete (76%)
 
 ---
 
-**Next Steps**: 
-- **Option A (Recommended)**: [Sub-Plan 11: API Route Refactoring](./sub-plans/sub-plan-11-api-route-refactoring.md) - Fix compilation issues first
-- **Option B (Parallel)**: [Sub-Plan 10: Update Docs & README](./sub-plans/sub-plan-10-updated-docs-readme.md) - Can work in parallel with SP11
+**Next Steps**:
+
+- **Recommended**: [Sub-Plan 12: Backend Integration Demo](./sub-plans/sub-plan-12-backend-integration-demo.md) - Add mock backend integration demos

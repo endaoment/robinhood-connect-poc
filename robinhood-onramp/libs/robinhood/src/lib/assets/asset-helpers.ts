@@ -86,7 +86,7 @@ export function getDepositAddress(symbol: string): string | undefined {
 export function getDepositMemo(symbol: string): string | undefined {
   const registry = getAssetRegistry()
   const asset = registry[symbol]
-  return asset?.depositAddress?.memo
+  return asset?.depositAddress?.memo ?? undefined
 }
 
 /**

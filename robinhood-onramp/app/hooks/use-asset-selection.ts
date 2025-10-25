@@ -1,10 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import {
-  getAssetConfig,
-  type RobinhoodAssetConfig,
-} from "@/libs/robinhood";
+import type { RobinhoodAssetConfig } from "@/libs/robinhood/lib/types";
 
 export interface AssetSelection {
   /** Selected asset metadata */
@@ -21,18 +18,18 @@ export function useAssetSelection() {
 
   /**
    * Select an asset
+   * The asset comes from the API and already has all needed info including depositAddress
    */
   const selectAsset = useCallback((asset: RobinhoodAssetConfig) => {
-    const config = getAssetConfig(asset.symbol);
-
-    if (!config) {
-      console.error(`No configuration found for asset: ${asset.symbol}`);
+    // The asset from the API already has depositAddress
+    if (!asset.depositAddress?.address) {
+      console.error(`Asset ${asset.symbol} has no deposit address`);
       return;
     }
 
     setSelection({
       asset,
-      walletAddress: config.depositAddress.address,
+      walletAddress: asset.depositAddress.address,
     });
   }, []);
 

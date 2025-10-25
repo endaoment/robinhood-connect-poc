@@ -1,23 +1,175 @@
 'use client'
 
-import { toast } from '@/app/hooks/use-toast'
-import type { RobinhoodAssetConfig } from '@/libs/robinhood'
+import type { RobinhoodAssetConfig } from '@/libs/robinhood/lib/types'
+import { Button } from '@/app/components/ui/button'
+import { Card } from '@/app/components/ui/card'
+import { ChevronDown, ChevronUp, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 
+interface RegistryStatus {
+  totalAssets: number
+  fromCBP: number
+  fromOTC: number
+  fromFallback: number
+  noMatch: number
+  enabled: number
+}
+
+type ViewState = 'compact' | 'open' | 'expanded'
+
 export function AssetRegistryToast() {
+  const [status, setStatus] = useState<RegistryStatus | null>(null)
+  const [viewState, setViewState] = useState<ViewState>('compact')
+  const [detailsData, setDetailsData] = useState<any>(null)
+  const [assets, setAssets] = useState<RobinhoodAssetConfig[]>([])
+  const [missingAssets, setMissingAssets] = useState<RobinhoodAssetConfig[]>([])
+
+  // Register this instance for external control
+  useRegistryControl(setViewState)
+
   useEffect(() => {
-    console.log('[Asset Registry Toast] Component mounted, will show toast in 1.5s')
-
-    // Fetch registry status from health API
-    const timer = setTimeout(() => {
-      console.log('[Asset Registry Toast] Timer triggered, fetching status...')
-      fetchAndShowRegistryStatus()
-    }, 1500) // Wait 1.5s for server to initialize
-
+    console.log('[Asset Registry Status] Component mounted, fetching status...')
+    
+    // Fetch registry status
+    const fetchStatus = async () => {
+      try {
+        const response = await fetch('/api/robinhood/health')
+        const data = await response.json()
+        
+        console.log('[Asset Registry Status] Health data:', data)
+        
+        if (data.registry?.initialized && data.registry.validation) {
+          const validation = data.registry.validation
+          const sourceBreakdown = data.sourceBreakdown || {}
+          
+          setStatus({
+            totalAssets: validation.totalAssets || 0,
+            fromCBP: sourceBreakdown.fromCBP || 0,
+            fromOTC: sourceBreakdown.fromOTC || 0,
+            fromFallback: sourceBreakdown.fromFallback || 0,
+            noMatch: sourceBreakdown.noMatch || 0,
+            enabled: validation.enabledAssets || 0,
+          })
+          setDetailsData(data)
+          console.log('[Asset Registry Status] Status set:', {
+            totalAssets: validation.totalAssets,
+            enabled: validation.enabledAssets,
+          })
+        } else {
+          console.log('[Asset Registry Status] Registry not initialized or invalid data')
+        }
+      } catch (error) {
+        console.error('[Asset Registry Status] Failed to fetch:', error)
+      }
+    }
+    
+    // Fetch after a short delay to let server initialize
+    const timer = setTimeout(fetchStatus, 1000)
     return () => clearTimeout(timer)
   }, [])
 
-  return null // No UI, just side effects
+  // Fetch assets when expanding to table view
+  useEffect(() => {
+    if (viewState === 'expanded' && assets.length === 0) {
+      fetch('/api/robinhood/assets')
+        .then(r => r.json())
+        .then(d => {
+          setAssets(d.assets || [])
+          setMissingAssets(d.missingAssets || [])
+        })
+        .catch(console.error)
+    }
+  }, [viewState, assets.length])
+
+  if (!status) return null
+
+  const handleToggle = () => {
+    if (viewState === 'compact') {
+      setViewState('open')
+    } else if (viewState === 'open') {
+      setViewState('expanded')
+    } else {
+      setViewState('compact')
+    }
+  }
+
+  return (
+    <>
+      {/* Compact: Floating Status Button */}
+      {viewState === 'compact' && (
+        <Button
+          onClick={handleToggle}
+          variant="outline"
+          size="sm"
+          className="fixed top-4 right-4 z-50 shadow-lg border-2 hover:scale-105 transition-transform bg-white"
+        >
+          <div className="flex items-center gap-1.5 text-xs font-mono">
+            <span className="font-semibold">Registry:</span>
+            {status.fromCBP > 0 && <span className="text-blue-600">🏦{status.fromCBP}</span>}
+            {status.fromOTC > 0 && <span className="text-purple-600">📋{status.fromOTC}</span>}
+            {status.fromFallback > 0 && <span className="text-cyan-600">🔄{status.fromFallback}</span>}
+            {status.noMatch > 0 && <span className="text-orange-600">⚠️{status.noMatch}</span>}
+          </div>
+        </Button>
+      )}
+
+      {/* Open: Summary Panel */}
+      {viewState === 'open' && (
+        <Card className="fixed top-4 right-4 z-50 shadow-2xl border-2 w-80 animate-in slide-in-from-top-2 fade-in duration-200 bg-white">
+          <div className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold text-sm">Asset Registry</h3>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleToggle}
+                  className="px-2 py-1 hover:bg-muted rounded text-xs text-emerald-600 font-medium"
+                  title="Expand to see all assets"
+                >
+                  Show All
+                </button>
+                <button
+                  onClick={() => setViewState('compact')}
+                  className="p-1 hover:bg-muted rounded"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+            <RegistrySummary data={detailsData} status={status} />
+          </div>
+        </Card>
+      )}
+
+      {/* Expanded: Full Table */}
+      {viewState === 'expanded' && (
+        <Card className="fixed top-4 right-4 z-50 shadow-2xl border-2 w-[500px] max-h-[85vh] overflow-hidden animate-in slide-in-from-top-2 fade-in duration-200 bg-white">
+          <div className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold text-sm">Asset Registry - All Assets</h3>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setViewState('open')}
+                  className="px-2 py-1 hover:bg-muted rounded text-xs text-emerald-600 font-medium"
+                  title="Collapse to summary"
+                >
+                  Summary
+                </button>
+                <button
+                  onClick={() => setViewState('compact')}
+                  className="p-1 hover:bg-muted rounded"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+            <div className="max-h-[calc(85vh-80px)] overflow-y-auto">
+              <AssetTable assets={assets} missingAssets={missingAssets} />
+            </div>
+          </div>
+        </Card>
+      )}
+    </>
+  )
 }
 
 function shortenAddress(address: string): string {
@@ -25,405 +177,177 @@ function shortenAddress(address: string): string {
   return `${address.slice(0, 6)}...${address.slice(-4)}`
 }
 
-function AssetRegistryDetails({
-  assets,
-  missingAssets,
-}: {
-  assets: RobinhoodAssetConfig[]
-  missingAssets?: RobinhoodAssetConfig[]
-}) {
-  const [expanded, setExpanded] = useState(false)
-
-  // Group by category
-  const byCategory = assets.reduce(
-    (acc, asset) => {
-      if (!acc[asset.category]) acc[asset.category] = []
-      acc[asset.category].push(asset)
-      return acc
-    },
-    {} as Record<string, RobinhoodAssetConfig[]>,
-  )
-
-  const sortedCategories = Object.entries(byCategory).sort((a, b) => b[1].length - a[1].length)
-
-  // Category emojis
-  const categoryEmojis: Record<string, string> = {
-    layer1: '🌐',
-    layer2: '⚡',
-    stablecoin: '💵',
-    defi: '🏦',
-    meme: '🐕',
-    other: '📦',
-  }
-
-  // Determine address source with emoji
-  const getAddressSource = (asset: RobinhoodAssetConfig): { text: string; emoji: string } => {
-    if (!asset.depositAddress?.address) {
-      return { text: 'No Match', emoji: '⚠️' }
-    }
-
-    // Check wallet type to determine source
-    const walletType = asset.depositAddress?.walletType
-    const note = asset.depositAddress?.note || ''
-
-    if (walletType === 'Trading' || walletType === 'Trading Balance') {
-      return { text: 'CBP', emoji: '🏦' } // Coinbase Prime
-    }
-
-    // Generic fallback EOA (for EVM tokens without specific addresses)
-    if (note.toLowerCase().includes('fallback')) {
-      return { text: 'Fallback EOA', emoji: '🔄' }
-    }
-
-    // OTC list (backend EOA addresses)
-    if (walletType === 'OTC' || note.includes('OTC')) {
-      return { text: 'OTC List', emoji: '📋' }
-    }
-
-    // Other CBP wallet types
-    return { text: 'CBP Other', emoji: '🏦' }
-  }
+function RegistrySummary({ data, status }: { data: any; status: RegistryStatus }) {
+  const { discovery, primeAddresses } = data || {}
+  const primeStats = primeAddresses?.stats
+  const totalPrimeWallets = primeStats?.totalWalletsFetched || 0
 
   return (
-    <div className="space-y-2">
-      {/* Summary */}
-      <div className="flex items-center justify-between">
-        <div className="font-semibold">💎 {assets.length} assets available</div>
-        <button onClick={() => setExpanded(!expanded)} className="text-xs underline hover:no-underline">
-          {expanded ? '▲ Hide Details' : '▼ Show All Assets'}
-        </button>
+    <div className="space-y-3 text-xs font-mono">
+      {/* API Fetch Results */}
+      <div className="space-y-1 pb-2 border-b bg-muted/20 p-2 rounded">
+        <div className="font-semibold mb-2">📡 API Fetch Results:</div>
+        <div className="flex justify-between items-center gap-4">
+          <span>🔍 Discovered:</span>
+          <span className="font-bold text-base tabular-nums">{status.totalAssets}</span>
+        </div>
+        {totalPrimeWallets > 0 && (
+          <div className="flex justify-between items-center gap-4">
+            <span>💼 Prime Wallets:</span>
+            <span className="font-bold text-base tabular-nums">{totalPrimeWallets}</span>
+          </div>
+        )}
       </div>
 
-      {/* Categories Summary */}
-      {!expanded && (
-        <div className="space-y-1">
-          {sortedCategories.map(([category, categoryAssets]) => (
-            <div key={category} className="text-xs">
-              <span className="font-medium">
-                {categoryEmojis[category] || '📦'} <span className="capitalize">{category}</span>
-              </span>
-              : {categoryAssets.length} (
-              {categoryAssets
-                .map((a) => a.symbol)
-                .slice(0, 5)
-                .join(', ')}
-              {categoryAssets.length > 5 ? '...' : ''})
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Address Source Breakdown */}
+      <div className="space-y-1 pb-2 border-b bg-muted/20 p-2 rounded">
+        <div className="font-semibold mb-2">📋 Address Sources:</div>
+        {status.fromCBP > 0 && (
+          <div className="flex justify-between items-center gap-4">
+            <span>🏦 CBP:</span>
+            <span className="font-bold text-base text-blue-600 tabular-nums">{status.fromCBP}</span>
+          </div>
+        )}
+        {status.fromOTC > 0 && (
+          <div className="flex justify-between items-center gap-4">
+            <span>📋 OTC List:</span>
+            <span className="font-bold text-base text-purple-600 tabular-nums">{status.fromOTC}</span>
+          </div>
+        )}
+        {status.fromFallback > 0 && (
+          <div className="flex justify-between items-center gap-4">
+            <span>🔄 Fallback:</span>
+            <span className="font-bold text-base text-cyan-600 tabular-nums">{status.fromFallback}</span>
+          </div>
+        )}
+        {status.noMatch > 0 && (
+          <div className="flex justify-between items-center gap-4">
+            <span>⚠️ No Match:</span>
+            <span className="font-bold text-base text-orange-600 tabular-nums">{status.noMatch}</span>
+          </div>
+        )}
+      </div>
 
-      {/* Expanded Table View */}
-      {expanded && (
-        <div className="max-h-[600px] overflow-y-auto border rounded">
-          <table className="w-full text-[10px]">
-            <thead className="sticky top-0 bg-secondary/95 backdrop-blur border-b">
-              <tr>
-                <th className="text-left p-1.5 font-semibold w-20">Asset</th>
-                <th className="text-left p-1.5 font-semibold w-24">Network</th>
-                <th className="text-left p-1.5 font-semibold">Address</th>
-                <th className="text-left p-1.5 font-semibold w-28">Source</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedCategories.map(([category, categoryAssets]) => (
-                <React.Fragment key={category}>
-                  <tr className="bg-muted/50">
-                    <td colSpan={4} className="p-1.5 font-semibold text-xs">
-                      {categoryEmojis[category] || '📦'} <span className="capitalize">{category}</span> (
-                      {categoryAssets.length})
-                    </td>
-                  </tr>
-                  {categoryAssets
-                    .sort((a, b) => a.sortOrder - b.sortOrder)
-                    .map((asset) => {
-                      const source = getAddressSource(asset)
-                      return (
-                        <tr key={asset.symbol} className="border-t hover:bg-muted/30">
-                          <td className="p-1.5">
-                            <div className="flex items-center gap-1.5">
-                              {asset.logoUrl && (
-                                <img
-                                  src={asset.logoUrl}
-                                  alt={asset.symbol}
-                                  className="w-4 h-4 rounded-full"
-                                  onError={(e) => {
-                                    e.currentTarget.style.display = 'none'
-                                  }}
-                                />
-                              )}
-                              <span className="font-medium">{asset.symbol}</span>
-                            </div>
-                          </td>
-                          <td className="p-1.5 text-muted-foreground text-[9px]">{asset.network}</td>
-                          <td className="p-1.5 font-mono">
-                            {asset.depositAddress?.address ? (
-                              <span className="text-muted-foreground">
-                                {shortenAddress(asset.depositAddress.address)}
-                                {asset.depositAddress?.memo && (
-                                  <span className="text-orange-500 ml-1" title={`Memo: ${asset.depositAddress.memo}`}>
-                                    📝
-                                  </span>
-                                )}
-                              </span>
-                            ) : (
-                              <span className="text-red-500">❌ Missing</span>
-                            )}
-                          </td>
-                          <td className="p-1.5">
-                            <span
-                              className={`text-[9px] px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 whitespace-nowrap ${
-                                source.text === 'CBP'
-                                  ? 'bg-blue-500/20 text-blue-700'
-                                  : source.text === 'CBP Other'
-                                    ? 'bg-blue-400/20 text-blue-600'
-                                    : source.text === 'OTC List'
-                                      ? 'bg-purple-500/20 text-purple-700'
-                                      : source.text === 'Fallback EOA'
-                                        ? 'bg-cyan-500/20 text-cyan-700'
-                                        : source.text === 'No Match'
-                                          ? 'bg-orange-500/20 text-orange-700'
-                                          : 'bg-gray-500/20 text-gray-700'
-                              }`}
-                            >
-                              {source.emoji} {source.text}
-                            </span>
-                          </td>
-                        </tr>
-                      )
-                    })}
-                </React.Fragment>
-              ))}
-
-              {/* Missing Addresses Section */}
-              {missingAssets && missingAssets.length > 0 && (
-                <React.Fragment>
-                  <tr className="bg-orange-50 border-t-2 border-orange-200">
-                    <td colSpan={4} className="p-2 font-semibold text-xs text-orange-900">
-                      ⚠️ Missing Addresses ({missingAssets.length})
-                    </td>
-                  </tr>
-                  {missingAssets
-                    .sort((a, b) => a.sortOrder - b.sortOrder)
-                    .map((asset) => (
-                      <tr key={asset.symbol} className="border-t hover:bg-orange-50/30 text-muted-foreground">
-                        <td className="p-1.5">
-                          <div className="flex items-center gap-1.5">
-                            {asset.logoUrl && (
-                              <img
-                                src={asset.logoUrl}
-                                alt={asset.symbol}
-                                className="w-4 h-4 rounded-full opacity-50"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none'
-                                }}
-                              />
-                            )}
-                            <span className="font-medium">{asset.symbol}</span>
-                          </div>
-                        </td>
-                        <td className="p-1.5 text-muted-foreground text-[9px]">{asset.network}</td>
-                        <td className="p-1.5 font-mono">
-                          <span className="text-orange-500 text-[9px]">❌ No address found</span>
-                        </td>
-                        <td className="p-1.5">
-                          <span className="text-[9px] px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 whitespace-nowrap bg-orange-500/20 text-orange-700">
-                            ⚠️ No Match
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                </React.Fragment>
-              )}
-            </tbody>
-          </table>
+      {/* Summary Stats */}
+      <div className="space-y-1 bg-muted/20 p-2 rounded">
+        <div className="font-semibold mb-2">📊 Status:</div>
+        <div className="flex justify-between items-center gap-4">
+          <span>✅ Ready:</span>
+          <span className="font-bold text-base text-green-600 tabular-nums">{status.enabled}</span>
         </div>
-      )}
+        {status.noMatch > 0 && (
+          <div className="flex justify-between items-center gap-4">
+            <span>⚠️ Missing:</span>
+            <span className="font-bold text-base text-orange-600 tabular-nums">{status.noMatch}</span>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
 
-// Export the toast display function so it can be called from anywhere
-export async function showAssetRegistryToast(healthData?: any) {
-  try {
-    // If data not provided, fetch it
-    const data = healthData || (await fetch('/api/robinhood/health').then((r) => r.json()))
-
-    if (!data.registry?.initialized) {
-      console.error('[Asset Registry Toast] Registry not initialized!')
-      toast({
-        title: '⚠️ Asset Registry',
-        description: 'Registry not initialized. Using static fallback.',
-        variant: 'destructive',
-      })
-      return
+function AssetTable({ assets, missingAssets }: { assets: RobinhoodAssetConfig[]; missingAssets: RobinhoodAssetConfig[] }) {
+  // Determine address source
+  const getAddressSource = (asset: RobinhoodAssetConfig): { text: string; color: string } => {
+    if (!asset.depositAddress?.address) {
+      return { text: '⚠️ No Match', color: 'bg-orange-500/20 text-orange-700' }
     }
 
-    const { validation } = data.registry
-    const { sourceBreakdown, discovery, primeAddresses } = data
+    const walletType = asset.depositAddress?.walletType
+    const note = asset.depositAddress?.note || ''
 
-    if (!validation || validation.totalAssets === 0) {
-      toast({
-        title: '⚠️ Asset Registry',
-        description: 'No assets loaded.',
-        variant: 'destructive',
-      })
-      return
+    if (walletType === 'Trading' || walletType === 'Trading Balance') {
+      return { text: '🏦 CBP', color: 'bg-blue-500/20 text-blue-700' }
     }
 
-    // Fetch enabled asset list for expandable view
-    const assetsResponse = await fetch('/api/robinhood/assets')
-    let enabledAssets: RobinhoodAssetConfig[] = []
-    let missingAssets: RobinhoodAssetConfig[] = []
-
-    if (assetsResponse.ok) {
-      const assetsData = await assetsResponse.json()
-      enabledAssets = assetsData.assets || [] // Assets with addresses
-      missingAssets = assetsData.missingAssets || [] // Assets without addresses
-
-      console.log('[Asset Registry Toast] Received:', {
-        enabled: enabledAssets.length,
-        missing: missingAssets.length,
-      })
+    if (note.toLowerCase().includes('fallback')) {
+      return { text: '🔄 Fallback', color: 'bg-cyan-500/20 text-cyan-700' }
     }
 
-    // Use server-calculated breakdown (matches server logs exactly)
-    const totalFromRH = discovery?.cryptoAssetsDiscovered || validation.totalAssets
-    const fromCBP = sourceBreakdown?.fromCBP || 0
-    const fromOTC = sourceBreakdown?.fromOTC || 0
-    const fromFallback = sourceBreakdown?.fromFallback || 0
-    const noMatch = sourceBreakdown?.noMatch || 0
-    const networkMismatch = sourceBreakdown?.networkMismatch || 0
+    if (walletType === 'OTC' || note.includes('OTC')) {
+      return { text: '📋 OTC', color: 'bg-purple-500/20 text-purple-700' }
+    }
 
-    // Get Prime stats if available
-    const primeStats = primeAddresses?.stats
-    const totalPrimeWallets = primeStats?.totalWalletsFetched || 0
-    const primeAddressesMatched = primeStats?.addressesMatched || 0
+    return { text: '🏦 Other', color: 'bg-blue-400/20 text-blue-600' }
+  }
 
-    console.log('[Asset Registry Toast] Discovery:', {
-      totalAssetPairs: discovery?.totalAssetPairs,
-      cryptoAssetsDiscovered: discovery?.cryptoAssetsDiscovered,
-    })
-    console.log('[Asset Registry Toast] Prime:', {
-      totalWalletsFetched: totalPrimeWallets,
-      addressesMatched: primeAddressesMatched,
-      walletTypes: primeStats?.walletTypeDistribution,
-    })
-    console.log('[Asset Registry Toast] Breakdown:', {
-      totalFromRH,
-      fromCBP,
-      fromOTC,
-      fromFallback,
-      noMatch,
-      networkMismatch,
-    })
+  return (
+    <div className="border rounded">
+      <table className="w-full text-[10px]">
+        <thead className="sticky top-0 bg-secondary/95 backdrop-blur border-b">
+          <tr>
+            <th className="text-left p-1.5 font-semibold w-20">Asset</th>
+            <th className="text-left p-1.5 font-semibold w-24">Network</th>
+            <th className="text-left p-1.5 font-semibold">Address</th>
+            <th className="text-left p-1.5 font-semibold w-24">Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          {assets.map((asset) => {
+            const source = getAddressSource(asset)
+            return (
+              <tr key={asset.symbol} className="border-t hover:bg-muted/30">
+                <td className="p-1.5 font-medium">{asset.symbol}</td>
+                <td className="p-1.5 text-muted-foreground text-[9px]">{asset.network}</td>
+                <td className="p-1.5 font-mono text-muted-foreground text-[9px]">
+                  {asset.depositAddress?.address ? shortenAddress(asset.depositAddress.address) : '—'}
+                </td>
+                <td className="p-1.5">
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded ${source.color}`}>
+                    {source.text}
+                  </span>
+                </td>
+              </tr>
+            )
+          })}
+          
+          {/* Missing assets */}
+          {missingAssets.length > 0 && (
+            <>
+              <tr className="bg-orange-50 border-t-2 border-orange-200">
+                <td colSpan={4} className="p-2 font-semibold text-xs text-orange-900">
+                  ⚠️ Missing Addresses ({missingAssets.length})
+                </td>
+              </tr>
+              {missingAssets.map((asset) => (
+                <tr key={asset.symbol} className="border-t hover:bg-orange-50/30 text-muted-foreground">
+                  <td className="p-1.5 font-medium">{asset.symbol}</td>
+                  <td className="p-1.5 text-[9px]">{asset.network}</td>
+                  <td className="p-1.5 text-orange-500 text-[9px]">❌ No address</td>
+                  <td className="p-1.5">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-700">
+                      ⚠️ No Match
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </>
+          )}
+        </tbody>
+      </table>
+    </div>
+  )
+}
 
-    console.log('[Asset Registry Toast] Showing toast now...')
-    toast({
-      title: '✅ Asset Registry Loaded',
-      description: (
-        <div className="space-y-3 font-mono text-xs">
-          {/* Receipt-style Source Breakdown - Matches Server Logs */}
-          <div className="space-y-1 pb-2 border-b bg-muted/20 p-2 rounded">
-            <div className="font-semibold mb-2">📡 API Fetch Results:</div>
-            <div className="space-y-1">
-              <div className="flex justify-between items-center gap-4">
-                <span className="whitespace-nowrap">🔍 Discovered (Robinhood API):</span>
-                <span className="font-bold text-base tabular-nums">{totalFromRH}</span>
-              </div>
-              {totalPrimeWallets > 0 && (
-                <div className="flex justify-between items-center gap-4">
-                  <span className="whitespace-nowrap">💼 Prime Wallets Fetched:</span>
-                  <span className="font-bold text-base tabular-nums">{totalPrimeWallets}</span>
-                </div>
-              )}
-            </div>
-          </div>
+// Global registry instance reference for external control
+let globalSetViewState: ((state: ViewState) => void) | null = null
 
-          {/* Address Source Breakdown */}
-          <div className="space-y-1 pb-2 border-b bg-muted/20 p-2 rounded">
-            <div className="font-semibold mb-2">📋 Address Sources:</div>
-            <div className="space-y-1">
-              {fromCBP > 0 && (
-                <div className="space-y-0.5">
-                  <div className="flex justify-between items-center gap-4">
-                    <span className="whitespace-nowrap">🏦 CBP (Coinbase Prime):</span>
-                    <span className="font-bold text-base text-blue-600 tabular-nums">{fromCBP}</span>
-                  </div>
-                  <div className="text-[9px] text-muted-foreground ml-5">
-                    Network-specific addresses (must match exactly)
-                  </div>
-                </div>
-              )}
-              {fromOTC > 0 && (
-                <div className="space-y-0.5">
-                  <div className="flex justify-between items-center gap-4">
-                    <span className="whitespace-nowrap">📋 OTC List (Backend):</span>
-                    <span className="font-bold text-base text-purple-600 tabular-nums">{fromOTC}</span>
-                  </div>
-                  <div className="text-[9px] text-muted-foreground ml-5">Backend EOA addresses</div>
-                </div>
-              )}
-              {fromFallback > 0 && (
-                <div className="space-y-0.5">
-                  <div className="flex justify-between items-center gap-4">
-                    <span className="whitespace-nowrap">🔄 Fallback EOA:</span>
-                    <span className="font-bold text-base text-cyan-600 tabular-nums">{fromFallback}</span>
-                  </div>
-                  <div className="text-[9px] text-muted-foreground ml-5">
-                    Generic EVM address (works for all EVM tokens)
-                  </div>
-                </div>
-              )}
-              {noMatch > 0 && (
-                <div className="flex justify-between items-center gap-4">
-                  <span className="whitespace-nowrap">⚠️ No Address Match:</span>
-                  <span className="font-bold text-base text-orange-600 tabular-nums">{noMatch}</span>
-                </div>
-              )}
-              {networkMismatch > 0 && (
-                <div className="flex justify-between items-center gap-4">
-                  <span className="whitespace-nowrap">⚠️ Network Mismatch:</span>
-                  <span className="font-bold text-base text-red-600 tabular-nums">{networkMismatch}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Summary Stats */}
-          <div className="space-y-1 pb-2 border-b bg-muted/20 p-2 rounded">
-            <div className="font-semibold mb-2">📊 Registry Status:</div>
-            <div className="space-y-1">
-              <div className="flex justify-between items-center gap-4">
-                <span className="whitespace-nowrap">✅ Ready to Use:</span>
-                <span className="font-bold text-base text-green-600 tabular-nums">
-                  {fromCBP + fromOTC + fromFallback}
-                </span>
-              </div>
-              <div className="flex justify-between items-center gap-4">
-                <span className="whitespace-nowrap">⚠️ Missing Address:</span>
-                <span className="font-bold text-base text-orange-600 tabular-nums">{noMatch}</span>
-              </div>
-              {validation.errors > 0 && (
-                <div className="flex justify-between items-center gap-4">
-                  <span className="whitespace-nowrap">❌ Errors:</span>
-                  <span className="font-bold text-base text-red-500 tabular-nums">{validation.errors}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Expandable Asset List */}
-          {enabledAssets.length > 0 && <AssetRegistryDetails assets={enabledAssets} missingAssets={missingAssets} />}
-        </div>
-      ),
-      duration: 15000, // 15 seconds (more time to explore)
-    })
-  } catch (error) {
-    console.error('[Asset Registry Toast] Failed to fetch status:', error)
+export function openAssetRegistry() {
+  if (globalSetViewState) {
+    globalSetViewState('expanded')
   }
 }
 
-async function fetchAndShowRegistryStatus() {
-  return showAssetRegistryToast()
+// Hook to register the state setter
+function useRegistryControl(setState: (state: ViewState) => void) {
+  useEffect(() => {
+    globalSetViewState = setState
+    return () => {
+      globalSetViewState = null
+    }
+  }, [setState])
 }
+
+// Add this to AssetRegistryToast component to enable external control
+// (Will be called in the component above)
+

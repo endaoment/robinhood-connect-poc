@@ -1,13 +1,13 @@
 'use client'
 
 import { AssetIcon } from '@/app/components/asset-icon'
-import { showAssetRegistryToast } from '@/app/components/asset-registry-toast'
+import { openAssetRegistry } from '@/app/components/asset-registry-toast'
 import { Button } from '@/app/components/ui/button'
 import { Card, CardContent } from '@/app/components/ui/card'
 import { Input } from '@/app/components/ui/input'
 import { useAssetSelection } from '@/app/hooks/use-asset-selection'
 import { useToast } from '@/app/hooks/use-toast'
-import { getAssetConfig, getEnabledAssets, searchAssets, type RobinhoodAssetConfig } from '@/libs/robinhood/lib'
+import type { RobinhoodAssetConfig } from '@/libs/robinhood/lib/types'
 import { ChevronDown, ExternalLink, Loader2, Search, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -25,14 +25,14 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
-  
+
   // Fetch assets from API (server has the correct filtered list)
   const [apiAssets, setApiAssets] = useState<RobinhoodAssetConfig[]>([])
-  
+
   useEffect(() => {
     fetch('/api/robinhood/assets')
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.assets) {
           setApiAssets(data.assets)
         }
@@ -42,18 +42,18 @@ export default function Dashboard() {
 
   // Filtered assets based on search
   const filteredAssets = useMemo(() => {
-    const assetsToSearch = apiAssets.length > 0 ? apiAssets : getEnabledAssets()
-    
+    // Only use API assets to avoid SSR issues with registry
+    // During SSR, apiAssets will be empty and we'll show no results until client-side fetch completes
+    const assetsToSearch = apiAssets
+
     if (!searchQuery.trim()) {
       return assetsToSearch
     }
-    
+
     // Search through the assets
     const lowerQuery = searchQuery.toLowerCase()
     return assetsToSearch.filter(
-      (asset) =>
-        asset.symbol.toLowerCase().includes(lowerQuery) ||
-        asset.name.toLowerCase().includes(lowerQuery)
+      (asset) => asset.symbol.toLowerCase().includes(lowerQuery) || asset.name.toLowerCase().includes(lowerQuery),
     )
   }, [searchQuery, apiAssets])
 
@@ -93,8 +93,9 @@ export default function Dashboard() {
               )
             : null
 
-        // Get asset metadata for icon and details
-        const assetInfo = orderDetails.asset ? getAssetConfig(orderDetails.asset) : null
+        // Note: We don't have access to asset metadata on client-side anymore
+        // The orderDetails just has the symbol, not the full config
+        // We'll just use the symbol and network from orderDetails directly
 
         // Show dismissible toast with rich order details
         toast({
@@ -105,17 +106,9 @@ export default function Dashboard() {
               {(orderDetails.asset || orderDetails.network) && (
                 <div className="border-l-4 border-emerald-500 bg-emerald-50 p-3 rounded">
                   <div className="flex items-center gap-3 mb-2">
-                    {assetInfo && (
-                      <AssetIcon
-                        symbol={assetInfo.symbol}
-                        icon={assetInfo.icon}
-                        logoUrl={assetInfo.logoUrl}
-                        size={32}
-                      />
-                    )}
                     <div className="flex-1">
                       <div className="text-sm font-semibold text-emerald-900">Transaction Summary</div>
-                      {assetInfo && <div className="text-xs text-emerald-700">{assetInfo.name}</div>}
+                      {orderDetails.asset && <div className="text-xs text-emerald-700">{orderDetails.asset}</div>}
                     </div>
                   </div>
                   <div className="space-y-1">
@@ -492,21 +485,10 @@ export default function Dashboard() {
                     </div>
                   )}
 
-                  {/* Results count - clickable to show registry toast */}
+                  {/* Results count - clickable to show registry */}
                   {filteredAssets.length > 0 && (
                     <button
-                      onClick={() => {
-                        // Trigger the asset registry toast
-                        fetch('/api/robinhood/health')
-                          .then((res) => res.json())
-                          .then((data) => {
-                            if (data.registry?.initialized) {
-                              // Show detailed registry status
-                              showAssetRegistryToast(data)
-                            }
-                          })
-                          .catch(console.error)
-                      }}
+                      onClick={openAssetRegistry}
                       className="w-full p-3 bg-zinc-50 border-t border-zinc-200 text-center text-sm text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-colors cursor-pointer"
                     >
                       {filteredAssets.length} asset{filteredAssets.length !== 1 ? 's' : ''} available →

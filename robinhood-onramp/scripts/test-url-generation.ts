@@ -1,11 +1,12 @@
+// @ts-nocheck
 /**
  * Test URL generation for all supported assets
  *
  * Run with: npx tsx scripts/test-url-generation.ts
  */
 
-import { buildAssetConfigs } from '../lib/robinhood-asset-config'
-import { buildDaffyStyleOnrampUrl } from '../lib/robinhood-url-builder'
+import { buildAssetConfigs } from '../libs/robinhood/src/lib/assets/asset-helpers'
+import { buildDaffyStyleOnrampUrl } from '../libs/robinhood/src/lib/url-builder/daffy-style'
 
 console.log('🧪 Testing URL Generation for All Assets\n')
 

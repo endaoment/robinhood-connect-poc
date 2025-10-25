@@ -1,3 +1,4 @@
+// @ts-nocheck - POC-only file, not used in Next.js
 /**
  * Robinhood Connect Controller
  *
