@@ -26,6 +26,23 @@ export type {
   ValidateUrlParams,
 } from './services'
 
+// DTOs and Validation
+export {
+  GenerateUrlDto,
+  CreatePledgeDto,
+  PledgeStatus,
+  CentralizedExchangeStatus,
+  AssetDto,
+  AssetNetworkDto,
+  AssetRegistryDto,
+  RobinhoodCallbackDto,
+  validateDto,
+  validateDtoOrThrow,
+  ValidationError,
+} from './dtos'
+
+export type { ValidationResult } from './dtos'
+
 // Asset Registry (legacy exports - will be deprecated)
 export {
   getAssetConfig,
