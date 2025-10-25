@@ -1,9 +1,11 @@
-# Sub-Plan 10: Backend Integration Demonstration
+# Sub-Plan 11: Backend Integration Demonstration
 
 **Status**: Pending
 **Priority**: Medium
-**Dependencies**: Sub-Plan 9.5 (Directory Restructuring)
-**Estimated Time**: 3-4 hours
+**Dependencies**: Sub-Plan 10 (Documentation & README Updates)
+**Estimated Time**: 2-3 hours
+
+> **Note**: This sub-plan uses the final `libs/` structure from SP9.5-9.6 and updated docs from SP10.
 
 ## Context Required
 
@@ -92,6 +94,6 @@ export default function CallbackPage() {
 
 ## Next Steps
 
-**Proceed to** [Sub-Plan 11: API Route Refactoring](./sub-plan-11-api-route-refactoring.md)
+**Proceed to** [Sub-Plan 12: API Route Refactoring](./sub-plan-12-api-route-refactoring.md)
 
 

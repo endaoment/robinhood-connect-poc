@@ -1,11 +1,11 @@
-# Sub-Plan 13: Architecture Documentation Update
+# Sub-Plan 14: Final Architecture Documentation Polish
 
 **Status**: Pending
 **Priority**: Medium
-**Dependencies**: Sub-Plan 12 (Migration Guide)
+**Dependencies**: Sub-Plan 13 (Migration Guide)
 **Estimated Time**: 2-3 hours
 
-> **Note**: This sub-plan assumes SP9.5 (Directory Restructuring) is complete, documenting the final `libs/` structure.
+> **Note**: This is the final polish after SP9.5-9.6 restructuring and SP10 documentation updates.
 
 ## Context Required
 

@@ -706,53 +706,56 @@ export * from "./types";
 **Create**: `libs/robinhood/src/lib/robinhood.controller.ts`
 
 ```typescript
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from "@nestjs/common";
 import {
   RobinhoodClientService,
   AssetRegistryService,
   UrlBuilderService,
   PledgeService,
-} from './services';
-import {
-  GenerateUrlDto,
-  RobinhoodCallbackDto,
-  CreatePledgeDto,
-} from './dtos';
+} from "./services";
+import { GenerateUrlDto, RobinhoodCallbackDto, CreatePledgeDto } from "./dtos";
 
 /**
  * Robinhood Connect Controller
- * 
+ *
  * Handles HTTP endpoints for Robinhood Connect integration.
  * This controller is backend-ready and will work in NestJS as-is.
- * 
+ *
  * In POC: Not used by Next.js (uses app/api/robinhood instead)
  * In Backend: Replaces Next.js routes, handles actual API requests
  */
-@Controller('robinhood')
+@Controller("robinhood")
 export class RobinhoodController {
   constructor(
     private readonly robinhoodClient: RobinhoodClientService,
     private readonly assetRegistry: AssetRegistryService,
     private readonly urlBuilder: UrlBuilderService,
-    private readonly pledgeService: PledgeService,
+    private readonly pledgeService: PledgeService
   ) {}
 
   /**
    * Health check endpoint
    * GET /robinhood/health
    */
-  @Get('health')
+  @Get("health")
   async getHealth() {
     const registry = this.assetRegistry;
     const assets = registry.getAllAssets();
-    
+
     return {
-      status: 'healthy',
+      status: "healthy",
       timestamp: new Date().toISOString(),
       registry: {
         totalAssets: assets.length,
-        evmAssets: assets.filter(a => a.chain === 'ETHEREUM' || a.chain === 'POLYGON' || a.chain === 'BASE').length,
-        nonEvmAssets: assets.filter(a => !['ETHEREUM', 'POLYGON', 'BASE'].includes(a.chain)).length,
+        evmAssets: assets.filter(
+          (a) =>
+            a.chain === "ETHEREUM" ||
+            a.chain === "POLYGON" ||
+            a.chain === "BASE"
+        ).length,
+        nonEvmAssets: assets.filter(
+          (a) => !["ETHEREUM", "POLYGON", "BASE"].includes(a.chain)
+        ).length,
       },
     };
   }
@@ -761,7 +764,7 @@ export class RobinhoodController {
    * List all available assets
    * GET /robinhood/assets
    */
-  @Get('assets')
+  @Get("assets")
   async getAssets() {
     const assets = this.assetRegistry.getAllAssets();
     return {
@@ -775,10 +778,10 @@ export class RobinhoodController {
    * Generate onramp URL
    * POST /robinhood/url/generate
    */
-  @Post('url/generate')
+  @Post("url/generate")
   async generateUrl(@Body() dto: GenerateUrlDto) {
     const url = this.urlBuilder.generateOnrampUrl(dto);
-    
+
     return {
       success: true,
       url,
@@ -788,18 +791,18 @@ export class RobinhoodController {
   /**
    * Handle callback from Robinhood
    * POST /robinhood/callback
-   * 
+   *
    * In production, this would:
    * 1. Validate callback data
    * 2. Create pledge in database
    * 3. Send notifications
    * 4. Return success
    */
-  @Post('callback')
+  @Post("callback")
   async handleCallback(@Body() dto: RobinhoodCallbackDto) {
     // Create pledge from callback
     const pledge = await this.pledgeService.createFromCallback(dto);
-    
+
     return {
       success: true,
       pledgeId: pledge.otcTransactionHash,
@@ -811,10 +814,10 @@ export class RobinhoodController {
    * Create pledge manually (for testing)
    * POST /robinhood/pledge/create
    */
-  @Post('pledge/create')
+  @Post("pledge/create")
   async createPledge(@Body() dto: CreatePledgeDto) {
     const pledge = await this.pledgeService.createPledge(dto);
-    
+
     return {
       success: true,
       pledge,
@@ -826,8 +829,8 @@ export class RobinhoodController {
 **Create**: `libs/robinhood/src/lib/robinhood.module.ts`
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { RobinhoodController } from './robinhood.controller';
+import { Module } from "@nestjs/common";
+import { RobinhoodController } from "./robinhood.controller";
 import {
   RobinhoodClientService,
   AssetRegistryService,
@@ -837,19 +840,19 @@ import {
   EvmAssetService,
   NonEvmAssetService,
   OtcLoaderService,
-} from './services';
+} from "./services";
 
 /**
  * Robinhood Connect Module
- * 
+ *
  * Provides complete Robinhood Connect integration with:
  * - Asset registry management
  * - URL generation for onramp flows
  * - Pledge creation and tracking
  * - Robinhood API client
- * 
+ *
  * This module is backend-ready and can be used as-is in NestJS.
- * 
+ *
  * In POC: Services are used by Next.js API routes
  * In Backend: Full NestJS module with controller
  */
@@ -861,7 +864,7 @@ import {
     AssetRegistryService,
     UrlBuilderService,
     PledgeService,
-    
+
     // Asset processing services
     AssetDiscoveryService,
     EvmAssetService,
@@ -886,25 +889,25 @@ Add controller and module exports:
 ```typescript
 /**
  * Robinhood Connect API Library
- * 
+ *
  * Main entry point for Robinhood integration services, DTOs, and types.
  */
 
 // NestJS Module and Controller (backend-ready)
-export * from './robinhood.module';
-export * from './robinhood.controller';
+export * from "./robinhood.module";
+export * from "./robinhood.controller";
 
 // Services
-export * from './services';
+export * from "./services";
 
 // DTOs
-export * from './dtos';
+export * from "./dtos";
 
 // Constants
-export * from './constants';
+export * from "./constants";
 
 // Types
-export * from './types';
+export * from "./types";
 ```
 
 **Add NestJS Dependencies**:
@@ -952,6 +955,7 @@ npx tsc --noEmit
 - ✅ Can write controller tests in POC
 
 **Note**: The Next.js routes in `app/api/robinhood/` still exist for POC demo. When migrated to backend:
+
 - Next.js routes are deleted (POC-only)
 - NestJS controller handles the actual API routes
 - Everything else (services, DTOs) works unchanged
@@ -1061,12 +1065,12 @@ To integrate this library into endaoment-backend:
 2. **Update the module** (if needed):
    - Add database entities: `TypeOrmModule.forFeature([CryptoDonationPledge])`
    - Import backend modules: `TokensModule`, `NotificationModule`, etc.
-   
+
 3. **Import in app module**:
    ```typescript
    // apps/api/src/app.module.ts
    import { RobinhoodModule } from '@/libs/robinhood';
-   
+
    @Module({
      imports: [
        // ... other modules
@@ -1096,8 +1100,7 @@ See [Migration Guide](../../docs/MIGRATION-GUIDE.md) for detailed instructions.
 This library provides services for interacting with Coinbase Prime API, specifically for wallet address management used by the Robinhood integration.
 
 ## Structure
-
-````
+```
 
 src/
 ├── lib/

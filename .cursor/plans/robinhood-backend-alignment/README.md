@@ -20,10 +20,11 @@
 | [SP9](./sub-plans/sub-plan-9-comprehensive-test-suite.md)                | Comprehensive Test Suite    | ✅ Complete | High     | SP8          | 8-10 hours |
 | [SP9.5](./sub-plans/sub-plan-9.5-directory-restructuring-for-backend.md) | Directory Restructuring     | 🔵 Ready    | Critical | SP9          | 3-4 hours  |
 | [SP9.6](./sub-plans/sub-plan-9.6-frontend-backend-separation.md)         | Frontend/Backend Separation | 🔵 Ready    | High     | SP9.5        | 2-3 hours  |
-| [SP10](./sub-plans/sub-plan-10-backend-integration-demo.md)              | Backend Integration Demo    | ⚪ Pending  | Medium   | SP9.6        | 3-4 hours  |
-| [SP11](./sub-plans/sub-plan-11-api-route-refactoring.md)                 | API Route Refactoring       | ⚪ Pending  | High     | SP10         | 2-3 hours  |
-| [SP12](./sub-plans/sub-plan-12-migration-guide.md)                       | Migration Guide             | ⚪ Pending  | High     | SP11         | 3-4 hours  |
-| [SP13](./sub-plans/sub-plan-13-architecture-documentation.md)            | Architecture Documentation  | ⚪ Pending  | Medium   | SP12         | 2-3 hours  |
+| [SP10](./sub-plans/sub-plan-10-updated-docs-readme.md)                   | Update Docs & README        | 🔵 Ready    | High     | SP9.6        | 3-4 hours  |
+| [SP11](./sub-plans/sub-plan-11-backend-integration-demo.md)              | Backend Integration Demo    | ⚪ Pending  | Medium   | SP10         | 2-3 hours  |
+| [SP12](./sub-plans/sub-plan-12-api-route-refactoring.md)                 | API Route Refactoring       | ⚪ Pending  | High     | SP11         | 2-3 hours  |
+| [SP13](./sub-plans/sub-plan-13-migration-guide.md)                       | Migration Guide             | ⚪ Pending  | High     | SP12         | 3-4 hours  |
+| [SP14](./sub-plans/sub-plan-14-architecture-documentation.md)            | Final Architecture Polish   | ⚪ Pending  | Medium   | SP13         | 2-3 hours  |
 
 **Legend**:
 
@@ -106,16 +107,19 @@ Some sub-plans can be worked on simultaneously by different agents/people:
         SP9.6 (Frontend/Backend Separation)
                          |
                          ↓
-           SP10 (Backend Integration Demo)
+             SP10 (Update Docs & README)
                          |
                          ↓
-              SP11 (API Route Refactoring)
+           SP11 (Backend Integration Demo)
                          |
                          ↓
-                SP12 (Migration Guide)
+              SP12 (API Route Refactoring)
                          |
                          ↓
-           SP13 (Architecture Documentation)
+                SP13 (Migration Guide)
+                         |
+                         ↓
+           SP14 (Architecture Documentation)
 ```
 
 ## Success Criteria Checklist
@@ -405,7 +409,7 @@ Some sub-plans can be worked on simultaneously by different agents/people:
 **Current Phase**: Structure Refinement (SP9.5-9.6)
 **Last Updated**: 2025-10-25
 
-**Progress**: 9 of 16 sub-plans complete (56%)
+**Progress**: 9 of 17 sub-plans complete (53%)
 
 ---
 

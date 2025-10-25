@@ -413,8 +413,8 @@ This repository follows a clean **Frontend/Backend separation** pattern, making 
 robinhood-onramp/
 ├── app/ # 🎨 FRONTEND: Next.js Application
 │ ├── api/robinhood/ # ⚠️ POC-ONLY: Next.js API routes (demos libs/)
-│ │   # NOTE: These are deleted when migrating to backend!
-│ │   # Backend uses NestJS controller in libs/ instead
+│ │ # NOTE: These are deleted when migrating to backend!
+│ │ # Backend uses NestJS controller in libs/ instead
 │ ├── (routes)/ # Page routes
 │ ├── components/ # React components
 │ ├── hooks/ # React hooks  
@@ -425,11 +425,11 @@ robinhood-onramp/
 ├── libs/ # 🔧 BACKEND: API Libraries (100% Backend-Ready!)
 │ ├── robinhood/ # Robinhood Connect integration
 │ │ ├── src/lib/
-│ │ │   ├── robinhood.controller.ts  # ✅ NestJS controller (backend-ready)
-│ │ │   ├── robinhood.module.ts      # ✅ NestJS module (backend-ready)
-│ │ │   ├── services/ # Business logic
-│ │ │   ├── dtos/ # Validation
-│ │ │   └── constants/ # Config
+│ │ │ ├── robinhood.controller.ts # ✅ NestJS controller (backend-ready)
+│ │ │ ├── robinhood.module.ts # ✅ NestJS module (backend-ready)
+│ │ │ ├── services/ # Business logic
+│ │ │ ├── dtos/ # Validation
+│ │ │ └── constants/ # Config
 │ │ └── tests/ # Tests co-located with code
 │ ├── coinbase/ # Coinbase Prime support
 │ └── shared/ # Shared utilities
@@ -503,6 +503,7 @@ cp -r robinhood-onramp/libs/robinhood \
 ```
 
 **What gets migrated**:
+
 - ✅ `libs/robinhood/` → Complete NestJS module with controller
 - ❌ `app/api/robinhood/` → Deleted (Next.js specific, not needed)
 
