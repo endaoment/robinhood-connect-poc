@@ -18,11 +18,11 @@
 | [SP7](./sub-plans/sub-plan-7-mock-pledge-service.md)                     | Mock Pledge Service         | ✅ Complete | Critical | SP6, SP3     |
 | [SP8](./sub-plans/sub-plan-8-test-infrastructure.md)                     | Test Infrastructure Setup   | ✅ Complete | High     | SP4-SP7      |
 | [SP9](./sub-plans/sub-plan-9-comprehensive-test-suite.md)                | Comprehensive Test Suite    | ✅ Complete | High     | SP8          |
-| [SP9.5](./sub-plans/sub-plan-9.5-directory-restructuring-for-backend.md) | Directory Restructuring     | 🔵 Ready    | Critical | SP9          |
-| [SP9.6](./sub-plans/sub-plan-9.6-frontend-backend-separation.md)         | Frontend/Backend Separation | 🔵 Ready    | High     | SP9.5        |
+| [SP9.5](./sub-plans/sub-plan-9.5-directory-restructuring-for-backend.md) | Directory Restructuring     | ✅ Complete | Critical | SP9          |
+| [SP9.6](./sub-plans/sub-plan-9.6-frontend-backend-separation.md)         | Frontend/Backend Separation | ✅ Complete | High     | SP9.5        |
 | [SP10](./sub-plans/sub-plan-10-updated-docs-readme.md)                   | Update Docs & README        | 🔵 Ready    | High     | SP9.6        |
-| [SP11](./sub-plans/sub-plan-11-backend-integration-demo.md)              | Backend Integration Demo    | ⚪ Pending  | Medium   | SP10         |
-| [SP12](./sub-plans/sub-plan-12-api-route-refactoring.md)                 | API Route Refactoring       | ⚪ Pending  | High     | SP11         |
+| [SP11](./sub-plans/sub-plan-11-api-route-refactoring.md)                 | API Route Refactoring       | 🔵 Ready    | Critical | SP9.6        |
+| [SP12](./sub-plans/sub-plan-12-backend-integration-demo.md)              | Backend Integration Demo    | ⚪ Pending  | Medium   | SP11         |
 | [SP13](./sub-plans/sub-plan-13-migration-guide.md)                       | Migration Guide             | ⚪ Pending  | High     | SP12         |
 | [SP14](./sub-plans/sub-plan-14-architecture-documentation.md)            | Final Architecture Polish   | ⚪ Pending  | Medium   | SP13         |
 
@@ -106,14 +106,12 @@ Some sub-plans can be worked on simultaneously by different agents/people:
                          ↓
         SP9.6 (Frontend/Backend Separation)
                          |
-                         ↓
-             SP10 (Update Docs & README)
-                         |
-                         ↓
-           SP11 (Backend Integration Demo)
-                         |
-                         ↓
-              SP12 (API Route Refactoring)
+                +--------+--------+
+                ↓                 ↓
+   SP10 (Update Docs)   SP11 (API Route Refactoring)
+                                  |
+                                  ↓
+                SP12 (Backend Integration Demo)
                          |
                          ↓
                 SP13 (Migration Guide)
@@ -375,12 +373,14 @@ Some sub-plans can be worked on simultaneously by different agents/people:
 **Repository**: robinhood-connect-poc
 **Location**: `.cursor/plans/robinhood-backend-alignment/`
 **Created**: 2025-10-24
-**Status**: Phase 3 Complete (SP0-SP9)
-**Current Phase**: Structure Refinement (SP9.5-9.6)
+**Status**: Phase 3 Complete (SP0-SP9.6)
+**Current Phase**: Integration & Refinement (SP10-SP11)
 **Last Updated**: 2025-10-25
 
-**Progress**: 9 of 17 sub-plans complete (53%)
+**Progress**: 11 of 17 sub-plans complete (65%)
 
 ---
 
-**Next Steps**: Proceed to [Sub-Plan 9.5: Directory Restructuring for Backend Alignment](./sub-plans/sub-plan-9.5-directory-restructuring-for-backend.md)
+**Next Steps**: 
+- **Option A (Recommended)**: [Sub-Plan 11: API Route Refactoring](./sub-plans/sub-plan-11-api-route-refactoring.md) - Fix compilation issues first
+- **Option B (Parallel)**: [Sub-Plan 10: Update Docs & README](./sub-plans/sub-plan-10-updated-docs-readme.md) - Can work in parallel with SP11

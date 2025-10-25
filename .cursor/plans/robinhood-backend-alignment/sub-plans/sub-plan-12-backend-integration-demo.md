@@ -1,10 +1,10 @@
-# Sub-Plan 11: Backend Integration Demonstration
+# Sub-Plan 12: Backend Integration Demonstration
 
 **Status**: Pending
 **Priority**: Medium
-**Dependencies**: Sub-Plan 10 (Documentation & README Updates)
+**Dependencies**: Sub-Plan 11 (API Route Refactoring)
 
-> **Note**: This sub-plan uses the final `libs/` structure from SP9.5-9.6 and updated docs from SP10.
+> **Note**: This sub-plan uses the final `libs/` structure from SP9.5-9.6 and requires a working, compiled application (ensured by SP11).
 
 ## Context Required
 
@@ -93,6 +93,4 @@ export default function CallbackPage() {
 
 ## Next Steps
 
-**Proceed to** [Sub-Plan 12: API Route Refactoring](./sub-plan-12-api-route-refactoring.md)
-
-
+**Proceed to** [Sub-Plan 13: Migration Guide](./sub-plan-13-migration-guide.md)

@@ -1,20 +1,69 @@
 # Robinhood Connect - Developer Guide
 
+## Project Structure
+
+This POC follows a clean **Frontend/Backend separation** pattern:
+
+```
+robinhood-onramp/
+├── app/              # 🎨 FRONTEND: Next.js (POC demonstration)
+│   ├── api/          # ⚠️ POC-only routes (deleted in migration)
+│   ├── components/   # React components
+│   ├── hooks/        # React hooks
+│   └── lib/          # Frontend utils
+│
+├── libs/             # 🔧 BACKEND: Complete NestJS modules
+│   ├── robinhood/    # ✅ Backend-ready (copy to endaoment-backend)
+│   ├── coinbase/     # ✅ Backend-ready
+│   └── shared/       # ✅ Backend-ready
+│
+└── docs/             # 📚 Documentation
+```
+
+### Import Patterns
+
+**Frontend imports** (in `app/` files):
+```typescript
+// Frontend components
+import { AssetCard } from '@/app/components/asset-card';
+import { useToast } from '@/app/hooks/use-toast';
+import { cn } from '@/app/lib/utils';
+
+// Backend services (for POC demo)
+import { urlBuilderService } from '@/libs/robinhood';
+```
+
+**Backend imports** (in `libs/` files):
+```typescript
+// Within same library
+import { RobinhoodClientService } from './services';
+import { GenerateUrlDto } from './dtos';
+
+// From other libraries
+import { PrimeApiService } from '@/libs/coinbase';
+
+// NestJS (in backend)
+import { RobinhoodModule } from '@/libs/robinhood';
+```
+
+---
+
 ## Architecture Overview
 
-This integration uses Robinhood's **Connect API** to enable cryptocurrency transfers from Robinhood accounts to external wallet addresses. The system uses an asset pre-selection flow with connectId tracking from the Robinhood API.
+This integration uses Robinhood's **Connect API** to enable cryptocurrency transfers from Robinhood accounts to external wallet addresses.
 
-**Important**: This integration handles **onramp only** (deposits to external wallets). Offramp (withdrawals from external wallets to Robinhood) is a separate API and is not supported by this codebase.
+**Important**: This integration handles **onramp only** (deposits to external wallets).
 
 ### Technology Stack
 
-- **Framework**: Next.js 14+ (App Router)
+- **Framework**: Next.js 14+ (App Router) for POC, NestJS ready for backend
 - **Language**: TypeScript (strict mode)
 - **Styling**: Tailwind CSS
 - **UI Components**: shadcn/ui
-- **State Management**: React hooks (useState, useEffect)
+- **State Management**: React hooks
+- **Validation**: class-validator (backend DTOs)
+- **Testing**: Jest + nock
 - **API Client**: Native fetch API
-- **UUID Generation**: uuid v4
 
 ## Key Components
 
@@ -131,6 +180,45 @@ Backend API endpoints for Robinhood integration.
 - User-friendly error constants
 - Error response formatting
 - Error logging utilities
+
+## Development Workflow
+
+### Working with Backend Libraries
+
+When adding new features to `libs/robinhood/`:
+
+1. **Add Service** in `libs/robinhood/src/lib/services/`
+2. **Add DTO** (if needed) in `libs/robinhood/src/lib/dtos/`
+3. **Export** from `libs/robinhood/src/lib/services/index.ts`
+4. **Update Module** to provide the service
+5. **Add Controller Endpoint** (if HTTP endpoint needed)
+6. **Write Tests** in `libs/robinhood/tests/services/`
+7. **Demo in POC** using Next.js routes in `app/api/`
+
+### Testing Backend Code
+
+```bash
+# Run all tests
+npm test
+
+# Run specific library tests
+npm test libs/robinhood
+
+# Run with coverage
+npm run test:coverage
+```
+
+### Type Checking
+
+```bash
+# Check all TypeScript
+npx tsc --noEmit
+
+# Check specific library
+npx tsc --noEmit -p libs/robinhood/tsconfig.json
+```
+
+---
 
 ## Environment Variables
 

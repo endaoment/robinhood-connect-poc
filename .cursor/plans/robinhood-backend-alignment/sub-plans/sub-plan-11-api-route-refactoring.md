@@ -1,10 +1,12 @@
-# Sub-Plan 12: API Route Refactoring
+# Sub-Plan 11: API Route Refactoring
 
-**Status**: Pending
-**Priority**: High
-**Dependencies**: Sub-Plan 11 (Backend Integration Demo)
+**Status**: Ready for Implementation
+**Priority**: Critical
+**Dependencies**: Sub-Plan 9.6 (Frontend/Backend Separation)
 
 > **Note**: This sub-plan uses the final `libs/` structure from SP9.5-9.6. These Next.js routes are POC-only and won't be migrated to backend (the NestJS controller in `libs/robinhood/` handles routes in production).
+>
+> **CRITICAL**: The app is currently not compiling due to TypeScript errors in the API routes. This sub-plan MUST be completed before SP12 (Backend Integration Demo) can function.
 
 ## Context Required
 
@@ -88,6 +90,6 @@ export async function POST(request: Request) {
 
 ## Next Steps
 
-**Proceed to** [Sub-Plan 13: Migration Guide](./sub-plan-13-migration-guide.md)
+**Proceed to** [Sub-Plan 12: Backend Integration Demo](./sub-plan-12-backend-integration-demo.md)
 
 

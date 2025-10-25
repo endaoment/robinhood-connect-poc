@@ -1,21 +1,128 @@
 # Robinhood Connect Architecture
 
-This document describes the current implementation of the Robinhood Connect onramp integration.
+> **🎯 This POC follows a clean Frontend/Backend separation pattern.**  
+> See [../STRUCTURE.md](../STRUCTURE.md) for complete directory organization.
 
-## Overview
+## Architecture Overview
 
-This integration allows users to transfer cryptocurrency from Robinhood to external wallets using the Robinhood Connect API.
+This integration uses a **dual-layer architecture**:
 
-**Key Points**:
+1. **Frontend Layer** (`app/`) - Next.js application for POC demonstration
+2. **Backend Layer** (`libs/`) - Complete NestJS modules ready for production
 
-- **Onramp Only**: This integration handles onramp (deposits to external wallets) only
-- **Asset Pre-Selection**: Users must select asset before initiating transfer
-- **Daffy-Style Flow**: Uses the proven Daffy-style URL generation approach
-- **No Offramp**: Offramp (withdrawals from external wallets) is a separate API and not supported
+### Why Two Layers?
+
+**In POC**:
+
+- `app/api/robinhood/` demonstrates the integration with Next.js routes
+- `libs/robinhood/` contains the complete backend-ready code
+- Frontend calls `libs/` services directly
+
+**In Production** (endaoment-backend):
+
+- `app/api/robinhood/` is deleted (Next.js specific)
+- `libs/robinhood/` is copied to `endaoment-backend/libs/api/robinhood/`
+- NestJS controller handles HTTP endpoints
+- Everything else (services, DTOs, tests) works unchanged
 
 ---
 
 ## Architecture Components
+
+### Backend Layer (`libs/robinhood/`)
+
+#### NestJS Module (`robinhood.module.ts`) ✅ BACKEND-READY
+
+```typescript
+@Module({
+  controllers: [RobinhoodController],
+  providers: [
+    RobinhoodClientService,
+    AssetRegistryService,
+    UrlBuilderService,
+    PledgeService,
+    // ... asset processing services
+  ],
+  exports: [RobinhoodClientService, AssetRegistryService],
+})
+export class RobinhoodModule {}
+```
+
+**Purpose**: Configures dependency injection and exports services for other modules.
+
+#### NestJS Controller (`robinhood.controller.ts`) ✅ BACKEND-READY
+
+```typescript
+@Controller('robinhood')
+export class RobinhoodController {
+  @Get('health')
+  async getHealth() { /* ... */ }
+
+  @Get('assets')
+  async getAssets() { /* ... */ }
+
+  @Post('url/generate')
+  async generateUrl(@Body() dto: GenerateUrlDto) { /* ... */ }
+
+  @Post('callback')
+  async handleCallback(@Body() dto: RobinhoodCallbackDto) { /* ... */ }
+}
+```
+
+**Purpose**: Handles HTTP endpoints in production backend.
+
+**Note**: In POC, these endpoints are handled by Next.js routes in `app/api/robinhood/` for demonstration. The controller exists but isn't used until migration.
+
+#### Services (`services/`)
+
+1. **RobinhoodClientService** - Robinhood API communication
+2. **AssetRegistryService** - Asset metadata and discovery
+3. **UrlBuilderService** - Connect URL generation
+4. **PledgeService** - Pledge creation and mapping
+5. **AssetDiscoveryService** - Asset discovery from Robinhood API
+6. **EvmAssetService** - EVM asset processing
+7. **NonEvmAssetService** - Non-EVM asset processing
+
+#### DTOs (`dtos/`)
+
+All DTOs use `class-validator` decorators for automatic validation:
+
+- **GenerateUrlDto** - URL generation parameters
+- **RobinhoodCallbackDto** - Callback data validation
+- **CreatePledgeDto** - Pledge creation data
+- **AssetDto** - Asset information structure
+
+#### Tests (`tests/`)
+
+- 183+ tests with 98%+ coverage
+- Service tests (`*.spec.ts`)
+- Integration tests with nock mocking
+- Test helpers and mocks
+
+### Frontend Layer (`app/`) - POC Only
+
+#### API Routes (`app/api/robinhood/`) ⚠️ POC-ONLY
+
+- **generate-onramp-url/route.ts** - Calls `urlBuilderService`
+- **health/route.ts** - Calls `assetRegistry`
+
+**These routes are deleted when migrating to backend.**  
+They exist only to demonstrate the integration in the POC.
+
+#### Pages (`app/**/page.tsx`)
+
+- **dashboard/page.tsx** - Asset selection UI
+- **callback/page.tsx** - Transfer confirmation
+
+#### Components (`app/components/`)
+
+- **asset-selector.tsx** - Asset picker with search
+- **asset-card.tsx** - Individual asset display
+- **ui/** - shadcn/ui components
+
+---
+
+## Original Components (For Reference)
 
 ### 1. Frontend Components
 
