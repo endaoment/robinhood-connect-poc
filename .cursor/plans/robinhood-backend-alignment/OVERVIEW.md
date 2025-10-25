@@ -628,6 +628,51 @@ async generateUrl({
 
 **Review Date**: After SP1 completion
 
+### Decision 6: Directory Structure Alignment
+
+**Date**: 2025-10-25
+**Context**: Need POC structure to exactly match endaoment-backend for easy migration
+
+**Options Considered**:
+
+1. Keep flat `lib/` structure - Simpler for POC
+2. Use `libs/` with partial alignment - Some backend patterns
+3. Full NestJS structure with `src/lib/` - Exact backend match
+4. Monorepo structure with nx - Overkill for POC
+
+**Decision**: Full NestJS structure with `libs/` (plural) and `src/lib/`
+
+**Rationale**:
+
+- Enables copy/paste migration to backend
+- Separates concerns (robinhood/coinbase/shared)
+- Co-locates tests with code (backend standard)
+- Makes library boundaries explicit
+- Ready for NestJS module wrappers
+
+**Consequences**:
+
+- **Positive**: Drop-in ready for backend, clear organization
+- **Negative**: More complex directory structure, import path changes
+- **Mitigations**: Comprehensive sub-plan (SP9.5), automated import updates
+
+**Structure**:
+
+```
+libs/
+├── robinhood/         # → endaoment-backend/libs/api/robinhood/
+│   ├── src/lib/       # Implementation
+│   └── tests/         # Tests
+├── coinbase/          # → merge into endaoment-backend/libs/api/coinbase/
+│   ├── src/lib/
+│   └── tests/
+└── shared/            # → POC-only (backend-mock), some utils migrate
+    ├── src/lib/
+    └── tests/
+```
+
+**Review Date**: After SP9.5 completion
+
 ## Notes for Implementers
 
 ### Critical Checkpoints
@@ -770,4 +815,5 @@ Please:
 4. Test fix
 5. Re-run validation
 ```
+
 

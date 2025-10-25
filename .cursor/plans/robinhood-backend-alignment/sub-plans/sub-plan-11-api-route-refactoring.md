@@ -5,6 +5,8 @@
 **Dependencies**: Sub-Plan 10 (Backend Integration Demo)
 **Estimated Time**: 2-3 hours
 
+> **Note**: This sub-plan assumes SP9.5 (Directory Restructuring) is complete, with `libs/` structure in place.
+
 ## Context Required
 
 **Files to Refactor**:
@@ -28,7 +30,7 @@
 
 ```typescript
 import { NextResponse } from "next/server";
-import { getAssetRegistry } from "@/lib/robinhood/services";
+import { getAssetRegistry } from "@/libs/robinhood";
 
 export async function GET() {
   try {
@@ -53,9 +55,11 @@ export async function GET() {
 
 ```typescript
 import { NextResponse } from "next/server";
-import { validateDtoOrThrow } from "@/lib/robinhood/dtos/validation-helper";
-import { GenerateUrlDto } from "@/lib/robinhood/dtos";
-import { urlBuilderService } from "@/lib/robinhood/services";
+import { 
+  validateDtoOrThrow,
+  GenerateUrlDto,
+  urlBuilderService
+} from "@/libs/robinhood";
 
 export async function POST(request: Request) {
   try {
@@ -86,4 +90,5 @@ export async function POST(request: Request) {
 ## Next Steps
 
 **Proceed to** [Sub-Plan 12: Migration Guide](./sub-plan-12-migration-guide.md)
+
 

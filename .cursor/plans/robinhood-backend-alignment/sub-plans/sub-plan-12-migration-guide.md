@@ -5,6 +5,8 @@
 **Dependencies**: Sub-Plan 11 (API Route Refactoring)
 **Estimated Time**: 3-4 hours
 
+> **Note**: This sub-plan assumes SP9.5 (Directory Restructuring) is complete, documenting migration from `libs/` structure.
+
 ## Context Required
 
 All completed implementation from SP1-SP11
@@ -30,11 +32,14 @@ Create comprehensive migration guide for backend implementer showing:
 
 ### 2. File Mapping
 
-| POC File                                             | Backend Destination                    | Notes                        |
-| ---------------------------------------------------- | -------------------------------------- | ---------------------------- |
-| `lib/robinhood/services/robinhood-client.service.ts` | `libs/api/robinhood/src/lib/services/` | Convert to NestJS Injectable |
-| `lib/robinhood/dtos/generate-url.dto.ts`             | `libs/api/robinhood/src/lib/dtos/`     | Already has class-validator  |
-| ...                                                  | ...                                    | ...                          |
+| POC File                                                      | Backend Destination                     | Notes                        |
+| ------------------------------------------------------------- | --------------------------------------- | ---------------------------- |
+| `libs/robinhood/src/lib/services/robinhood-client.service.ts` | `libs/api/robinhood/src/lib/services/`  | Convert to NestJS Injectable |
+| `libs/robinhood/src/lib/dtos/generate-url.dto.ts`             | `libs/api/robinhood/src/lib/dtos/`      | Already has class-validator  |
+| `libs/robinhood/src/lib/constants/*.ts`                       | `libs/api/robinhood/src/lib/constants/` | Copy directly                |
+| `libs/robinhood/tests/services/*.spec.ts`                     | `libs/api/robinhood/tests/`             | Update for NestJS testing    |
+| `libs/coinbase/src/lib/services/prime-api.service.ts`         | `libs/api/coinbase/src/lib/services/`   | Merge into existing Coinbase |
+| `libs/shared/src/lib/utils/*.ts`                              | `libs/shared/src/lib/utils/`            | Copy selectively             |
 
 ### 3. Module Setup
 
@@ -163,4 +168,3 @@ export class RobinhoodController {
 ## Next Steps
 
 **Proceed to** [Sub-Plan 13: Architecture Documentation](./sub-plan-13-architecture-documentation.md)
-

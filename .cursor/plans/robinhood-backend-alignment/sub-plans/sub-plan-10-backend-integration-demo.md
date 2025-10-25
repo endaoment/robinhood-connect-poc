@@ -2,7 +2,7 @@
 
 **Status**: Pending
 **Priority**: Medium
-**Dependencies**: Sub-Plan 7 (Mock Pledge), Sub-Plan 9 (Tests)
+**Dependencies**: Sub-Plan 9.5 (Directory Restructuring)
 **Estimated Time**: 3-4 hours
 
 ## Context Required
@@ -26,8 +26,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { pledgeService } from "@/lib/robinhood/services";
-import { RobinhoodCallbackDto } from "@/lib/robinhood/dtos";
+import { pledgeService } from "@/libs/robinhood";
+import { RobinhoodCallbackDto } from "@/libs/robinhood";
 
 export default function CallbackPage() {
   const searchParams = useSearchParams();
@@ -93,4 +93,5 @@ export default function CallbackPage() {
 ## Next Steps
 
 **Proceed to** [Sub-Plan 11: API Route Refactoring](./sub-plan-11-api-route-refactoring.md)
+
 

@@ -70,7 +70,7 @@ export class RobinhoodClientService {
   constructor(config: RobinhoodConfig, retryConfig: RetryConfig = DEFAULT_RETRY_CONFIG, logger?: ServiceLogger) {
     this.config = {
       ...config,
-      baseUrl: config.baseUrl || 'https://trading.robinhood.com',
+      baseUrl: config.baseUrl || 'https://api.robinhood.com',
     }
     this.retryConfig = retryConfig
     this.logger = logger || createConsoleLogger('RobinhoodClientService')

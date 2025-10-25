@@ -1,112 +1,103 @@
-import type { RobinhoodNetwork } from "../types";
+import type { RobinhoodNetwork } from '../types'
 
 /**
  * Validate wallet address format for given network
  */
-export function isValidWalletAddress(
-  address: string,
-  network: RobinhoodNetwork
-): boolean {
+export function isValidWalletAddress(address: string, network: RobinhoodNetwork): boolean {
   if (!address || address.length === 0) {
-    return false;
+    return false
   }
 
-  // Ethereum-based networks
+  // Ethereum-based networks (check uppercase for case-insensitive matching)
+  const networkUpper = network.toUpperCase()
   if (
-    network === "ETHEREUM" ||
-    network === "POLYGON" ||
-    network === "AVALANCHE" ||
-    network === "ARBITRUM" ||
-    network === "OPTIMISM" ||
-    network === "BASE" ||
-    network === "ZORA" ||
-    network === "ETHEREUM_CLASSIC"
+    networkUpper === 'ETHEREUM' ||
+    networkUpper === 'POLYGON' ||
+    networkUpper === 'AVALANCHE' ||
+    networkUpper === 'ARBITRUM' ||
+    networkUpper === 'OPTIMISM' ||
+    networkUpper === 'BASE' ||
+    networkUpper === 'ZORA' ||
+    networkUpper === 'ETHEREUM_CLASSIC'
   ) {
-    return /^0x[a-fA-F0-9]{40}$/.test(address);
+    return /^0x[a-fA-F0-9]{40}$/.test(address)
   }
 
   // Bitcoin
-  if (network === "BITCOIN") {
-    return address.length >= 26 && address.length <= 62;
+  if (network === 'BITCOIN') {
+    return address.length >= 26 && address.length <= 62
   }
 
   // Solana
-  if (network === "SOLANA") {
-    return address.length >= 32 && address.length <= 44;
+  if (network === 'SOLANA') {
+    return address.length >= 32 && address.length <= 44
   }
 
   // Litecoin
-  if (network === "LITECOIN") {
-    return address.length >= 26 && address.length <= 62;
+  if (network === 'LITECOIN') {
+    return address.length >= 26 && address.length <= 62
   }
 
   // Dogecoin
-  if (network === "DOGECOIN") {
-    return (
-      address.startsWith("D") && address.length >= 26 && address.length <= 34
-    );
+  if (network === 'DOGECOIN') {
+    return address.startsWith('D') && address.length >= 26 && address.length <= 34
   }
 
   // Bitcoin Cash
-  if (network === "BITCOIN_CASH") {
-    return address.length >= 26 && address.length <= 62;
+  if (network === 'BITCOIN_CASH') {
+    return address.length >= 26 && address.length <= 62
   }
 
   // Cardano
-  if (network === "CARDANO") {
-    return address.length >= 30 && address.length <= 110;
+  if (network === 'CARDANO') {
+    return address.length >= 30 && address.length <= 110
   }
 
   // XRP
-  if (network === "XRP") {
-    return (
-      address.startsWith("r") && address.length >= 25 && address.length <= 35
-    );
+  if (network === 'XRP') {
+    return address.startsWith('r') && address.length >= 25 && address.length <= 35
   }
 
   // Stellar
-  if (network === "STELLAR") {
-    return address.startsWith("G") && address.length === 56;
+  if (network === 'STELLAR') {
+    return address.startsWith('G') && address.length === 56
   }
 
   // Hedera
-  if (network === "HEDERA") {
-    return /^0\.0\.\d+$/.test(address);
+  if (network === 'HEDERA') {
+    return /^0\.0\.\d+$/.test(address)
   }
 
   // Tezos
-  if (network === "TEZOS") {
-    return (
-      address.startsWith("tz") && address.length >= 30 && address.length <= 40
-    );
+  if (network === 'TEZOS') {
+    return address.startsWith('tz') && address.length >= 30 && address.length <= 40
   }
 
   // Sui
-  if (network === "SUI") {
-    return /^0x[a-fA-F0-9]{64}$/.test(address);
+  if (network === 'SUI') {
+    return /^0x[a-fA-F0-9]{64}$/.test(address)
   }
 
   // Toncoin
-  if (network === "TONCOIN") {
-    return address.length >= 30 && address.length <= 60;
+  if (network === 'TONCOIN') {
+    return address.length >= 30 && address.length <= 60
   }
 
   // Default: assume valid
-  return true;
+  return true
 }
 
 /**
  * Validate asset code format
  */
 export function isValidAssetCode(assetCode: string): boolean {
-  // Asset codes are typically 2-10 uppercase letters
-  return /^[A-Z]{2,10}$/.test(assetCode);
+  // Asset codes are typically 2-10 letters (case-insensitive)
+  return /^[A-Za-z]{2,10}$/.test(assetCode)
 }
 
 /**
  * Validate amount format (positive number with optional decimals)
  */
 export function isValidAmount(amount: string): boolean {
-  return /^\d+(\.\d+)?$/.test(amount) && parseFloat(amount) > 0;
+  return /^\d+(\.\d+)?$/.test(amount) && parseFloat(amount) > 0
 }
-
