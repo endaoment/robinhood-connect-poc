@@ -181,7 +181,7 @@ import { isValidAddress } from "@/libs/shared";
 
 ## Creating New POCs from Template
 
-### Using blank-poc Template _(coming soon)_
+### Using blank-poc Template
 
 **Step 1: Clone Template**
 
@@ -417,7 +417,7 @@ This robinhood-connect-poc serves as the **gold standard** for template usage:
 
 **Template:**
 
-- [blank-poc](https://github.com/endaoment/blank-poc) - Base template _(coming soon)_
+- [blank-poc](https://github.com/endaoment/blank-poc) - Base template
 - This repository - Reference implementation
 
 **Documentation:**
@@ -461,7 +461,7 @@ A: With template: 1-2 days for basic POC, 1-2 weeks for production-ready.
    - Review documentation
    - See implementation patterns
 
-2. **Wait for blank-poc** _(coming soon)_
+2. **Use blank-poc**
 
    - Clean template repository
    - Ready to clone and customize

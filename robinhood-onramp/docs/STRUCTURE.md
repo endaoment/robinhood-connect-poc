@@ -172,7 +172,7 @@ This repository demonstrates the **POC template pattern** structure:
 
 ### Creating New POCs
 
-**Use the blank-poc template** *(coming soon)*:
+**Use the blank-poc template**:
 
 1. Clone [blank-poc](https://github.com/endaoment/blank-poc)
 2. Rename `onramp/` to `{provider}-onramp/`
