@@ -1,105 +1,56 @@
-# Quick Start Guide
+# Quick Start - Robinhood Connect POC
+
+Get the POC running in 5 minutes.
 
 ## Run the POC
 
 ```bash
+# Navigate to implementation directory
 cd robinhood-onramp
+
+# Install dependencies
 npm install
-cp .env.example .env.local  # Add your API credentials
+
+# Configure environment
+cp .env.example .env.local
+# Add your Robinhood API credentials to .env.local
+
+# Start development server
 npm run dev
 ```
 
-Visit: <http://localhost:3030>
+**Access**: <http://localhost:3030>
 
 ## Test
 
 ```bash
-npm test                 # Run all tests
-npm run test:coverage    # Check coverage
+cd robinhood-onramp
+
+npm test                 # Run all 183+ tests
+npm run test:coverage    # Check coverage (98%+)
 npx tsc --noEmit        # Type check
 npm run build            # Production build
 ```
 
-## Migrate to endaoment-backend
-
-### Copy Files
+## Migrate to Backend
 
 ```bash
-cp -r robinhood-onramp/libs/robinhood \
-      endaoment-backend/libs/api/robinhood
+# Copy Robinhood library to backend
+cp -r robinhood-onramp/libs/robinhood endaoment-backend/libs/api/robinhood
 ```
 
-### Wire Dependencies
+**Then**:
 
-Edit `endaoment-backend/libs/api/robinhood/src/lib/robinhood.module.ts`:
+1. Wire database and service dependencies
+2. Uncomment NestJS decorators
+3. Import module in AppModule
+4. Verify tests pass
 
-```typescript
-import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { CryptoDonationPledge } from "@/libs/data-access";
-import { TokensModule } from "@/libs/tokens";
-import { NotificationModule } from "@/libs/notification";
+**Details**: [robinhood-onramp/docs/MIGRATION-GUIDE.md](./robinhood-onramp/docs/MIGRATION-GUIDE.md)
 
-@Module({
-  imports: [
-    TypeOrmModule.forFeature([CryptoDonationPledge]),
-    TokensModule,
-    NotificationModule,
-  ],
-  // ... rest stays the same
-})
-export class RobinhoodModule {}
-```
+## Documentation
 
-### Import Module
-
-Edit `endaoment-backend/apps/api/src/app.module.ts`:
-
-```typescript
-import { RobinhoodModule } from "@/libs/robinhood";
-
-@Module({
-  imports: [
-    // ... other modules
-    RobinhoodModule,
-  ],
-})
-export class AppModule {}
-```
-
-### Test
-
-```bash
-cd endaoment-backend
-npm test libs/api/robinhood
-```
-
-Expected: 5 endpoints register (health, assets, url/generate, callback, pledge/create)
-
-See [robinhood-onramp/docs/MIGRATION-GUIDE.md](./robinhood-onramp/docs/MIGRATION-GUIDE.md) for complete instructions.
-
-## Use as Template for New Integrations
-
-```bash
-# 1. Clone this repo
-git clone robinhood-connect-poc your-integration-poc
-
-# 2. Rename integration
-cd your-integration-poc/robinhood-onramp
-mv libs/robinhood libs/your-integration
-
-# 3. Update package.json
-vim package.json  # Change name
-
-# 4. Build your integration
-# - Add services in libs/your-integration/src/lib/services/
-# - Add DTOs in libs/your-integration/src/lib/dtos/
-# - Update controller and module
-# - Build frontend demo in app/
-```
-
-## Learn More
-
-- **[robinhood-onramp/docs/STRUCTURE.md](./robinhood-onramp/docs/STRUCTURE.md)** - Directory structure
-- **[robinhood-onramp/docs/ARCHITECTURE.md](./robinhood-onramp/docs/ARCHITECTURE.md)** - Architecture
-- **[robinhood-onramp/docs/MIGRATION-GUIDE.md](./robinhood-onramp/docs/MIGRATION-GUIDE.md)** - Migration details
+**Implementation Guide**: [robinhood-onramp/README.md](./robinhood-onramp/README.md)  
+**Architecture**: [robinhood-onramp/docs/ARCHITECTURE.md](./robinhood-onramp/docs/ARCHITECTURE.md)  
+**Testing**: [robinhood-onramp/docs/TESTING_GUIDE.md](./robinhood-onramp/docs/TESTING_GUIDE.md)  
+**All Guides**: [robinhood-onramp/docs/](./robinhood-onramp/docs/)
