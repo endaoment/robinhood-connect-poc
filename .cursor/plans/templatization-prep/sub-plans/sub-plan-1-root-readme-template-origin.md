@@ -12,6 +12,7 @@
 ### Files to Review
 
 **Primary File:**
+
 - `/Users/rheeger/Code/endaoment/robinhood-connect-poc/README.md` (lines 1-84)
   - Current header: "Robinhood Connect POC" (line 1)
   - Status indicators (lines 3-4)
@@ -20,18 +21,21 @@
   - Documentation links (lines 74-78)
 
 **Reference Files:**
+
 - `.cursor/plans/templatization-prep/OVERVIEW.md` - Target architecture
 - `.cursor/plans/templatization-prep/sub-plans/sub-plan-0-drafting-plan.md` - Overall plan
 
 ### Understanding Required
 
 **Current State:**
+
 - README presents itself as a POC project
 - Some template language exists but minimal
 - Doesn't clearly indicate template origin
 - Mixed concerns (template + implementation)
 
 **Target State:**
+
 - Clearly shows "based on blank-poc template"
 - Professional template-originated appearance
 - Directs to `robinhood-onramp/` for implementation
@@ -58,6 +62,7 @@
 **Action**: Replace lines 1-6 with template-aware header
 
 **Current** (lines 1-6):
+
 ```markdown
 # Robinhood Connect POC
 
@@ -68,6 +73,7 @@
 ```
 
 **New**:
+
 ```markdown
 # Robinhood Connect POC
 
@@ -79,6 +85,7 @@
 ```
 
 **Validation**:
+
 - Template origin is first thing visible
 - Status reflects completed implementation
 - Pattern shows template → implementation flow
@@ -92,6 +99,7 @@
 **Action**: Replace lines 8-14 to show template usage
 
 **Current** (lines 8-14):
+
 ```markdown
 ## What This Is
 
@@ -102,6 +110,7 @@ A Robinhood Connect integration with separated concerns:
 ```
 
 **New**:
+
 ```markdown
 ## What This Is
 
@@ -115,6 +124,7 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 ```
 
 **Validation**:
+
 - Clearly indicates template usage
 - Shows example purpose
 - Links to template documentation
@@ -128,7 +138,8 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 **Action**: Replace lines 15-43 with template-aware structure
 
 **Current** (lines 15-43):
-```markdown
+
+````markdown
 ## Directory Structure
 
 ```text
@@ -158,7 +169,9 @@ robinhood-onramp/
 ├── scripts/                # 🛠️  Development Scripts
 └── public/                 # 📦 Static Assets
 ```
-```
+````
+
+````
 
 **New**:
 ```markdown
@@ -193,10 +206,11 @@ robinhood-connect-poc/           # 📦 Template-originated repository
     │   └── [7 more guides]
     │
     └── [configs]                 # jest, next, tailwind, etc.
-```
+````
 
 **Pattern**: Template files at root → Implementation in `robinhood-onramp/`
-```
+
+````
 
 **Validation**:
 - Shows template pattern clearly
@@ -219,23 +233,27 @@ robinhood-connect-poc/           # 📦 Template-originated repository
 - **[robinhood-onramp/docs/STRUCTURE.md](./robinhood-onramp/docs/STRUCTURE.md)** - Directory organization
 - **[robinhood-onramp/docs/MIGRATION-GUIDE.md](./robinhood-onramp/docs/MIGRATION-GUIDE.md)** - Backend integration
 - **[robinhood-onramp/docs/](./robinhood-onramp/docs/)** - Full documentation
-```
+````
 
 **New**:
+
 ```markdown
 ## Quick Links
 
 ### Using This Implementation
+
 - **[QUICK-START.md](./QUICK-START.md)** - Run the Robinhood POC
 - **[robinhood-onramp/README.md](./robinhood-onramp/README.md)** - Implementation guide
 - **[robinhood-onramp/docs/](./robinhood-onramp/docs/)** - Comprehensive documentation
 
 ### Template Pattern
+
 - **[TEMPLATE-USAGE.md](./TEMPLATE-USAGE.md)** - POC template pattern guide
-- **[blank-poc](https://github.com/endaoment/blank-poc)** - Base template repository *(coming soon)*
+- **[blank-poc](https://github.com/endaoment/blank-poc)** - Base template repository _(coming soon)_
 ```
 
 **Validation**:
+
 - Separates implementation vs template links
 - Clear navigation
 - Notes blank-poc coming soon
@@ -244,11 +262,12 @@ robinhood-connect-poc/           # 📦 Template-originated repository
 
 ### Step 5: Update "Using as a Template" Section
 
-**File**: `/Users/rheeger/Code/endaoment/robinhood-connect-poc/README.md**
+**File**: `/Users/rheeger/Code/endaoment/robinhood-connect-poc/README.md\*\*
 
 **Action**: Replace lines 52-58 with improved template guidance
 
 **Current** (lines 52-58):
+
 ```markdown
 ## Using as a Template
 
@@ -260,18 +279,21 @@ See [QUICK-START.md](./QUICK-START.md#use-as-template-for-new-integrations) for 
 ```
 
 **New**:
+
 ```markdown
 ## Template Pattern
 
 This repository demonstrates how to use the **blank-poc template** for rapid POC development:
 
 **Pattern Structure:**
+
 - **Root Level**: Template-aware documentation, project overview
 - **Implementation Directory** (`robinhood-onramp/`): Provider-specific implementation
 - **Backend-Ready**: `libs/` designed for direct endaoment-backend migration
 
 **For New POCs:**
-1. Start with [blank-poc](https://github.com/endaoment/blank-poc) template *(coming soon)*
+
+1. Start with [blank-poc](https://github.com/endaoment/blank-poc) template _(coming soon)_
 2. Study this repository as implementation example
 3. Follow [TEMPLATE-USAGE.md](./TEMPLATE-USAGE.md) guide
 
@@ -279,6 +301,7 @@ This repository demonstrates how to use the **blank-poc template** for rapid POC
 ```
 
 **Validation**:
+
 - Clear template pattern explanation
 - Shows this as example, not starting point
 - Directs to blank-poc for new POCs
@@ -292,6 +315,7 @@ This repository demonstrates how to use the **blank-poc template** for rapid POC
 **Action**: Keep section but add template context (lines 60-64)
 
 **Current** (lines 60-64):
+
 ```markdown
 ## Backend Migration
 
@@ -301,20 +325,24 @@ See [robinhood-onramp/docs/MIGRATION-GUIDE.md](./robinhood-onramp/docs/MIGRATION
 ```
 
 **New**:
-```markdown
+
+````markdown
 ## Backend Migration
 
 This POC follows the **template pattern** with backend-ready NestJS modules:
 
 **Quick Migration:**
+
 ```bash
 cp -r robinhood-onramp/libs/robinhood endaoment-backend/libs/api/robinhood
 ```
+````
 
 **Complete Guide**: [robinhood-onramp/docs/MIGRATION-GUIDE.md](./robinhood-onramp/docs/MIGRATION-GUIDE.md)
 
 All POCs following the template pattern support the same migration process.
-```
+
+````
 
 **Validation**:
 - Maintains migration information
@@ -338,18 +366,21 @@ All POCs following the template pattern support the same migration process.
 - DTOs with validation
 - Test suite (183+ tests)
 - Support for 19 blockchain networks
-```
+````
 
 **New**:
+
 ```markdown
 ## What's Included
 
 **Template Pattern Implementation:**
+
 - ✅ Root-level template documentation
 - ✅ Implementation-specific `robinhood-onramp/` directory
 - ✅ Backend-ready NestJS architecture
 
 **Robinhood Integration:**
+
 - 🔧 NestJS module with 5 HTTP endpoints
 - 🏗️ 4 service layers + comprehensive DTOs
 - ✅ 183+ tests with 98%+ coverage
@@ -358,6 +389,7 @@ All POCs following the template pattern support the same migration process.
 ```
 
 **Validation**:
+
 - Shows template pattern
 - Lists implementation specifics
 - Clear value proposition
@@ -371,6 +403,7 @@ All POCs following the template pattern support the same migration process.
 **Action**: Replace lines 74-78 with template-aware links
 
 **Current** (lines 74-78):
+
 ```markdown
 ## Documentation
 
@@ -380,25 +413,30 @@ All POCs following the template pattern support the same migration process.
 ```
 
 **New**:
+
 ```markdown
 ## Documentation
 
 ### Template Pattern
+
 - **[TEMPLATE-USAGE.md](./TEMPLATE-USAGE.md)** - POC template pattern guide
-- **[blank-poc](https://github.com/endaoment/blank-poc)** - Base template *(coming soon)*
+- **[blank-poc](https://github.com/endaoment/blank-poc)** - Base template _(coming soon)_
 
 ### Robinhood Implementation
+
 - **[QUICK-START.md](./QUICK-START.md)** - Run this POC
 - **[robinhood-onramp/README.md](./robinhood-onramp/README.md)** - Implementation guide
 - **[robinhood-onramp/docs/](./robinhood-onramp/docs/)** - 10 comprehensive guides
   - Architecture, Testing, Migration, Development, and more
 
 ### Planning Artifacts
-- **[robinhood-onramp/docs/PLANNING-METHODOLOGY.md](./robinhood-onramp/docs/PLANNING-METHODOLOGY.md)** - Planning process *(created in SP4)*
+
+- **[robinhood-onramp/docs/PLANNING-METHODOLOGY.md](./robinhood-onramp/docs/PLANNING-METHODOLOGY.md)** - Planning process _(created in SP4)_
 - **[.cursor/plans/](./cursor/plans/)** - Detailed planning logs
 ```
 
 **Validation**:
+
 - Clear documentation hierarchy
 - Separates template from implementation
 - Note about PLANNING-METHODOLOGY.md coming in SP4
@@ -412,6 +450,7 @@ All POCs following the template pattern support the same migration process.
 **Action**: Update lines 80-84 to reflect template status
 
 **Current** (lines 80-84):
+
 ```markdown
 ---
 
@@ -420,6 +459,7 @@ All POCs following the template pattern support the same migration process.
 ```
 
 **New**:
+
 ```markdown
 ---
 
@@ -437,6 +477,7 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 ```
 
 **Validation**:
+
 - Clear repository purpose
 - Template pattern emphasized
 - Updated date and status
@@ -462,6 +503,7 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 ## Validation Steps
 
 ### Step 1: Render Markdown
+
 ```bash
 # Open in markdown preview
 # Verify formatting looks professional
@@ -473,12 +515,14 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 ---
 
 ### Step 2: Verify Links
+
 ```bash
 # Click through all links in updated README
 # Verify relative paths work
 ```
 
 **Links to Verify:**
+
 - `./QUICK-START.md` (exists)
 - `./TEMPLATE-USAGE.md` (will be created in SP3)
 - `./robinhood-onramp/README.md` (exists)
@@ -486,7 +530,8 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 - `./robinhood-onramp/docs/PLANNING-METHODOLOGY.md` (will be created in SP4)
 - `./.cursor/plans/` (exists)
 
-**Expected**: 
+**Expected**:
+
 - ✅ Existing links work
 - ⚠️ Future links noted as "coming soon" or "(created in SPX)"
 
@@ -497,6 +542,7 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 **Test**: Read README as if you're new to the repository
 
 **Questions**:
+
 1. Is it obvious this came from a template? ✅
 2. Can you find template documentation? ✅
 3. Is implementation directory clear? ✅
@@ -509,6 +555,7 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 ### Step 4: Consistency Check
 
 **Verify**:
+
 - [ ] "blank-poc" consistently referenced
 - [ ] "robinhood-onramp/" directory name consistent
 - [ ] Template pattern language consistent
@@ -529,6 +576,7 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 **Symptom**: Every sentence mentions "template"
 
 **Solution**:
+
 - Use template language strategically
 - Focus on key sections (header, What This Is, Template Pattern)
 - Keep other sections natural
@@ -541,6 +589,7 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 **Symptom**: Link doesn't work yet
 
 **Solution**:
+
 - This is expected - file created in SP3
 - Note in commit message
 - Verify link path is correct
@@ -553,6 +602,7 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 **Symptom**: Too much template talk, lost Robinhood focus
 
 **Solution**:
+
 - Balance template awareness with implementation value
 - "What's Included" should still show Robinhood specifics
 - Implementation links should be prominent
@@ -563,16 +613,19 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 ## Integration Points
 
 ### With Sub-Plan 2 (QUICK-START)
+
 - Root README directs to QUICK-START
 - Consistent template language
 - Clear separation of concerns
 
 ### With Sub-Plan 3 (TEMPLATE-USAGE.md)
+
 - Root README links to it multiple times
 - Sets expectation for template documentation
 - Complementary content
 
 ### With Sub-Plan 4 (PLANNING-METHODOLOGY)
+
 - Link prepared in documentation section
 - Will work after SP4 completes
 
@@ -583,12 +636,14 @@ This repository demonstrates the **POC template pattern** through a complete Rob
 After completing this sub-plan:
 
 1. **Commit Changes**:
+
    ```bash
    git add README.md
    git commit -m "templatization: SP1 - root README template origin style"
    ```
 
 2. **Create Implementation Log**:
+
    - File: `implementation-logs/YYYYMMDD-HHMM-SP1-COMPLETE.md`
    - Document changes made
    - Note any deviations
@@ -617,4 +672,3 @@ After completing this sub-plan:
 **Estimated Time**: 30-45 minutes  
 **Complexity**: Low  
 **Risk Level**: 🟢 Low - Documentation only
-

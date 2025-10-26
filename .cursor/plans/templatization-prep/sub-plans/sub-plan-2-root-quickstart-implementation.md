@@ -12,6 +12,7 @@
 ### Files to Review
 
 **Primary File:**
+
 - `/Users/rheeger/Code/endaoment/robinhood-connect-poc/QUICK-START.md` (lines 1-106)
   - Run the POC section (lines 3-12)
   - Test section (lines 14-20)
@@ -20,17 +21,20 @@
   - Learn more section (lines 101-106)
 
 **Reference Files:**
+
 - `/Users/rheeger/Code/endaoment/robinhood-connect-poc/README.md` - Updated in SP1 with template pattern
 - `.cursor/plans/templatization-prep/sub-plans/sub-plan-1-root-readme-template-origin.md` - Template language patterns
 
 ### Understanding Required
 
 **Current State:**
+
 - Mixed concerns: POC running + template usage + migration
 - Template section at end (lines 81-99)
 - Doesn't clearly show this is implementation-specific
 
 **Target State:**
+
 - Focus on running THIS Robinhood POC
 - Brief template acknowledgment
 - Direct to implementation-specific docs
@@ -57,11 +61,13 @@
 **Action**: Replace lines 1-2 with template-aware header
 
 **Current** (lines 1-2):
+
 ```markdown
 # Quick Start Guide
 ```
 
 **New**:
+
 ```markdown
 # Quick Start Guide - Robinhood Connect POC
 
@@ -69,6 +75,7 @@
 ```
 
 **Validation**:
+
 - Clear title specifying Robinhood
 - Template acknowledgment upfront
 - Link to template docs
@@ -82,7 +89,8 @@
 **Action**: Enhance lines 3-12 with clearer context
 
 **Current** (lines 3-12):
-```markdown
+
+````markdown
 ## Run the POC
 
 ```bash
@@ -91,9 +99,11 @@ npm install
 cp .env.example .env.local  # Add your API credentials
 npm run dev
 ```
+````
 
 Visit: <http://localhost:3030>
-```
+
+````
 
 **New**:
 ```markdown
@@ -114,12 +124,13 @@ cp .env.example .env.local
 
 # Start development server
 npm run dev
-```
+````
 
 **Access**: <http://localhost:3030>
 
 **Next**: See [robinhood-onramp/README.md](./robinhood-onramp/README.md) for detailed implementation guide
-```
+
+````
 
 **Validation**:
 - Clear implementation directory note
@@ -143,8 +154,9 @@ npm test                 # Run all tests
 npm run test:coverage    # Check coverage
 npx tsc --noEmit        # Type check
 npm run build            # Production build
-```
-```
+````
+
+````
 
 **New**:
 ```markdown
@@ -157,10 +169,11 @@ npm test                 # Run all 183+ tests
 npm run test:coverage    # Check coverage (98%+)
 npx tsc --noEmit        # Type check
 npm run build            # Production build
-```
+````
 
 **See**: [robinhood-onramp/docs/TESTING_GUIDE.md](./robinhood-onramp/docs/TESTING_GUIDE.md) for comprehensive testing documentation
-```
+
+````
 
 **Validation**:
 - Directory reminder
@@ -189,7 +202,7 @@ This POC follows the **template pattern** with backend-ready NestJS modules.
 # Copy the Robinhood library to backend
 cp -r robinhood-onramp/libs/robinhood \
       endaoment-backend/libs/api/robinhood
-```
+````
 
 ### Integration Steps
 
@@ -203,12 +216,14 @@ cp -r robinhood-onramp/libs/robinhood \
 📚 **Detailed Instructions**: [robinhood-onramp/docs/MIGRATION-GUIDE.md](./robinhood-onramp/docs/MIGRATION-GUIDE.md)
 
 The migration guide includes:
+
 - Step-by-step instructions
 - Code examples
 - Troubleshooting
 - Validation steps
 - Rollback procedures
-```
+
+````
 
 **Validation**:
 - Simplified but complete
@@ -248,9 +263,10 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 **Template Documentation**: [TEMPLATE-USAGE.md](./TEMPLATE-USAGE.md) *(created in SP3)*
 
 **This repository serves as the reference implementation example.**
-```
+````
 
 **Validation**:
+
 - Clear template explanation
 - Directs to blank-poc for new POCs
 - Notes this is reference implementation
@@ -264,6 +280,7 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 **Action**: Replace lines 101-106 with enhanced links
 
 **Current** (lines 101-106):
+
 ```markdown
 ## Learn More
 
@@ -273,18 +290,22 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 ```
 
 **New**:
+
 ```markdown
 ## Learn More
 
 ### Template Pattern
-- **[TEMPLATE-USAGE.md](./TEMPLATE-USAGE.md)** - Template pattern guide *(created in SP3)*
-- **[blank-poc](https://github.com/endaoment/blank-poc)** - Base template *(coming soon)*
+
+- **[TEMPLATE-USAGE.md](./TEMPLATE-USAGE.md)** - Template pattern guide _(created in SP3)_
+- **[blank-poc](https://github.com/endaoment/blank-poc)** - Base template _(coming soon)_
 
 ### Robinhood Implementation
+
 - **[robinhood-onramp/README.md](./robinhood-onramp/README.md)** - Implementation overview
 - **[robinhood-onramp/docs/](./robinhood-onramp/docs/)** - Complete documentation (10 guides)
 
 **Key Guides:**
+
 - [STRUCTURE.md](./robinhood-onramp/docs/STRUCTURE.md) - Directory organization
 - [ARCHITECTURE.md](./robinhood-onramp/docs/ARCHITECTURE.md) - System architecture
 - [MIGRATION-GUIDE.md](./robinhood-onramp/docs/MIGRATION-GUIDE.md) - Backend integration
@@ -293,6 +314,7 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 ```
 
 **Validation**:
+
 - Organized by template vs implementation
 - Links to all key resources
 - Clear navigation
@@ -321,11 +343,13 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 **Test**: Follow QUICK-START as new user
 
 **Steps**:
+
 1. Read header - understand this is Robinhood POC
 2. Follow "Run This POC" - clear instructions?
 3. Check links - do they work?
 
-**Expected**: 
+**Expected**:
+
 - Can run POC in < 5 minutes
 - Clear where to find more info
 - Template pattern noted but not distracting
@@ -342,6 +366,7 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 ```
 
 **Expected**:
+
 - ✅ Existing links work
 - ⚠️ TEMPLATE-USAGE.md noted as "created in SP3"
 
@@ -350,6 +375,7 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 ### Step 3: Consistency Check with README
 
 **Compare**:
+
 - Template language consistent with SP1 README?
 - blank-poc references consistent?
 - robinhood-onramp/ directory naming consistent?
@@ -361,6 +387,7 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 ### Step 4: Conciseness Check
 
 **Verify**:
+
 - File length reasonable (< 100 lines)
 - Quick to scan
 - Action-oriented
@@ -383,6 +410,7 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 **Symptom**: QUICK-START becomes long guide
 
 **Solution**:
+
 - Keep it concise
 - Link to detailed docs
 - Focus on "get started now"
@@ -395,6 +423,7 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 **Symptom**: More template talk than implementation
 
 **Solution**:
+
 - Template acknowledgment at top
 - Focus on running THIS POC
 - Template section brief
@@ -407,6 +436,7 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 **Symptom**: Migration steps incomplete
 
 **Solution**:
+
 - Keep quick copy command
 - List high-level steps
 - Link to comprehensive MIGRATION-GUIDE.md
@@ -417,16 +447,19 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 ## Integration Points
 
 ### With Sub-Plan 1 (Root README)
+
 - Consistent template language
 - Same link patterns
 - Complementary purposes (README = what, QUICK-START = how)
 
 ### With Sub-Plan 3 (TEMPLATE-USAGE.md)
+
 - Multiple links to it
 - Sets expectation for template docs
 - Will work after SP3
 
 ### With Sub-Plan 5 (robinhood-onramp/README.md)
+
 - Directs to it for implementation details
 - Clear handoff to implementation docs
 
@@ -437,12 +470,14 @@ Use the [blank-poc](https://github.com/endaoment/blank-poc) template *(coming so
 After completing this sub-plan:
 
 1. **Commit Changes**:
+
    ```bash
    git add QUICK-START.md
    git commit -m "templatization: SP2 - root QUICK-START implementation focus"
    ```
 
 2. **Create Implementation Log**:
+
    - File: `implementation-logs/YYYYMMDD-HHMM-SP2-COMPLETE.md`
    - Document changes made
    - Note consistency with SP1
@@ -471,4 +506,3 @@ After completing this sub-plan:
 **Estimated Time**: 20-30 minutes  
 **Complexity**: Low  
 **Risk Level**: 🟢 Low - Documentation only
-

@@ -12,6 +12,7 @@
 ### Files to Review
 
 **Reference Files:**
+
 - `/Users/rheeger/Code/endaoment/robinhood-connect-poc/README.md` - Updated in SP1, links to TEMPLATE-USAGE.md
 - `/Users/rheeger/Code/endaoment/robinhood-connect-poc/QUICK-START.md` - Will be updated in SP2, links to TEMPLATE-USAGE.md
 - `/Users/rheeger/Code/endaoment/robinhood-connect-poc/robinhood-onramp/libs/shared/README.md` - Shared library documentation
@@ -20,6 +21,7 @@
 ### Understanding Required
 
 **Purpose of TEMPLATE-USAGE.md:**
+
 - Comprehensive guide to POC template pattern
 - Explain directory structure conventions
 - Document how this repository uses the pattern
@@ -27,6 +29,7 @@
 - Prepare users for blank-poc template (coming soon)
 
 **Key Topics to Cover:**
+
 1. POC template pattern overview
 2. Directory structure convention
 3. How robinhood-connect-poc uses the pattern
@@ -62,7 +65,7 @@
 
 **Pattern**: Root Template Awareness + Implementation Directory  
 **Example**: This repository (Robinhood Connect POC)  
-**Base Template**: [blank-poc](https://github.com/endaoment/blank-poc) *(coming soon)*
+**Base Template**: [blank-poc](https://github.com/endaoment/blank-poc) _(coming soon)_
 
 ---
 
@@ -90,47 +93,48 @@ The template pattern separates concerns:
 ## Directory Structure Convention
 
 All POCs following the template pattern use this structure:
-
 ```
-poc-repository/                      # Root repository
-├── README.md                         # Template-aware overview
-├── QUICK-START.md                    # Run this implementation
-├── TEMPLATE-USAGE.md                 # This file
+
+poc-repository/ # Root repository
+├── README.md # Template-aware overview
+├── QUICK-START.md # Run this implementation
+├── TEMPLATE-USAGE.md # This file
 │
-└── {provider}-onramp/               # Implementation directory
-    ├── README.md                     # Implementation-specific guide
-    │
-    ├── app/                          # Next.js Frontend
-    │   ├── (routes)/                # Page routes
-    │   ├── api/{provider}/          # POC-only API routes
-    │   ├── components/              # React components
-    │   │   └── ui/                  # shadcn/ui components
-    │   ├── hooks/                   # React hooks
-    │   └── lib/                     # Frontend utilities
-    │
-    ├── libs/                         # Backend Libraries
-    │   ├── {provider}/              # Provider integration
-    │   │   ├── src/lib/
-    │   │   │   ├── services/        # Business logic
-    │   │   │   ├── dtos/            # Validation
-    │   │   │   ├── constants/       # Configuration
-    │   │   │   ├── {provider}.controller.ts
-    │   │   │   └── {provider}.module.ts
-    │   │   └── tests/               # Comprehensive tests
-    │   │
-    │   └── shared/                  # Shared utilities
-    │       ├── src/lib/utils/       # Utilities
-    │       └── src/lib/backend-mock/  # POC-only mocks
-    │
-    ├── docs/                         # Comprehensive documentation
-    │   ├── STRUCTURE.md
-    │   ├── ARCHITECTURE.md
-    │   ├── MIGRATION-GUIDE.md
-    │   ├── TESTING_GUIDE.md
-    │   ├── DEVELOPER_GUIDE.md
-    │   └── [other guides]
-    │
-    └── [configs]                     # jest, next, tailwind, tsconfig
+└── {provider}-onramp/ # Implementation directory
+├── README.md # Implementation-specific guide
+│
+├── app/ # Next.js Frontend
+│ ├── (routes)/ # Page routes
+│ ├── api/{provider}/ # POC-only API routes
+│ ├── components/ # React components
+│ │ └── ui/ # shadcn/ui components
+│ ├── hooks/ # React hooks
+│ └── lib/ # Frontend utilities
+│
+├── libs/ # Backend Libraries
+│ ├── {provider}/ # Provider integration
+│ │ ├── src/lib/
+│ │ │ ├── services/ # Business logic
+│ │ │ ├── dtos/ # Validation
+│ │ │ ├── constants/ # Configuration
+│ │ │ ├── {provider}.controller.ts
+│ │ │ └── {provider}.module.ts
+│ │ └── tests/ # Comprehensive tests
+│ │
+│ └── shared/ # Shared utilities
+│ ├── src/lib/utils/ # Utilities
+│ └── src/lib/backend-mock/ # POC-only mocks
+│
+├── docs/ # Comprehensive documentation
+│ ├── STRUCTURE.md
+│ ├── ARCHITECTURE.md
+│ ├── MIGRATION-GUIDE.md
+│ ├── TESTING_GUIDE.md
+│ ├── DEVELOPER_GUIDE.md
+│ └── [other guides]
+│
+└── [configs] # jest, next, tailwind, tsconfig
+
 ```
 
 ### Key Principles
@@ -176,20 +180,24 @@ The `libs/shared` directory contains utilities used across all provider integrat
 
 **Utilities** (`libs/shared/src/lib/utils/`):
 ```
-├── performance-utils.ts    # Performance measurement
-├── security-utils.ts       # Input sanitization, validation
-├── utils.ts               # General utilities
-└── index.ts               # Barrel exports
+
+├── performance-utils.ts # Performance measurement
+├── security-utils.ts # Input sanitization, validation
+├── utils.ts # General utilities
+└── index.ts # Barrel exports
+
 ```
 
 **Backend Mocks** (`libs/shared/src/lib/backend-mock/`):
 ```
-├── mock-pledge.service.ts        # Simulates pledge creation
-├── mock-token.service.ts         # Simulates token resolution
-├── mock-notification.service.ts  # Simulates notifications
-├── toast-logger.ts              # POC demonstration helper
-└── types.ts                     # Shared types
-```
+
+├── mock-pledge.service.ts # Simulates pledge creation
+├── mock-token.service.ts # Simulates token resolution
+├── mock-notification.service.ts # Simulates notifications
+├── toast-logger.ts # POC demonstration helper
+└── types.ts # Shared types
+
+````
 
 ### When to Use libs/shared
 
@@ -216,11 +224,12 @@ The `libs/shared` directory contains utilities used across all provider integrat
 # Optional: Copy utilities if needed
 cp libs/shared/src/lib/utils/performance-utils.ts \
    endaoment-backend/libs/shared/src/lib/utils/
-```
+````
 
 ### Adding to libs/shared
 
 **Process:**
+
 1. Identify truly shared functionality (used by 2+ providers)
 2. Create utility in `libs/shared/src/lib/utils/`
 3. Export from `libs/shared/src/lib/index.ts`
@@ -228,6 +237,7 @@ cp libs/shared/src/lib/utils/performance-utils.ts \
 5. Document in `libs/shared/README.md`
 
 **Example:**
+
 ```typescript
 // libs/shared/src/lib/utils/network-utils.ts
 export function isValidAddress(address: string, network: string): boolean {
@@ -235,22 +245,24 @@ export function isValidAddress(address: string, network: string): boolean {
 }
 
 // libs/provider/src/lib/services/provider.service.ts
-import { isValidAddress } from '@/libs/shared'
+import { isValidAddress } from "@/libs/shared";
 ```
 
 ---
 
 ## Creating New POCs from Template
 
-### Using blank-poc Template *(coming soon)*
+### Using blank-poc Template _(coming soon)_
 
 **Step 1: Clone Template**
+
 ```bash
 git clone https://github.com/endaoment/blank-poc your-provider-poc
 cd your-provider-poc
 ```
 
 **Step 2: Customize Root Files**
+
 ```bash
 # Update README.md
 # - Change provider name throughout
@@ -263,12 +275,14 @@ cd your-provider-poc
 ```
 
 **Step 3: Rename Implementation Directory**
+
 ```bash
 mv onramp your-provider-onramp
 cd your-provider-onramp
 ```
 
 **Step 4: Customize Provider Library**
+
 ```bash
 # Rename provider-api to your provider
 mv libs/provider-api libs/your-provider
@@ -280,6 +294,7 @@ vim package.json  # Change name
 ```
 
 **Step 5: Build Provider Integration**
+
 ```bash
 # Update services in libs/your-provider/src/lib/services/
 # Update DTOs in libs/your-provider/src/lib/dtos/
@@ -289,6 +304,7 @@ vim package.json  # Change name
 ```
 
 **Step 6: Build Frontend**
+
 ```bash
 # Create pages in app/(routes)/
 # Build components in app/components/
@@ -296,6 +312,7 @@ vim package.json  # Change name
 ```
 
 **Step 7: Documentation**
+
 ```bash
 # Update docs/ to reflect your implementation
 # Update STRUCTURE.md with your directory names
@@ -310,12 +327,14 @@ vim package.json  # Change name
 ### Checklist for New POC
 
 **Root Level Updates:**
+
 - [ ] Update README.md with provider name
 - [ ] Update QUICK-START.md commands
 - [ ] Keep TEMPLATE-USAGE.md as-is (generic guide)
 - [ ] Update repository name in package.json
 
 **Implementation Directory:**
+
 - [ ] Rename `onramp/` to `{provider}-onramp/`
 - [ ] Update implementation directory README.md
 - [ ] Rename `libs/provider-api/` to `libs/{provider}/`
@@ -323,6 +342,7 @@ vim package.json  # Change name
 - [ ] Update package.json with provider name
 
 **Provider Library (`libs/{provider}/`):**
+
 - [ ] Implement services for provider API
 - [ ] Create DTOs with validation
 - [ ] Define constants and configurations
@@ -331,6 +351,7 @@ vim package.json  # Change name
 - [ ] Write comprehensive tests
 
 **Frontend (`app/`):**
+
 - [ ] Build provider-specific UI
 - [ ] Create necessary pages/routes
 - [ ] Add POC-only API routes
@@ -338,6 +359,7 @@ vim package.json  # Change name
 - [ ] Style with Tailwind CSS
 
 **Documentation (`docs/`):**
+
 - [ ] Update STRUCTURE.md
 - [ ] Update ARCHITECTURE.md
 - [ ] Update MIGRATION-GUIDE.md
@@ -351,6 +373,7 @@ vim package.json  # Change name
 ### Template Files (Minimal Customization)
 
 **Keep Mostly As-Is:**
+
 - `TEMPLATE-USAGE.md` - Generic guide
 - `libs/shared/` - Shared utilities
 - Basic app structure (layout, styling)
@@ -362,6 +385,7 @@ vim package.json  # Change name
 ### Implementation Files (Heavy Customization)
 
 **Customize Heavily:**
+
 - Provider library (`libs/{provider}/`)
 - Provider-specific UI components
 - API integration services
@@ -377,12 +401,14 @@ vim package.json  # Change name
 ### Directory Naming
 
 **Consistent Pattern:**
+
 - Repository: `{provider}-connect-poc`
 - Implementation directory: `{provider}-onramp/`
 - Provider library: `libs/{provider}/`
 - Shared library: `libs/shared/` (always)
 
 **Examples:**
+
 - `robinhood-connect-poc/robinhood-onramp/libs/robinhood/`
 - `stripe-connect-poc/stripe-onramp/libs/stripe/`
 - `coinbase-connect-poc/coinbase-onramp/libs/coinbase/`
@@ -390,6 +416,7 @@ vim package.json  # Change name
 ### Documentation
 
 **Always Include:**
+
 - STRUCTURE.md - Directory organization
 - ARCHITECTURE.md - System design
 - MIGRATION-GUIDE.md - Backend integration
@@ -401,6 +428,7 @@ vim package.json  # Change name
 ### Testing
 
 **Template Standard:**
+
 - Unit tests for all services
 - DTO validation tests
 - Controller endpoint tests
@@ -412,6 +440,7 @@ vim package.json  # Change name
 ### Backend Migration
 
 **Template Promise:**
+
 - Direct copy of `libs/{provider}/` to backend
 - Minimal changes required
 - Uncomment decorators, wire dependencies
@@ -428,6 +457,7 @@ vim package.json  # Change name
 This robinhood-connect-poc serves as the **gold standard** for template usage:
 
 **Learn From:**
+
 - How root docs reference template
 - How implementation directory is structured
 - How libs/robinhood is organized
@@ -436,6 +466,7 @@ This robinhood-connect-poc serves as the **gold standard** for template usage:
 - How backend migration is designed
 
 **Clone Patterns:**
+
 - Service architecture
 - DTO validation approach
 - Test coverage and organization
@@ -443,6 +474,7 @@ This robinhood-connect-poc serves as the **gold standard** for template usage:
 - Naming conventions
 
 **Adapt For:**
+
 - Your provider's API patterns
 - Your provider's authentication
 - Your provider's data models
@@ -455,16 +487,19 @@ This robinhood-connect-poc serves as the **gold standard** for template usage:
 ### Resources
 
 **Template:**
-- [blank-poc](https://github.com/endaoment/blank-poc) - Base template *(coming soon)*
+
+- [blank-poc](https://github.com/endaoment/blank-poc) - Base template _(coming soon)_
 - This repository - Reference implementation
 
 **Documentation:**
+
 - [README.md](./README.md) - Project overview
 - [QUICK-START.md](./QUICK-START.md) - Get started
 - [robinhood-onramp/docs/](./robinhood-onramp/docs/) - Comprehensive guides
 
 **Planning:**
-- [robinhood-onramp/docs/PLANNING-METHODOLOGY.md](./robinhood-onramp/docs/PLANNING-METHODOLOGY.md) - Planning process *(created in SP4)*
+
+- [robinhood-onramp/docs/PLANNING-METHODOLOGY.md](./robinhood-onramp/docs/PLANNING-METHODOLOGY.md) - Planning process _(created in SP4)_
 
 ### Questions?
 
@@ -492,16 +527,19 @@ A: With template: 1-2 days for basic POC, 1-2 weeks for production-ready.
 ### To Use This Pattern
 
 1. **Study This Repository**
+
    - Understand structure
    - Review documentation
    - See implementation patterns
 
-2. **Wait for blank-poc** *(coming soon)*
+2. **Wait for blank-poc** _(coming soon)_
+
    - Clean template repository
    - Ready to clone and customize
    - Generic provider-api example
 
 3. **Create Your POC**
+
    - Clone blank-poc
    - Follow customization workflow
    - Reference this repo as example
@@ -517,7 +555,8 @@ A: With template: 1-2 days for basic POC, 1-2 weeks for production-ready.
 **Template Pattern Version**: 1.0  
 **Last Updated**: October 26, 2025  
 **Status**: Reference Implementation Complete
-```
+
+````
 
 **Validation**:
 - Comprehensive template pattern guide
@@ -672,15 +711,17 @@ After completing this sub-plan:
    ```bash
    git add TEMPLATE-USAGE.md
    git commit -m "templatization: SP3 - create TEMPLATE-USAGE.md"
-   ```
+````
 
 2. **Create Implementation Log**:
+
    - File: `implementation-logs/YYYYMMDD-HHMM-SP3-COMPLETE.md`
    - Document comprehensive guide creation
    - Verify all sections complete
    - Note libs/shared documentation quality
 
 3. **Verify Links in Previous Sub-Plans**:
+
    - Links to TEMPLATE-USAGE.md now work
    - Check SP1 README links
    - Check SP2 QUICK-START links
@@ -708,4 +749,3 @@ After completing this sub-plan:
 **Estimated Time**: 60-90 minutes  
 **Complexity**: Medium  
 **Risk Level**: 🟢 Low - New documentation file
-

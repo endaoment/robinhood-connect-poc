@@ -27,6 +27,7 @@ npm run dev
 **Access**: <http://localhost:3030>
 
 **Features**:
+
 - Asset selection dashboard
 - Onramp URL generation
 - Callback handling
@@ -51,12 +52,14 @@ ROBINHOOD_API_KEY=your-api-key
 This implementation follows the **POC template pattern** with clear separation:
 
 **Frontend Layer** (`app/`):
+
 - Next.js 14+ with App Router
 - Shadcn/ui components
 - Robinhood-specific asset selection UI
 - POC-only API routes (demonstration)
 
 **Backend Layer** (`libs/`):
+
 - **`libs/robinhood/`** - Robinhood Connect integration (40+ files, 183+ tests)
 - **`libs/shared/`** - Shared utilities (performance, security)
 - **`libs/coinbase/`** - Secondary Coinbase Prime example
@@ -66,7 +69,8 @@ This implementation follows the **POC template pattern** with clear separation:
 
 **Documentation**: Comprehensive guides in `docs/` directory
 
-**See**: 
+**See**:
+
 - [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) - Detailed architecture
 - [docs/MIGRATION-GUIDE.md](./docs/MIGRATION-GUIDE.md) - Backend integration
 - [../TEMPLATE-USAGE.md](../TEMPLATE-USAGE.md) - Template pattern
@@ -85,23 +89,27 @@ This implementation follows the **POC template pattern** with clear separation:
 ### Robinhood Connect Integration
 
 **Services**:
+
 - `RobinhoodClientService` - API communication and authentication
 - `AssetRegistryService` - Asset management and validation
 - `UrlBuilderService` - Onramp URL generation with pre-selection
 - `PledgeService` - Backend integration and pledge creation
 
 **Data Transfer Objects**:
+
 - Complete validation using `class-validator`
 - Type-safe interfaces throughout
 - Backend-compatible structures
 
 **Testing**:
+
 - 183+ comprehensive tests
 - 98%+ code coverage
 - Mocked external dependencies
 - Integration test patterns
 
 **Backend Ready**:
+
 - NestJS controller and module
 - Direct copy to endaoment-backend
 - Uncomment decorators, wire dependencies
@@ -110,6 +118,7 @@ This implementation follows the **POC template pattern** with clear separation:
 ### Template Pattern Benefits
 
 This implementation demonstrates:
+
 - ✅ Rapid development from template
 - ✅ Production-ready code structure
 - ✅ Comprehensive documentation
@@ -130,21 +139,25 @@ npm run build            # Build for production
 ## Documentation
 
 ### Template Pattern
+
 - [../TEMPLATE-USAGE.md](../TEMPLATE-USAGE.md) - POC template pattern guide
 - [../README.md](../README.md) - Root project overview
 - [docs/PLANNING-METHODOLOGY.md](./docs/PLANNING-METHODOLOGY.md) - Planning process
 
 ### Architecture & Structure
+
 - [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) - System architecture
 - [docs/STRUCTURE.md](./docs/STRUCTURE.md) - Directory organization
 - [docs/FLOW-DIAGRAMS.md](./docs/FLOW-DIAGRAMS.md) - Visual flows
 
 ### Development & Migration
+
 - [docs/DEVELOPER_GUIDE.md](./docs/DEVELOPER_GUIDE.md) - Development workflow
 - [docs/MIGRATION-GUIDE.md](./docs/MIGRATION-GUIDE.md) - Backend integration
 - [docs/TESTING_GUIDE.md](./docs/TESTING_GUIDE.md) - Testing approach
 
 ### Code Quality
+
 - [docs/NAMING-CONVENTIONS.md](./docs/NAMING-CONVENTIONS.md) - Naming standards
 - [docs/LINTING-AND-TYPE-SAFETY.md](./docs/LINTING-AND-TYPE-SAFETY.md) - Code quality
 - [docs/LOGGING-GUIDE.md](./docs/LOGGING-GUIDE.md) - Logging patterns
@@ -165,6 +178,7 @@ npm run lint             # Linting
 ```
 
 **Test Organization**:
+
 - Service tests (libs/robinhood/tests/services/)
 - DTO validation tests
 - Controller tests
@@ -173,6 +187,7 @@ npm run lint             # Linting
 ### Manual Testing
 
 **Development Testing**:
+
 ```bash
 npm run dev
 # Visit http://localhost:3030/dashboard
@@ -180,6 +195,7 @@ npm run dev
 ```
 
 **With API Credentials**:
+
 - Valid Robinhood API credentials required
 - Registered callback URL needed
 - End-to-end transaction testing
@@ -215,6 +231,7 @@ OWASP Top 10 considerations applied where applicable.
 **Status**: Implementation Complete, Backend Migration Ready
 
 **Key Achievements**:
+
 - 40+ backend files with production patterns
 - 183+ tests with 98%+ coverage
 - 10 comprehensive documentation guides
