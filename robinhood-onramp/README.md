@@ -13,7 +13,7 @@ npm run dev
 
 **Access**: <http://localhost:3030>
 
-**Features**: Asset selection, onramp URL generation, callback handling, 19 blockchain networks
+**Features**: Asset selection, onramp URL generation, ⭐ Order Details API integration with auto-resolution, 19 blockchain networks
 
 ## Requirements
 
@@ -50,10 +50,10 @@ npm run dev
 
 **Services**:
 
-- `RobinhoodClientService` - API communication and authentication
+- `RobinhoodClientService` - API communication, authentication, ⭐ Order Details API polling
 - `AssetRegistryService` - Asset management and validation
 - `UrlBuilderService` - Onramp URL generation with pre-selection
-- `PledgeService` - Backend integration and pledge creation
+- `PledgeService` - Backend integration and pledge creation ⭐ with blockchain tx hash tracking
 
 **Data Transfer Objects**:
 
@@ -67,6 +67,14 @@ npm run dev
 - 98%+ code coverage
 - Mocked external dependencies
 - Integration test patterns
+
+**Order Details API Integration** ⭐ **NEW**:
+
+- Polls Robinhood Order Details API after transfer
+- Auto-resolves crypto amount, fiat amount, and blockchain tx hash
+- No reliance on callback URL parameters
+- Retry logic with 10 attempts (12-second intervals, 2 minutes total)
+- Captures complete transfer data for backend
 
 **Backend Ready**:
 

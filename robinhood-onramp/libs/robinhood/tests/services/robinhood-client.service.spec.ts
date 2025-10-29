@@ -4,22 +4,24 @@
  * Tests:
  * - ConnectId generation (success/failure)
  * - Asset fetching (various params)
+ * - Order Details API (success/failure/retries)  ⭐ NEW
  * - Retry logic
  * - Error handling
  * - Configuration
+ *
+ * Total: 61 tests
  */
 import { RobinhoodClientService } from '@/libs/robinhood/lib/services/robinhood-client.service'
 import {
-  mockConnectIdSuccess,
-  mockConnectIdFailure,
-  mockDiscoverySuccess,
-  mockDiscoveryFailure,
-  mockDiscoveryWithQuery,
-  mockTimeout,
-  createMockAssets,
-  createMockAsset,
   cleanAll,
+  createMockAsset,
+  createMockAssets,
   isDone,
+  mockConnectIdFailure,
+  mockConnectIdSuccess,
+  mockDiscoveryFailure,
+  mockDiscoverySuccess,
+  mockDiscoveryWithQuery,
 } from '../mocks/robinhood-nock-api'
 
 describe('RobinhoodClientService', () => {
@@ -110,7 +112,7 @@ describe('RobinhoodClientService', () => {
         service.generateConnectId({
           walletAddress: '0x123',
           userIdentifier: 'test@example.com',
-        })
+        }),
       ).rejects.toThrow('No connect_id in response')
     })
 
@@ -123,7 +125,7 @@ describe('RobinhoodClientService', () => {
         service.generateConnectId({
           walletAddress: 'invalid',
           userIdentifier: 'test@example.com',
-        })
+        }),
       ).rejects.toThrow('ConnectId generation failed')
     })
 
@@ -136,7 +138,7 @@ describe('RobinhoodClientService', () => {
         service.generateConnectId({
           walletAddress: '0x123',
           userIdentifier: 'test@example.com',
-        })
+        }),
       ).rejects.toThrow('ConnectId generation failed')
     })
 
@@ -149,7 +151,7 @@ describe('RobinhoodClientService', () => {
         service.generateConnectId({
           walletAddress: '0x123',
           userIdentifier: 'test@example.com',
-        })
+        }),
       ).rejects.toThrow()
     })
 
@@ -230,7 +232,7 @@ describe('RobinhoodClientService', () => {
         service.generateConnectId({
           walletAddress: '0x123',
           userIdentifier: 'test@example.com',
-        })
+        }),
       ).rejects.toThrow()
     })
   })
@@ -405,7 +407,7 @@ describe('RobinhoodClientService', () => {
         service.generateConnectId({
           walletAddress: '0x123',
           userIdentifier: 'test@example.com',
-        })
+        }),
       ).rejects.toThrow()
     })
 
@@ -425,7 +427,7 @@ describe('RobinhoodClientService', () => {
         service.generateConnectId({
           walletAddress: '0x123',
           userIdentifier: 'test@example.com',
-        })
+        }),
       ).rejects.toThrow()
     })
 
@@ -455,7 +457,7 @@ describe('RobinhoodClientService', () => {
         service.generateConnectId({
           walletAddress: '0x123',
           userIdentifier: 'test@example.com',
-        })
+        }),
       ).rejects.toThrow(/ConnectId generation failed/)
     })
 
@@ -629,7 +631,7 @@ describe('RobinhoodClientService', () => {
         service.generateConnectId({
           walletAddress: '0x123',
           userIdentifier: 'test@example.com',
-        })
+        }),
       ).rejects.toThrow()
 
       expect(mockLogger.error).toHaveBeenCalled()
@@ -653,7 +655,7 @@ describe('RobinhoodClientService', () => {
           delayMs: 10,
           backoffMultiplier: 1,
         },
-        mockLogger
+        mockLogger,
       )
 
       await service.generateConnectId({
@@ -664,5 +666,274 @@ describe('RobinhoodClientService', () => {
       expect(mockLogger.warn).toHaveBeenCalled()
     })
   })
-})
 
+  describe('getOrderDetails', () => {
+    const testConnectId = '596e6a8d-3ccd-47f2-b392-7de79df3e8d1'
+
+    it('should fetch order details successfully', async () => {
+      const { mockOrderDetailsSuccess } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsSuccess(testConnectId)
+
+      const service = new RobinhoodClientService(testConfig)
+      const result = await service.getOrderDetails(testConnectId)
+
+      expect(result).toBeDefined()
+      expect(result.connectId).toBe(testConnectId)
+      expect(result.status).toBe('ORDER_STATUS_SUCCEEDED')
+      expect(result.assetCode).toBe('SOL')
+      expect(result.cryptoAmount).toBe('0.002')
+      expect(result.fiatAmount).toBe('0.41')
+      expect(result.blockchainTransactionId).toBeDefined()
+      expect(result.destinationAddress).toBeDefined()
+      expect(isDone()).toBe(true)
+    })
+
+    it('should return order with IN_PROGRESS status', async () => {
+      const { mockOrderDetailsInProgress } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsInProgress(testConnectId)
+
+      const service = new RobinhoodClientService(testConfig)
+      const result = await service.getOrderDetails(testConnectId)
+
+      expect(result.status).toBe('ORDER_STATUS_IN_PROGRESS')
+      expect(result.connectId).toBe(testConnectId)
+    })
+
+    it('should return order with FAILED status', async () => {
+      const { mockOrderDetailsFailed } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsFailed(testConnectId)
+
+      const service = new RobinhoodClientService(testConfig)
+      const result = await service.getOrderDetails(testConnectId)
+
+      expect(result.status).toBe('ORDER_STATUS_FAILED')
+      expect(result.connectId).toBe(testConnectId)
+    })
+
+    it('should return order with CANCELLED status', async () => {
+      const { mockOrderDetailsCancelled } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsCancelled(testConnectId)
+
+      const service = new RobinhoodClientService(testConfig)
+      const result = await service.getOrderDetails(testConnectId)
+
+      expect(result.status).toBe('ORDER_STATUS_CANCELLED')
+      expect(result.connectId).toBe(testConnectId)
+    })
+
+    it('should handle different asset types', async () => {
+      const { mockOrderDetailsSuccess } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsSuccess(testConnectId, {
+        assetCode: 'BTC',
+        networkCode: 'BITCOIN',
+        cryptoAmount: '0.05',
+        fiatAmount: '3250.00',
+      })
+
+      const service = new RobinhoodClientService(testConfig)
+      const result = await service.getOrderDetails(testConnectId)
+
+      expect(result.assetCode).toBe('BTC')
+      expect(result.networkCode).toBe('BITCOIN')
+      expect(result.cryptoAmount).toBe('0.05')
+      expect(result.fiatAmount).toBe('3250.00')
+    })
+
+    it('should include network fee details', async () => {
+      const { mockOrderDetailsSuccess } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsSuccess(testConnectId)
+
+      const service = new RobinhoodClientService(testConfig)
+      const result = await service.getOrderDetails(testConnectId)
+
+      expect(result.networkFee).toBeDefined()
+      expect(result.networkFee.type).toBe('PRICE_ITEM_TYPE_CRYPTO_CURRENCY_NETWORK_FEE')
+      expect(result.networkFee.fiatAmount).toBeDefined()
+      expect(result.networkFee.cryptoQuantity).toBeDefined()
+    })
+
+    it('should include total amount details', async () => {
+      const { mockOrderDetailsSuccess } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsSuccess(testConnectId)
+
+      const service = new RobinhoodClientService(testConfig)
+      const result = await service.getOrderDetails(testConnectId)
+
+      expect(result.totalAmount).toBeDefined()
+      expect(result.totalAmount.type).toBe('PRICE_ITEM_TYPE_TOTAL')
+      expect(result.totalAmount.fiatAmount).toBe('0.46')
+      expect(result.totalAmount.cryptoQuantity).toBe('0.0022')
+    })
+
+    it('should handle 404 Not Found error', async () => {
+      const { mockOrderDetailsNotFound } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsNotFound(testConnectId)
+
+      const service = new RobinhoodClientService(testConfig)
+
+      await expect(service.getOrderDetails(testConnectId)).rejects.toThrow('Order details fetch failed')
+    })
+
+    it('should handle 500 server errors', async () => {
+      const { mockOrderDetailsFailure } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsFailure(testConnectId, 500, 'Internal Server Error')
+
+      const service = new RobinhoodClientService(testConfig)
+
+      await expect(service.getOrderDetails(testConnectId)).rejects.toThrow('Order details fetch failed')
+    })
+
+    it('should handle 401 authentication errors', async () => {
+      const { mockOrderDetailsFailure } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsFailure(testConnectId, 401, 'Unauthorized')
+
+      const service = new RobinhoodClientService(testConfig)
+
+      await expect(service.getOrderDetails(testConnectId)).rejects.toThrow('Order details fetch failed')
+    })
+
+    it('should handle 403 forbidden errors', async () => {
+      const { mockOrderDetailsFailure } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsFailure(testConnectId, 403, 'Forbidden')
+
+      const service = new RobinhoodClientService(testConfig)
+
+      await expect(service.getOrderDetails(testConnectId)).rejects.toThrow('Order details fetch failed')
+    })
+
+    it('should log success information', async () => {
+      const { mockOrderDetailsSuccess } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsSuccess(testConnectId)
+
+      const mockLogger = {
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+        debug: jest.fn(),
+      }
+
+      const service = new RobinhoodClientService(testConfig, undefined, mockLogger)
+      await service.getOrderDetails(testConnectId)
+
+      expect(mockLogger.info).toHaveBeenCalledWith('Fetching order details', { connectId: testConnectId })
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Order details fetched successfully',
+        expect.objectContaining({
+          connectId: testConnectId,
+          status: 'ORDER_STATUS_SUCCEEDED',
+        }),
+      )
+    })
+
+    it('should log error information on failure', async () => {
+      const { mockOrderDetailsFailure } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsFailure(testConnectId, 500)
+
+      const mockLogger = {
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+        debug: jest.fn(),
+      }
+
+      const service = new RobinhoodClientService(testConfig, undefined, mockLogger)
+
+      await expect(service.getOrderDetails(testConnectId)).rejects.toThrow()
+
+      expect(mockLogger.error).toHaveBeenCalledWith('Failed to fetch order details', expect.anything())
+    })
+
+    it('should use retry logic on temporary failures', async () => {
+      const { mockOrderDetailsFailure, mockOrderDetailsSuccess } = require('../mocks/robinhood-nock-api')
+
+      // First attempt fails
+      mockOrderDetailsFailure(testConnectId, 503, 'Service Unavailable')
+      // Second attempt succeeds
+      mockOrderDetailsSuccess(testConnectId)
+
+      const service = new RobinhoodClientService(testConfig, {
+        maxAttempts: 2,
+        delayMs: 10,
+        backoffMultiplier: 1,
+      })
+
+      const result = await service.getOrderDetails(testConnectId)
+
+      expect(result).toBeDefined()
+      expect(result.status).toBe('ORDER_STATUS_SUCCEEDED')
+    })
+
+    it('should respect custom configuration', async () => {
+      const customConnectId = 'custom-connect-id-123'
+      const { mockOrderDetailsSuccess } = require('../mocks/robinhood-nock-api')
+
+      // Mock with custom base URL
+      const customNock = require('nock')
+      customNock('https://custom.robinhood.com')
+        .get(`/catpay/v1/external/order/${customConnectId}`)
+        .reply(200, {
+          connectId: customConnectId,
+          status: 'ORDER_STATUS_SUCCEEDED',
+          assetCode: 'ETH',
+          networkCode: 'ETHEREUM',
+          cryptoAmount: '1.5',
+          fiatAmount: '3000.00',
+          blockchainTransactionId: 'custom-tx-hash',
+          destinationAddress: '0x123',
+          networkFee: { type: 'FEE', fiatAmount: '0', cryptoQuantity: '0' },
+          processingFee: { type: 'FEE', fiatAmount: '0', cryptoQuantity: '0' },
+          totalAmount: { type: 'TOTAL', fiatAmount: '3000.00', cryptoQuantity: '1.5' },
+          paymentMethod: 'crypto_balance',
+          fiatCode: 'USD',
+          price: '2000.00',
+          applicationId: 'custom-app',
+          referenceId: '',
+        })
+
+      const service = new RobinhoodClientService(
+        {
+          ...testConfig,
+          baseUrl: 'https://custom.robinhood.com',
+        },
+        undefined,
+      )
+
+      const result = await service.getOrderDetails(customConnectId)
+
+      expect(result.connectId).toBe(customConnectId)
+      expect(result.assetCode).toBe('ETH')
+    })
+
+    it('should handle empty blockchain transaction ID', async () => {
+      const { mockOrderDetailsSuccess } = require('../mocks/robinhood-nock-api')
+      mockOrderDetailsSuccess(testConnectId, {
+        blockchainTransactionId: '',
+        status: 'ORDER_STATUS_IN_PROGRESS',
+      })
+
+      const service = new RobinhoodClientService(testConfig)
+      const result = await service.getOrderDetails(testConnectId)
+
+      expect(result.blockchainTransactionId).toBe('')
+      expect(result.status).toBe('ORDER_STATUS_IN_PROGRESS')
+    })
+
+    it('should handle various network codes', async () => {
+      const networks = ['ETHEREUM', 'BITCOIN', 'SOLANA', 'POLYGON', 'ARBITRUM']
+
+      for (const network of networks) {
+        const { mockOrderDetailsSuccess } = require('../mocks/robinhood-nock-api')
+        const connectId = `test-${network.toLowerCase()}`
+
+        mockOrderDetailsSuccess(connectId, {
+          networkCode: network,
+        })
+
+        const service = new RobinhoodClientService(testConfig)
+        const result = await service.getOrderDetails(connectId)
+
+        expect(result.networkCode).toBe(network)
+      }
+    })
+  })
+})

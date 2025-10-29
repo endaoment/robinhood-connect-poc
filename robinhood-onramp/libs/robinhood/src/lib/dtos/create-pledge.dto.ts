@@ -34,14 +34,12 @@ export enum CentralizedExchangeStatus {
  */
 export class CreatePledgeDto {
   /**
-   * Robinhood ConnectId used as transaction hash
-   * Prefixed with 'robinhood:' to distinguish from blockchain tx hashes
+   * Transaction hash - either:
+   * - Blockchain transaction hash (from Order Details API)
+   * - Robinhood ConnectId prefixed with 'robinhood:'
    */
   @IsString()
-  @IsNotEmpty({ message: "ConnectId is required" })
-  @Matches(/^robinhood:/, {
-    message: 'OTC transaction hash must start with "robinhood:"',
-  })
+  @IsNotEmpty({ message: "Transaction hash is required" })
   otcTransactionHash!: string;
 
   /**
@@ -115,6 +113,22 @@ export class CreatePledgeDto {
   @IsOptional()
   @IsString()
   network?: string;
+
+  /**
+   * Fiat amount in USD
+   * From Robinhood Order Details API
+   */
+  @IsOptional()
+  @IsString()
+  fiatAmountUsd?: string;
+
+  /**
+   * Destination wallet address
+   * Where the crypto was sent
+   */
+  @IsOptional()
+  @IsString()
+  destinationWalletAddress?: string;
 }
 
 

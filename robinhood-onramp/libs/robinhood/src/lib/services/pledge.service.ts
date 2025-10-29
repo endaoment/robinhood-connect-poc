@@ -45,6 +45,66 @@ export interface CreatePledgeFromCallbackParams {
 }
 
 /**
+ * Parameters for creating pledge from Order Details API response
+ */
+export interface CreatePledgeFromOrderDetailsParams {
+  /**
+   * Robinhood ConnectId
+   */
+  connectId: string
+
+  /**
+   * Optional Robinhood order ID
+   */
+  orderId?: string
+
+  /**
+   * Asset code from Order Details API
+   */
+  assetCode: string
+
+  /**
+   * Network code from Order Details API
+   */
+  network: string
+
+  /**
+   * Crypto amount from Order Details API
+   */
+  cryptoAmount: string
+
+  /**
+   * Fiat amount (USD) from Order Details API
+   */
+  fiatAmount: string
+
+  /**
+   * Blockchain transaction hash
+   */
+  blockchainTxHash: string
+
+  /**
+   * Destination address
+   */
+  destinationAddress: string
+
+  /**
+   * Destination type ('fund' or 'org')
+   */
+  destinationType: 'fund' | 'org'
+
+  /**
+   * Destination ID (fund or org UUID)
+   */
+  destinationId: string
+
+  /**
+   * Optional user ID for non-anonymous donations
+   */
+  pledgerUserId?: string
+}
+
+/**
  * Result from pledge creation
  */
 export interface CreatePledgeResult {
@@ -253,6 +313,156 @@ export class PledgeService {
       }
     } catch (error) {
       const errorMsg = `Pledge creation failed: ${
+        error instanceof Error ? error.message : 'Unknown error'
+      }`
+      this.logger.error(errorMsg, error)
+      return {
+        success: false,
+        error: errorMsg,
+      }
+    }
+  }
+
+  /**
+   * Create pledge from Robinhood Order Details API response
+   *
+   * This is the NEW preferred method that uses definitive data from Robinhood's API
+   * instead of unreliable callback URL parameters.
+   *
+   * @param params - Order details from Robinhood API
+   * @returns Pledge creation result
+   *
+   * @example
+   * ```typescript
+   * const result = await pledgeService.createPledgeFromOrderDetails({
+   *   connectId: '596e6a8d-3ccd-47f2-b392-7de79df3e8d1',
+   *   assetCode: 'SOL',
+   *   network: 'SOLANA',
+   *   cryptoAmount: '0.002',
+   *   fiatAmount: '0.41',
+   *   blockchainTxHash: '4bED2xdo6sj...',
+   *   destinationAddress: 'DPsUYCz...',
+   *   destinationType: 'fund',
+   *   destinationId: 'fund-uuid',
+   * });
+   * ```
+   */
+  async createPledgeFromOrderDetails(
+    params: CreatePledgeFromOrderDetailsParams
+  ): Promise<CreatePledgeResult> {
+    const {
+      connectId,
+      orderId,
+      assetCode,
+      network,
+      cryptoAmount,
+      fiatAmount,
+      blockchainTxHash,
+      destinationAddress,
+      destinationType,
+      destinationId,
+      pledgerUserId,
+    } = params
+
+    const warnings: string[] = []
+
+    this.logger.info('Creating pledge from Order Details API', {
+      connectId,
+      assetCode,
+      cryptoAmount,
+      fiatAmount,
+    })
+
+    try {
+      // Step 1: Resolve token from backend
+      this.logger.info('Resolving token...', { assetCode, network })
+
+      const token = await mockTokenService.getTokenBySymbolAndNetwork(
+        assetCode,
+        network,
+        true // Show toast
+      )
+
+      if (!token) {
+        const errorMsg = `Token ${assetCode} on network ${network} not found in backend`
+        this.logger.error(errorMsg)
+        return {
+          success: false,
+          error: errorMsg,
+        }
+      }
+
+      this.logger.info('Token resolved', { token: token.symbol, decimals: token.decimals })
+
+      // Step 2: Convert amount to smallest unit (e.g., satoshis, wei)
+      this.logger.info('Converting amount to smallest unit...', {
+        amount: cryptoAmount,
+        decimals: token.decimals,
+      })
+
+      let inputAmount: string
+      try {
+        inputAmount = convertToSmallestUnit(cryptoAmount, token.decimals)
+        this.logger.info('Amount converted', { inputAmount })
+      } catch (error) {
+        const errorMsg = `Amount conversion failed: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+        this.logger.error(errorMsg)
+        return {
+          success: false,
+          error: errorMsg,
+        }
+      }
+
+      // Step 3: Build CreatePledgeDto with blockchain tx hash
+      const pledgeDto: CreatePledgeDto = {
+        // Use actual blockchain transaction hash as primary identifier
+        otcTransactionHash: blockchainTxHash,
+        pledgerUserId,
+        inputToken: token.id,
+        inputAmount,
+        destinationOrgId: destinationId,
+        status: PledgeStatus.PendingLiquidation,
+        centralizedExchangeDonationStatus: CentralizedExchangeStatus.Completed,
+        centralizedExchangeTransactionId: orderId || connectId,
+        // Include for debugging and tracking
+        asset: assetCode,
+        network,
+        // NEW: Include fiat amount for better tracking
+        fiatAmountUsd: fiatAmount,
+        // NEW: Include destination address
+        destinationWalletAddress: destinationAddress,
+      }
+
+      this.logger.info('Built pledge DTO with blockchain tx hash', { pledgeDto })
+
+      // Add warnings for optional fields
+      if (!pledgerUserId) {
+        warnings.push('No user ID provided - pledge will be anonymous')
+      }
+
+      // Step 4: Create pledge in backend
+      this.logger.info('Creating pledge in backend...')
+
+      const backendPledge = await mockPledgeService.createPledge(
+        pledgeDto,
+        true // Show toast
+      )
+
+      this.logger.info('Pledge created successfully', {
+        pledgeId: backendPledge.id,
+        blockchainTxHash,
+      })
+
+      return {
+        success: true,
+        pledge: pledgeDto,
+        backendPledge,
+        warnings: warnings.length > 0 ? warnings : undefined,
+      }
+    } catch (error) {
+      const errorMsg = `Pledge creation from Order Details failed: ${
         error instanceof Error ? error.message : 'Unknown error'
       }`
       this.logger.error(errorMsg, error)

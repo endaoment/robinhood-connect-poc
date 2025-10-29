@@ -41,6 +41,45 @@ export interface FetchTradingAssetsParams {
 }
 
 /**
+ * Response from Robinhood Order Details API
+ */
+export interface OrderDetailsResponse {
+  applicationId: string
+  connectId: string
+  assetCode: string
+  networkCode: string
+  fiatCode: string
+  fiatAmount: string
+  cryptoAmount: string
+  price: string
+  networkFee: {
+    type: string
+    fiatAmount: string
+    cryptoQuantity: string
+  }
+  processingFee: {
+    type: string
+    fiatAmount: string
+    cryptoQuantity: string
+  }
+  partnerFee?: {
+    type: string
+    fiatAmount: string
+    cryptoQuantity: string
+  }
+  paymentMethod: string
+  totalAmount: {
+    type: string
+    fiatAmount: string
+    cryptoQuantity: string
+  }
+  blockchainTransactionId: string
+  destinationAddress: string
+  referenceId: string
+  status: 'ORDER_STATUS_IN_PROGRESS' | 'ORDER_STATUS_SUCCEEDED' | 'ORDER_STATUS_FAILED' | 'ORDER_STATUS_CANCELLED'
+}
+
+/**
  * Service for interacting with Robinhood Connect APIs
  *
  * Handles:
@@ -126,6 +165,51 @@ export class RobinhoodClientService {
     } catch (error) {
       this.logger.error('Failed to generate ConnectId', error)
       throw new Error(`ConnectId generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  /**
+   * Get order details for a completed transfer
+   *
+   * @param connectId - The connectId from the transfer callback
+   * @returns Promise resolving to order details
+   * @throws {Error} If order details fetch fails or order not found
+   *
+   * @example
+   * ```typescript
+   * const orderDetails = await client.getOrderDetails('596e6a8d-3ccd-47f2-b392-7de79df3e8d1');
+   * console.log(orderDetails.cryptoAmount); // '0.002'
+   * console.log(orderDetails.blockchainTransactionId); // '4bED2x...'
+   * ```
+   */
+  async getOrderDetails(connectId: string, config?: Partial<RobinhoodConfig>): Promise<OrderDetailsResponse> {
+    const activeConfig = { ...this.config, ...config }
+
+    this.logger.info('Fetching order details', { connectId })
+
+    try {
+      const response = await this.fetchWithRetry({
+        url: `${activeConfig.baseUrl}/catpay/v1/external/order/${connectId}`,
+        method: 'GET',
+        headers: {
+          'x-api-key': activeConfig.apiKey,
+          'application-id': activeConfig.appId,
+        },
+      })
+
+      const data = await response.json() as OrderDetailsResponse
+
+      this.logger.info('Order details fetched successfully', {
+        connectId,
+        status: data.status,
+        assetCode: data.assetCode,
+        cryptoAmount: data.cryptoAmount,
+      })
+
+      return data
+    } catch (error) {
+      this.logger.error('Failed to fetch order details', error)
+      throw new Error(`Order details fetch failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 

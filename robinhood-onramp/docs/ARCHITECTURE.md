@@ -20,6 +20,7 @@ See [MIGRATION-GUIDE.md](./MIGRATION-GUIDE.md) for integration steps.
 
 - `generateConnectId()` - Create connect ID
 - `fetchAssets()` - Get supported assets
+- ⭐ `getOrderDetails()` - Poll Order Details API for transfer data (NEW)
 
 **AssetRegistryService** - Asset management (singleton)
 
@@ -34,7 +35,8 @@ See [MIGRATION-GUIDE.md](./MIGRATION-GUIDE.md) for integration steps.
 
 **PledgeService** - Pledge creation
 
-- `createPledge()` - Convert callback to pledge entity
+- `createFromCallback()` - Convert callback to pledge entity (legacy)
+- ⭐ `createPledgeFromOrderDetails()` - Create pledge from Order Details API (NEW)
 - `mapCallbackToPledge()` - Field mapping
 
 ### Support Services
@@ -70,7 +72,58 @@ export class GenerateUrlDto {
 }
 ```
 
-## Error Handling
+## Order Details API Integration ⭐ NEW
+
+### Overview
+
+The callback page now polls the Robinhood Order Details API to get definitive transfer data instead of relying on URL parameters.
+
+### Flow
+
+1. **Callback receives** `connectId` from Robinhood redirect
+2. **Poll API** `GET /catpay/v1/external/order/{connectId}`
+3. **Check status** - `ORDER_STATUS_IN_PROGRESS`, `ORDER_STATUS_SUCCEEDED`, or `ORDER_STATUS_FAILED`
+4. **Retry logic** - Poll every 12 seconds, max 10 attempts (2 minutes total)
+5. **Auto-create pledge** when status is `SUCCEEDED`
+
+### Data Retrieved
+
+From Order Details API response:
+
+- ✅ **cryptoAmount** - Exact amount transferred (e.g., "0.002")
+- ✅ **fiatAmount** - USD equivalent (e.g., "0.41")
+- ✅ **blockchainTransactionId** - On-chain transaction hash
+- ✅ **destinationAddress** - Wallet address funds were sent to
+- ✅ **assetCode** - Asset symbol (e.g., "SOL")
+- ✅ **networkCode** - Network name (e.g., "SOLANA")
+- ✅ **status** - Transfer completion status
+- ✅ **networkFee** - Network fee details
+- ✅ **totalAmount** - Total including fees
+
+### Benefits
+
+**vs. Callback URL Parameters**:
+
+- ❌ Old: `assetAmount=0` (unreliable)
+- ✅ New: Actual amount from Robinhood API
+
+- ❌ Old: No blockchain tx hash
+- ✅ New: Real transaction hash for on-chain verification
+
+- ❌ Old: No fiat amount
+- ✅ New: USD value for reporting
+
+- ❌ Old: Prefixed connectId as tx hash (`robinhood:abc-123`)
+- ✅ New: Actual blockchain transaction hash
+
+### Implementation
+
+**Frontend**: `app/(routes)/callback/page.tsx`  
+**API Route**: `app/api/robinhood/order-details/route.ts`  
+**Service**: `RobinhoodClientService.getOrderDetails()`  
+**Pledge Creation**: `PledgeService.createPledgeFromOrderDetails()`
+
+### Error Handling
 
 Custom error classes:
 

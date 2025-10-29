@@ -21,9 +21,14 @@ flowchart TD
     RHAuth --> RHAmount[Enters Amount]
     RHAmount --> RHConfirm[Confirms Transfer]
 
-    RHConfirm --> Callback[Robinhood Redirects<br/>to /callback]
-    Callback --> PledgeService[PledgeService creates<br/>pledge]
-    PledgeService --> Complete([Transfer Complete])
+    RHConfirm --> Callback[Robinhood Redirects<br/>to /callback with connectId]
+    Callback --> Poll[⭐ Poll Order Details API]
+    Poll --> GetDetails{Order Status?}
+    GetDetails -->|In Progress| Wait[Wait 2 seconds]
+    Wait --> Poll
+    GetDetails -->|Succeeded| CreatePledge[⭐ Auto-create pledge<br/>with blockchain tx hash]
+    CreatePledge --> Complete([Transfer Complete])
+    GetDetails -->|Failed| Error([Show Error])
 ```
 
 ## Service Architecture
@@ -75,24 +80,38 @@ sequenceDiagram
     participant Dashboard
     participant UrlBuilder
     participant RHClient
-    participant Robinhood
+    participant RobinhoodAPI as Robinhood API
+    participant RobinhoodUI as Robinhood UI
     participant Callback
+    participant OrderAPI as Order Details API
     participant Pledge
 
     User->>Dashboard: Select ETH on Ethereum
     Dashboard->>UrlBuilder: generateUrl({ asset, network })
     UrlBuilder->>RHClient: generateConnectId()
-    RHClient->>Robinhood: POST /connect_id
-    Robinhood-->>RHClient: connectId
+    RHClient->>RobinhoodAPI: POST /connect_id
+    RobinhoodAPI-->>RHClient: connectId
     RHClient-->>UrlBuilder: connectId
     UrlBuilder-->>Dashboard: URL
     Dashboard->>User: Redirect to Robinhood
 
-    User->>Robinhood: Authenticate & Transfer
-    Robinhood->>Callback: Redirect with transfer data
-    Callback->>Pledge: createFromCallback(dto)
-    Pledge-->>Callback: Pledge created
-    Callback->>User: Success message
+    User->>RobinhoodUI: Authenticate & Transfer
+    RobinhoodUI->>Callback: Redirect with connectId
+    
+    loop Poll every 2s (max 10 attempts)
+        Callback->>OrderAPI: ⭐ GET /order/{connectId}
+        OrderAPI-->>Callback: Order details + status
+        alt Status: SUCCEEDED
+            Callback->>Pledge: ⭐ createFromOrderDetails(data)
+            Note over Pledge: Uses blockchain tx hash<br/>crypto amount, fiat amount
+            Pledge-->>Callback: Pledge created
+            Callback->>User: ✅ Success with amounts
+        else Status: IN_PROGRESS
+            Callback->>Callback: Wait 2 seconds, retry
+        else Status: FAILED
+            Callback->>User: ❌ Transfer failed
+        end
+    end
 ```
 
 ## Migration Flow
@@ -106,16 +125,39 @@ flowchart LR
     Wire --> Done[5 endpoints registered]
 ```
 
-## Pledge Creation Flow
+## Pledge Creation Flow (New - Order Details API)
 
 ```mermaid
 flowchart TD
-    Callback[Callback with transfer data] --> Validate[Validate CallbackDto]
-    Validate --> ResolveToken[TokenService.resolveToken]
+    Callback[Callback receives connectId] --> Poll[Poll Order Details API]
+    Poll --> CheckStatus{Order Status?}
+    CheckStatus -->|IN_PROGRESS| Wait[Wait 2 seconds]
+    Wait --> Poll
+    CheckStatus -->|SUCCEEDED| Extract[Extract order data]
+    CheckStatus -->|FAILED| ErrorFlow[Show error to user]
+    
+    Extract --> OrderData[⭐ Get definitive data:<br/>- Blockchain tx hash<br/>- Crypto amount<br/>- Fiat amount<br/>- Asset/Network<br/>- Destination address]
+    OrderData --> ResolveToken[TokenService.resolveToken<br/>using assetCode + networkCode]
+    ResolveToken --> ConvertAmount[Convert to smallest unit]
+    ConvertAmount --> CreatePledge[Create pledge with:<br/>- Blockchain tx hash<br/>- Fiat amount tracking<br/>- Destination address]
+    CreatePledge --> SaveDB[Repository.save]
+    SaveDB --> Notify[NotificationService.notify]
+    Notify --> ShowSuccess[Show success with<br/>actual amounts]
+```
+
+## Legacy Pledge Creation Flow (Deprecated)
+
+```mermaid
+flowchart TD
+    Callback[Callback with URL params] --> Validate[Validate CallbackDto]
+    Validate --> Issue[⚠️ Issue: Amount often 0<br/>No blockchain tx hash]
+    Issue --> ResolveToken[TokenService.resolveToken]
     ResolveToken --> CreateEntity[Create pledge entity]
     CreateEntity --> SaveDB[Repository.save]
     SaveDB --> Notify[NotificationService.notify]
     Notify --> Return[Return pledge]
+    
+    style Issue fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
 ## Viewing Diagrams

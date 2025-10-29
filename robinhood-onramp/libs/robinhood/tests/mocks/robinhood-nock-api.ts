@@ -88,6 +88,106 @@ export function mockTimeout(endpoint: string, method: 'GET' | 'POST' = 'GET') {
 }
 
 /**
+ * Mock successful Order Details API call
+ */
+export function mockOrderDetailsSuccess(connectId: string, orderData: Partial<any> = {}) {
+  const defaultData = {
+    applicationId: 'test-app-id',
+    connectId,
+    assetCode: 'SOL',
+    networkCode: 'SOLANA',
+    fiatCode: 'USD',
+    fiatAmount: '0.41',
+    cryptoAmount: '0.002',
+    price: '205.00',
+    networkFee: {
+      type: 'PRICE_ITEM_TYPE_CRYPTO_CURRENCY_NETWORK_FEE',
+      fiatAmount: '0.05',
+      cryptoQuantity: '0.0002',
+    },
+    processingFee: {
+      type: 'PRICE_ITEM_TYPE_CRYPTO_CURRENCY_PROCESSING_FEE',
+      fiatAmount: '0',
+      cryptoQuantity: '0',
+    },
+    paymentMethod: 'crypto_balance',
+    totalAmount: {
+      type: 'PRICE_ITEM_TYPE_TOTAL',
+      fiatAmount: '0.46',
+      cryptoQuantity: '0.0022',
+    },
+    blockchainTransactionId: '4bED2xdo6sjGWaqF1VaFGXdzYWuasg1pKQi1x1wSzhKErDbDujoFggLSFkTMuAT72uy5nXPtoSMCahLrsTuXhahz',
+    destinationAddress: 'DPsUYCziRFjW8dcvitvtrJJfxbPUb1X7Ty8ybn3hRwM1',
+    referenceId: '',
+    status: 'ORDER_STATUS_SUCCEEDED',
+  }
+
+  return nock(ROBINHOOD_BASE_URL)
+    .get(`/catpay/v1/external/order/${connectId}`)
+    .reply(200, { ...defaultData, ...orderData })
+}
+
+/**
+ * Mock Order Details API with IN_PROGRESS status
+ */
+export function mockOrderDetailsInProgress(connectId: string) {
+  return mockOrderDetailsSuccess(connectId, {
+    status: 'ORDER_STATUS_IN_PROGRESS',
+    blockchainTransactionId: '',
+    fiatAmount: '0',
+    cryptoAmount: '0',
+  })
+}
+
+/**
+ * Mock Order Details API with FAILED status
+ */
+export function mockOrderDetailsFailed(connectId: string) {
+  return mockOrderDetailsSuccess(connectId, {
+    status: 'ORDER_STATUS_FAILED',
+  })
+}
+
+/**
+ * Mock Order Details API with CANCELLED status
+ */
+export function mockOrderDetailsCancelled(connectId: string) {
+  return mockOrderDetailsSuccess(connectId, {
+    status: 'ORDER_STATUS_CANCELLED',
+  })
+}
+
+/**
+ * Mock Order Details API failure (404 - Not Found)
+ */
+export function mockOrderDetailsNotFound(connectId: string) {
+  return nock(ROBINHOOD_BASE_URL)
+    .get(`/catpay/v1/external/order/${connectId}`)
+    .reply(404, {
+      code: 5,
+      message: 'order not found for reference id provided',
+      details: [
+        {
+          '@type': 'type.googleapis.com/rosetta.catpay.v1.ErrorResponse',
+          message: 'order not found for reference id provided',
+          code: 'ERROR_CODE_NOT_FOUND',
+        },
+      ],
+    })
+}
+
+/**
+ * Mock Order Details API failure (generic error)
+ */
+export function mockOrderDetailsFailure(connectId: string, statusCode: number = 500, message: string = 'Internal Server Error') {
+  return nock(ROBINHOOD_BASE_URL)
+    .get(`/catpay/v1/external/order/${connectId}`)
+    .reply(statusCode, {
+      error: message,
+    })
+}
+
+/**
  * Sample trading asset for tests
  */
 export function createMockAsset(overrides: Partial<any> = {}) {
